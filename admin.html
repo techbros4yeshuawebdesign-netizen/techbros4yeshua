@@ -166,6 +166,7 @@ async function loadAdmin() {
   document.getElementById('auth-screen').style.display='none';
   document.getElementById('admin-screen').style.display='block';
   await Promise.all([loadContacts(), loadEditRequests(), loadClients()]);
+  setupRealtime();
 }
 
 async function loadContacts() {
@@ -242,6 +243,30 @@ async function loadClients() {
 }
 
 sb.auth.getSession().then(({data:{session}})=>{if(session)loadAdmin();});
+
+// ── REAL-TIME UPDATES ──
+function setupRealtime() {
+  // Watch edit_requests table
+  sb.channel('edit-requests-changes')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'edit_requests' }, (payload) => {
+      loadEditRequests();
+    })
+    .subscribe();
+
+  // Watch contact_requests table
+  sb.channel('contact-requests-changes')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'contact_requests' }, (payload) => {
+      loadContacts();
+    })
+    .subscribe();
+
+  // Watch profiles table
+  sb.channel('profiles-changes')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'profiles' }, (payload) => {
+      loadClients();
+    })
+    .subscribe();
+}
 </script>
 </body>
 </html>

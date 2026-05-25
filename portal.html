@@ -459,6 +459,7 @@ async function loadPortal(user) {
   document.getElementById('portal-screen').style.display='block';
   document.getElementById('p-email-disp').textContent=user.email;
   await Promise.all([loadOverview(), loadSites(), loadSubscription(), loadRequests()]);
+  setupRealtime();
 }
 
 async function loadOverview() {
@@ -588,6 +589,69 @@ async function submitRequest(mode) {
 // ── INIT ──
 sb.auth.getSession().then(({data:{session}})=>{if(session)loadPortal(session.user);});
 sb.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_IN'&&session&&!currentUser)loadPortal(session.user);});
+
+// ── REAL-TIME UPDATES ──
+function setupRealtime() {
+  // Watch own edit requests — auto-update when Nathan marks done
+  sb.channel('my-requests')
+    .on('postgres_changes', {
+      event: 'UPDATE',
+      schema: 'public',
+      table: 'edit_requests',
+      filter: 'user_id=eq.' + currentUser.id
+    }, (payload) => {
+      // Show toast notification
+      const req = payload.new;
+      if (req.status === 'done') {
+        showToast('✅ Your edit request has been completed!');
+      }
+      loadRequests();
+    })
+    .on('postgres_changes', {
+      event: 'INSERT',
+      schema: 'public',
+      table: 'edit_requests',
+      filter: 'user_id=eq.' + currentUser.id
+    }, () => {
+      loadRequests();
+    })
+    .subscribe();
+
+  // Watch own sites — auto-update when Nathan adds a site
+  sb.channel('my-sites')
+    .on('postgres_changes', {
+      event: '*',
+      schema: 'public',
+      table: 'sites',
+      filter: 'user_id=eq.' + currentUser.id
+    }, () => {
+      showToast('🌐 Your site has been updated!');
+      loadSites();
+      loadOverview();
+    })
+    .subscribe();
+
+  // Watch own subscription
+  sb.channel('my-subscription')
+    .on('postgres_changes', {
+      event: '*',
+      schema: 'public',
+      table: 'subscriptions',
+      filter: 'user_id=eq.' + currentUser.id
+    }, () => {
+      loadSubscription();
+      loadOverview();
+    })
+    .subscribe();
+}
+
+function showToast(msg) {
+  const toast = document.createElement('div');
+  toast.textContent = msg;
+  toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1a3a1a;color:#c8f135;font-family:Syne,sans-serif;font-weight:700;font-size:14px;padding:12px 24px;border-radius:100px;z-index:999;box-shadow:0 4px 20px rgba(0,0,0,0.4);white-space:nowrap;animation:fadeUp 0.3s ease;';
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 4000);
+}
 
 // ── PARTICLES ──
 (function(){
