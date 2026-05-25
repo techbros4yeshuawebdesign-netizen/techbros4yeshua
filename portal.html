@@ -120,8 +120,8 @@ body{font-family:'DM Sans',sans-serif;background:transparent;color:#fff;min-heig
 .req-card{background:var(--card2);border:1px solid var(--border);border-radius:13px;padding:18px 22px;margin-bottom:9px;}
 .req-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;gap:10px;flex-wrap:wrap;}
 .req-type{font-family:'Syne',sans-serif;font-weight:600;font-size:14px;}
-.req-page{font-size:12px;color:var(--mid);margin-bottom:5px;}
-.req-msg{font-size:13px;color:rgba(255,255,255,0.55);line-height:1.5;}
+.req-page{font-size:12px;color:var(--mid);margin-bottom:5px;word-break:break-word;}
+.req-msg{font-size:13px;color:rgba(255,255,255,0.55);line-height:1.5;word-break:break-word;white-space:pre-wrap;overflow:hidden;}
 .req-date{font-size:11px;color:rgba(255,255,255,0.2);margin-top:7px;}
 
 /* FORM */
@@ -457,7 +457,7 @@ async function loadPortal(user) {
   currentUser=user;
   document.getElementById('auth-screen').style.display='none';
   document.getElementById('portal-screen').style.display='block';
-  document.getElementById('p-email-disp').textContent=user.email;
+  document.getElementById('p-email-disp').textContent=user.email.replace('nathan@churchofgladtidings.com','techBros4yeshua.web.design@gmail.com');
   await Promise.all([loadOverview(), loadSites(), loadSubscription(), loadRequests()]);
   setupRealtime();
 }
