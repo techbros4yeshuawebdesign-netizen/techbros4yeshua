@@ -371,9 +371,9 @@ footer{background:rgba(4,5,2,0.9);padding:44px 40px;text-align:center;color:rgba
   <div class="sec-label reveal" style="text-align:center;">Get started</div>
   <div class="sec-title reveal" style="text-align:center;font-size:clamp(24px,3vw,38px);">Request your free prototype.</div>
   <div class="contact-box reveal">
-    <form action="https://formspree.io/f/mredeboq" method="POST">
+    <form action="REMOVED" method="POST">
       <input type="hidden" name="_subject" value="New Website Request — Tech Bros for Yeshua">
-      <input type="hidden" name="_next" value="https://techbros4yeshua.netlify.app/?sent=true">
+      <input type="hidden" name="_next" value="https://techbros4yeshuawebdesign-netizen.github.io/techbros4yeshua/?sent=true">
       <div class="form-row">
         <div class="f-group"><label>First Name</label><input type="text" name="first_name" placeholder="John" required></div>
         <div class="f-group"><label>Last Name</label><input type="text" name="last_name" placeholder="Smith"></div>
@@ -438,10 +438,7 @@ footer{background:rgba(4,5,2,0.9);padding:44px 40px;text-align:center;color:rgba
   </div>
 </div>
 
-<!-- THANK YOU BANNER -->
-<div id="ty-banner" style="display:none;position:fixed;top:70px;left:50%;transform:translateX(-50%);background:#1a3a1a;color:var(--lime);font-family:'Syne',sans-serif;font-weight:700;font-size:14px;padding:13px 26px;border-radius:100px;z-index:999;box-shadow:0 4px 24px rgba(0,0,0,0.4);white-space:nowrap;">
-  ✅ Request sent! We'll be in touch within 24 hours.
-</div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -511,7 +508,7 @@ async function doModalSignup() {
 async function doModalForgot() {
   const email = document.getElementById('ml-email').value.trim();
   if (!email) { showModalMsg('Enter your email first.', 'error'); return; }
-  await sb.auth.resetPasswordForEmail(email, { redirectTo: 'https://techbros4yeshua.netlify.app/portal.html' });
+  await sb.auth.resetPasswordForEmail(email, { redirectTo: 'https://techbros4yeshuawebdesign-netizen.github.io/techbros4yeshua/portal.html' });
   showModalMsg('Password reset email sent!', 'success');
 }
 
@@ -564,7 +561,7 @@ async function doSignup() {
 async function doForgot() {
   const email = document.getElementById('ll-email').value.trim();
   if (!email) { showLoginMsg('Enter your email first.', 'error'); return; }
-  await sb.auth.resetPasswordForEmail(email, { redirectTo: 'https://techbros4yeshua.netlify.app/portal.html' });
+  await sb.auth.resetPasswordForEmail(email, { redirectTo: 'https://techbros4yeshuawebdesign-netizen.github.io/techbros4yeshua/portal.html' });
   showLoginMsg('Password reset email sent!', 'success');
 }
 
@@ -581,11 +578,40 @@ sb.auth.getSession().then(({ data: { session } }) => {
   }
 });
 
-// ── THANK YOU BANNER ──
-if (new URLSearchParams(window.location.search).get('sent') === 'true') {
-  const b = document.getElementById('ty-banner');
-  b.style.display = 'block';
-  setTimeout(() => b.style.display = 'none', 6000);
+// ── CONTACT FORM ──
+async function submitContact() {
+  const first = document.getElementById('cf-first').value.trim();
+  const last = document.getElementById('cf-last').value.trim();
+  const biz = document.getElementById('cf-biz').value.trim();
+  const email = document.getElementById('cf-email').value.trim();
+  const phone = document.getElementById('cf-phone').value.trim();
+  const plan = document.getElementById('cf-plan').value;
+  const msg = document.getElementById('cf-msg').value.trim();
+  const m = document.getElementById('contact-msg');
+
+  if (!first || !biz || !email) {
+    m.textContent = 'Please fill in your name, business, and email.';
+    m.className = 'msg error'; return;
+  }
+
+  const btn = document.getElementById('cf-btn');
+  btn.textContent = 'Sending...'; btn.disabled = true;
+
+  const { error } = await sb.from('contact_requests').insert({
+    first_name: first, last_name: last, business: biz,
+    email, phone: phone || null,
+    plan: plan || 'Not sure yet', message: msg || null,
+    type: 'prototype_request'
+  });
+
+  if (error) {
+    m.textContent = 'Something went wrong. Please email us directly at techBros4yeshua.web.design@gmail.com';
+    m.className = 'msg error';
+    btn.textContent = 'Request My Free Prototype →'; btn.disabled = false;
+  } else {
+    document.getElementById('contact-form-fields').style.display = 'none';
+    document.getElementById('contact-success').style.display = 'block';
+  }
 }
 
 // ── SCROLL REVEAL ──

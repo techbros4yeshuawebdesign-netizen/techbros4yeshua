@@ -432,7 +432,7 @@ async function doSignup() {
 async function doForgot() {
   const email=document.getElementById('al-email').value.trim();
   if(!email){showAuthMsg('Enter your email first.','error');return;}
-  await sb.auth.resetPasswordForEmail(email,{redirectTo:'https://techbros4yeshua.netlify.app/portal.html'});
+  await sb.auth.resetPasswordForEmail(email,{redirectTo:'https://techbros4yeshuawebdesign-netizen.github.io/techbros4yeshua/portal.html'});
   showAuthMsg('Password reset email sent!','success');
 }
 
@@ -559,20 +559,7 @@ async function submitRequest(mode) {
     });
     if(error){m.textContent='Error submitting. Try again.';m.className='msg error';btn.textContent='Submit New Site Request →';btn.disabled=false;}
     else{
-      // Also email Nathan via Formspree
-      await fetch('https://formspree.io/f/mredeboq', {
-        method:'POST',
-        headers:{'Content-Type':'application/json','Accept':'application/json'},
-        body:JSON.stringify({
-          _subject: 'New Website Request — ' + siteName + ' (' + sitePlan + ')',
-          client_email: currentUser.email,
-          site_type: siteType,
-          plan: sitePlan,
-          site_name: siteName,
-          domain: siteDomain||'Not provided',
-          vision: siteDesc
-        })
-      });
+      // Saved to Supabase — Nathan can view in dashboard
       m.textContent='✓ Request submitted! Nathan will reach out within 24 hours.';m.className='msg success';
       btn.textContent='Submit New Site Request →';btn.disabled=false;
       document.getElementById('site-type').value='';document.getElementById('site-plan').value='';
@@ -589,16 +576,7 @@ async function submitRequest(mode) {
     const {error}=await sb.from('edit_requests').insert({user_id:currentUser.id,page,edit_type:type,message:msg,status:'pending'});
     if(error){m.textContent='Error submitting. Try again.';m.className='msg error';btn.textContent='Submit Edit Request →';btn.disabled=false;}
     else{
-      // Also email Nathan via Formspree
-      await fetch('https://formspree.io/f/mredeboq', {
-        method:'POST',
-        headers:{'Content-Type':'application/json','Accept':'application/json'},
-        body:JSON.stringify({
-          _subject: 'Edit Request — ' + type,
-          client_email: currentUser.email,
-          page, edit_type: type, message: msg
-        })
-      });
+      // Saved to Supabase — Nathan can view in dashboard
       m.textContent='✓ Request submitted! Nathan will review within 24 hours.';m.className='msg success';
       btn.textContent='Submit Edit Request →';btn.disabled=false;
       document.getElementById('req-page').value='';document.getElementById('req-type').value='';document.getElementById('req-text').value='';
