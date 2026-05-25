@@ -217,9 +217,18 @@ async function markDone(id) {
   card.querySelector('.badge').className='badge done';
   card.querySelector('.badge').innerHTML='<span class="badge-dot"></span>done';
   const btn=card.querySelector('.mark-done');
-  if(btn) btn.remove();
-  const pending=document.querySelectorAll('.badge.pending').length;
-  document.getElementById('s-pending').textContent=pending;
+  if(btn){btn.textContent='Undo';btn.onclick=()=>markUndone(id);}
+  document.getElementById('s-pending').textContent=document.querySelectorAll('.badge.pending').length;
+}
+
+async function markUndone(id) {
+  await sb.from('edit_requests').update({status:'pending'}).eq('id',id);
+  const card=document.getElementById('req-'+id);
+  card.querySelector('.badge').className='badge pending';
+  card.querySelector('.badge').innerHTML='<span class="badge-dot"></span>pending';
+  const btn=card.querySelector('.mark-done');
+  if(btn){btn.textContent='Mark Done';btn.onclick=()=>markDone(id);}
+  document.getElementById('s-pending').textContent=document.querySelectorAll('.badge.pending').length;
 }
 
 async function loadClients() {
