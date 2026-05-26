@@ -773,7 +773,6 @@ body::before {
               <option value="starter">Starter — $25/mo (up to 5 pages)</option>
               <option value="professional">Professional — $50/mo (up to 10 pages)</option>
               <option value="premium">Premium — $100/mo (unlimited pages)</option>
-              <option value="unlimited">Unlimited — $500/mo (unlimited websites)</option>
             </select>
           </div>
           <div class="p-field"><label>Business / Site Name</label><input type="text" id="site-name-input" placeholder="e.g. Smith's Auto Repair"></div>
@@ -794,10 +793,9 @@ const SKEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZ
 const sb = supabase.createClient(SURL, SKEY);
 
 const PLANS = {
-  starter:      { name:'Starter',      price:'$25/month', features:['Up to 5 pages','Mobile responsive','Contact form','Basic SEO','Hosting + SSL','1 month free edits'] },
-  professional: { name:'Professional', price:'$50/month', features:['Up to 10 pages','Mobile responsive','Contact form + live chat','Advanced SEO','Hosting + SSL','1 year free edits','Payment processing'] },
-  premium:      { name:'Premium',      price:'$100/month', features:['Unlimited pages','Mobile responsive','Full feature set','Advanced SEO + analytics','Hosting + SSL','Unlimited edits forever','Payments + subscription management'] },
-  unlimited:    { name:'Agency',        price:'$500/month', features:['Unlimited websites','Unlimited pages per site','Full feature set on every site','Advanced SEO + analytics','Hosting + SSL on all sites','Unlimited edits forever','Payment + subscription management','Priority support — 12hr response'] }
+  starter:      { name:'Starter',      price:'$299 setup + $55/mo', features:['Up to 5 pages','Mobile responsive','Contact form','Basic SEO','Hosting + SSL','1 month free edits'] },
+  professional: { name:'Professional', price:'$599 setup + $85/mo', features:['Up to 10 pages','Mobile responsive','Contact form + live chat','Advanced SEO','Hosting + SSL','1 year free edits','Payment processing'] },
+  premium:      { name:'Premium',      price:'$1,200 setup + $150/mo', features:['Unlimited pages','Mobile responsive','Full feature set','Advanced SEO + analytics','Hosting + SSL','Unlimited edits forever','Payments + subscription management'] }
 };
 
 let currentUser = null;
@@ -911,7 +909,7 @@ async function loadSites() {
         <div class="site-meta">${s.pages||1} page${(s.pages||1)!==1?'s':''} · Added ${new Date(s.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</div>
       </div>
       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-        <span class="badge ${s.status==='active'?'active':'pending'}"><span class="badge-dot"></span>${s.status||'active'}</span>
+        <span class="badge ${s.status==='active'?'active':s.status==='demo'?'pending':'pending'}"><span class="badge-dot"></span>${s.status==='active'?'🟢 Live':s.status==='demo'?'🔧 Demo in Progress':'⏸ Paused'}</span>
         ${s.site_url?`<a href="${s.site_url}" target="_blank" class="ghost-btn lime-outline">Visit →</a>`:''}
         <button class="ghost-btn" onclick="showTab('new-request')">Request Edit</button>
       </div>

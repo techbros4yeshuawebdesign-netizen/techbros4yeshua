@@ -1520,8 +1520,8 @@ body::before {
       <div class="plan reveal"><div class="scan-line"></div>
         <div class="plan-badge">Starter</div>
         <div class="plan-name">Basic</div>
-        <div class="plan-price"><div class="plan-price-num">$25</div><div class="plan-price-mo">/mo</div></div>
-        <div class="plan-desc">Everything a small business needs to get online and stay there.</div>
+        <div class="plan-price"><div class="plan-price-num">$55</div><div class="plan-price-mo">/mo</div></div>
+        <div class="plan-desc">$299 one-time setup. Everything a small business needs to get online and stay there.</div>
         <ul class="features-list">
           <li class="feature-item">Up to 5 pages</li>
           <li class="feature-item">Mobile responsive design</li>
@@ -1532,15 +1532,15 @@ body::before {
           <li class="feature-item feature-no">Payment processing</li>
           <li class="feature-item feature-no">Unlimited edits</li>
         </ul>
-        <button class="plan-btn" onclick="openPlanModal('starter','Starter — $25/mo')">Subscribe — $25/mo →</button>
-        <p class="plan-secure">Secured by Stripe · Cancel anytime</p>
+        <button class="plan-btn" onclick="openPlanModal('starter','Starter — $299 setup + $55/mo')">$299 Setup + $55/mo →</button>
+        <p class="plan-secure">One-time setup fee · Secured by Stripe</p>
       </div>
 
       <div class="plan featured reveal"><div class="scan-line" style="animation-delay:-1s;"></div>
         <div class="plan-badge">Most Popular</div>
         <div class="plan-name">Professional</div>
-        <div class="plan-price"><div class="plan-price-num">$50</div><div class="plan-price-mo">/mo</div></div>
-        <div class="plan-desc">For growing businesses that need more pages, more features, and payment ability.</div>
+        <div class="plan-price"><div class="plan-price-num">$85</div><div class="plan-price-mo">/mo</div></div>
+        <div class="plan-desc">$599 one-time setup. For growing businesses that need more pages, more features, and payment ability.</div>
         <ul class="features-list">
           <li class="feature-item">Up to 10 pages</li>
           <li class="feature-item">Mobile responsive design</li>
@@ -1551,15 +1551,15 @@ body::before {
           <li class="feature-item">Payment processing</li>
           <li class="feature-item feature-no">Unlimited edits</li>
         </ul>
-        <button class="plan-btn" onclick="openPlanModal('professional','Professional — $50/mo')">Subscribe — $50/mo →</button>
+        <button class="plan-btn" onclick="openPlanModal('professional','Professional — $599 setup + $85/mo')">$599 Setup + $85/mo →</button>
         <p class="plan-secure">Secured by Stripe · Cancel anytime</p>
       </div>
 
       <div class="plan reveal"><div class="scan-line" style="animation-delay:-2s;"></div>
         <div class="plan-badge">Premium</div>
         <div class="plan-name">Full Service</div>
-        <div class="plan-price"><div class="plan-price-num">$100</div><div class="plan-price-mo">/mo</div></div>
-        <div class="plan-desc">Everything included. Unlimited pages, unlimited changes, payments, and subscriptions.</div>
+        <div class="plan-price"><div class="plan-price-num">$150</div><div class="plan-price-mo">/mo</div></div>
+        <div class="plan-desc">$1,200 one-time setup. Everything included. Unlimited pages, unlimited changes, payments, and subscriptions.</div>
         <ul class="features-list">
           <li class="feature-item">Unlimited pages</li>
           <li class="feature-item">Mobile responsive design</li>
@@ -1570,25 +1570,7 @@ body::before {
           <li class="feature-item">Payment processing</li>
           <li class="feature-item">Subscription billing management</li>
         </ul>
-        <button class="plan-btn" onclick="openPlanModal('premium','Premium — $100/mo')">Subscribe — $100/mo →</button>
-        <p class="plan-secure">Secured by Stripe · Cancel anytime</p>
-      </div>
-      <div class="plan reveal" style="border-color:rgba(200,241,53,0.3);"><div class="scan-line" style="animation-delay:-3s;"></div>
-        <div class="plan-badge" style="background:rgba(200,241,53,0.15);">🔥 Agency</div>
-        <div class="plan-name">Unlimited</div>
-        <div class="plan-price"><div class="plan-price-num">$500</div><div class="plan-price-mo">/mo</div></div>
-        <div class="plan-desc">Build unlimited websites for unlimited clients. The full agency package — everything included, no limits whatsoever.</div>
-        <ul class="features-list">
-          <li class="feature-item">Unlimited websites</li>
-          <li class="feature-item">Unlimited pages per site</li>
-          <li class="feature-item">Full feature set on every site</li>
-          <li class="feature-item">Advanced SEO + analytics</li>
-          <li class="feature-item">Hosting + SSL on all sites</li>
-          <li class="feature-item">Unlimited edits — forever</li>
-          <li class="feature-item">Payment + subscription management</li>
-          <li class="feature-item">Priority support — 12hr response</li>
-        </ul>
-        <button class="plan-btn" onclick="openPlanModal('unlimited','Agency — $500/mo')" style="border-color:rgba(200,241,53,0.4);color:var(--lime);">Subscribe — $500/mo →</button>
+        <button class="plan-btn" onclick="openPlanModal('premium','Premium — $1,200 setup + $150/mo')">$1,200 Setup + $150/mo →</button>
         <p class="plan-secure">Secured by Stripe · Cancel anytime</p>
       </div>
 
@@ -1719,7 +1701,7 @@ const sb = supabase.createClient(
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh3bm5keGF0aWRkdXBreGNrbGJ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyMTIwNTAsImV4cCI6MjA5NDc4ODA1MH0.jFh--OnV9_ihfkm0bVs9gb1GJP2vn5iqV1_5McTbHPs'
 );
 
-const STRIPE = { starter:'STRIPE_STARTER_LINK', professional:'STRIPE_PRO_LINK', premium:'STRIPE_PREMIUM_LINK', unlimited:'STRIPE_UNLIMITED_LINK' };
+const STRIPE = { starter:'STRIPE_STARTER_LINK', professional:'STRIPE_PRO_LINK', premium:'STRIPE_PREMIUM_LINK' };
 
 // ── PLAN MODAL ──
 let currentPlanKey = '';
@@ -1868,20 +1850,64 @@ async function submitContact() {
   const btn = document.getElementById('cf-btn');
   btn.textContent = 'Sending...'; btn.disabled = true;
 
-  const { error } = await sb.from('contact_requests').insert({
-    first_name: first, last_name: last, business: biz,
-    email, phone: phone || null,
-    plan: plan || 'Not sure yet', message: msg || null,
-    type: 'prototype_request'
-  });
+  try {
+    // Save to Supabase
+    const { error } = await sb.from('contact_requests').insert({
+      first_name: first, last_name: last, business: biz,
+      email, phone: phone || null,
+      plan: plan || 'Not sure yet', message: msg || null,
+      type: 'prototype_request',
+      status: 'pending'
+    });
 
-  if (error) {
-    m.textContent = 'Something went wrong. Please email us directly at techBros4yeshua.web.design@gmail.com';
-    m.className = 'msg error';
-    btn.textContent = 'Request My Free Prototype →'; btn.disabled = false;
-  } else {
+    if (error) throw new Error(error.message);
+
+    // Also send email notification via mailto as backup
+    // (opens email client pre-filled for Nathan)
+    const subject = encodeURIComponent('New Website Inquiry — ' + biz);
+    const body = encodeURIComponent(
+      'New prototype request received!
+
+' +
+      'Name: ' + first + ' ' + last + '
+' +
+      'Business: ' + biz + '
+' +
+      'Email: ' + email + '
+' +
+      'Phone: ' + (phone||'Not provided') + '
+' +
+      'Plan Interest: ' + (plan||'Not sure yet') + '
+
+' +
+      'Message:
+' + (msg||'None') + '
+
+' +
+      'View in admin: https://techbros4yeshua.netlify.app/admin.html'
+    );
+
+    // Silent email ping — create hidden iframe to avoid redirecting
+    const mailtoLink = 'mailto:techBros4yeshua.web.design@gmail.com?subject=' + subject + '&body=' + body;
+
+    // Show success
     document.getElementById('contact-form-fields').style.display = 'none';
     document.getElementById('contact-success').style.display = 'block';
+
+    // Open email in background after short delay
+    setTimeout(() => {
+      const a = document.createElement('a');
+      a.href = mailtoLink;
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }, 500);
+
+  } catch(err) {
+    m.textContent = 'Error submitting. Please email us directly: techBros4yeshua.web.design@gmail.com';
+    m.className = 'msg error';
+    btn.textContent = 'Request My Free Prototype →'; btn.disabled = false;
   }
 }
 

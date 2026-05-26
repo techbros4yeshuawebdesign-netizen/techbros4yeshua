@@ -484,6 +484,138 @@ body::before {
   pointer-events: none; z-index: 1; transform: translate(-50%,-50%);
 }
 
+
+/* ── PAYMENT FLOW ── */
+.pay-btn {
+  padding: 7px 16px; border-radius: 100px; font-size: 12px;
+  font-family: 'Syne', sans-serif; font-weight: 700; cursor: pointer;
+  border: 1px solid rgba(200,241,53,0.3); background: rgba(200,241,53,0.08);
+  color: var(--lime); transition: all 0.2s;
+}
+.pay-btn:hover { background: rgba(200,241,53,0.18); box-shadow: 0 0 15px rgba(200,241,53,0.3); }
+.pay-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.pay-btn.sent {
+  border-color: rgba(80,200,80,0.3); background: rgba(80,200,80,0.08); color: #6dc86d;
+}
+
+.plan-select {
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px; padding: 6px 10px; font-family: 'DM Sans', sans-serif;
+  font-size: 12px; color: #fff; outline: none; cursor: pointer;
+}
+.plan-select:focus { border-color: var(--lime); }
+.plan-select option { background: #111408; }
+
+.stripe-setup-box {
+  background: rgba(200,241,53,0.05); border: 1.5px solid rgba(200,241,53,0.2);
+  border-radius: 16px; padding: 24px 28px; margin-bottom: 20px;
+}
+.stripe-setup-box h3 {
+  font-family: 'Syne', sans-serif; font-weight: 700; font-size: 16px;
+  color: var(--lime); margin-bottom: 12px;
+}
+.stripe-link-row {
+  display: flex; gap: 10px; align-items: center; margin-bottom: 10px; flex-wrap: wrap;
+}
+.stripe-link-row label {
+  font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+  color: rgba(255,255,255,0.4); width: 110px; flex-shrink: 0;
+}
+.stripe-link-row input {
+  flex: 1; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px; padding: 8px 12px; font-family: 'DM Sans', sans-serif;
+  font-size: 13px; color: #fff; outline: none; min-width: 200px;
+}
+.stripe-link-row input:focus { border-color: var(--lime); }
+.stripe-link-row input::placeholder { color: rgba(255,255,255,0.2); }
+.save-stripe-btn {
+  background: var(--lime); color: #080a04; font-family: 'Syne', sans-serif;
+  font-weight: 700; font-size: 13px; padding: 9px 20px; border-radius: 100px;
+  border: none; cursor: pointer; transition: all 0.2s; margin-top: 8px;
+}
+.save-stripe-btn:hover { box-shadow: 0 0 20px rgba(200,241,53,0.5); transform: scale(1.03); }
+
+.contact-status {
+  display: inline-flex; align-items: center; gap: 5px; font-size: 10px;
+  font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 3px 10px; border-radius: 100px;
+}
+.contact-status.pending { background: rgba(255,180,0,0.12); color: #ffb400; }
+.contact-status.payment-sent { background: rgba(79,159,255,0.12); color: #4f9fff; }
+.contact-status.active { background: rgba(200,241,53,0.12); color: var(--lime); }
+.contact-status.declined { background: rgba(220,50,50,0.12); color: #ff8080; }
+
+.change-plan-row {
+  display: flex; gap: 8px; align-items: center; margin-top: 10px; flex-wrap: wrap;
+}
+
+
+/* ── DEMO / LIVE STATUS ── */
+.status-toggle {
+  display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-top: 10px;
+}
+.status-toggle-btn {
+  padding: 6px 16px; border-radius: 100px; font-size: 11px;
+  font-family: 'Syne', sans-serif; font-weight: 700; cursor: pointer;
+  transition: all 0.2s; border: 1px solid transparent;
+}
+.status-toggle-btn.demo {
+  background: rgba(255,180,0,0.08); border-color: rgba(255,180,0,0.3); color: #ffb400;
+}
+.status-toggle-btn.demo.active {
+  background: rgba(255,180,0,0.2); border-color: #ffb400;
+  box-shadow: 0 0 12px rgba(255,180,0,0.3);
+}
+.status-toggle-btn.live {
+  background: rgba(200,241,53,0.08); border-color: rgba(200,241,53,0.3); color: var(--lime);
+}
+.status-toggle-btn.live.active {
+  background: rgba(200,241,53,0.2); border-color: var(--lime);
+  box-shadow: 0 0 12px rgba(200,241,53,0.4);
+}
+.status-toggle-btn.offline {
+  background: rgba(220,50,50,0.08); border-color: rgba(220,50,50,0.2); color: #ff8080;
+}
+.status-toggle-btn.offline.active {
+  background: rgba(220,50,50,0.18); border-color: #ff8080;
+  box-shadow: 0 0 12px rgba(220,50,50,0.3);
+}
+.workflow-steps {
+  display: flex; flex-direction: column; gap: 8px; margin-top: 14px;
+}
+.workflow-step {
+  display: flex; align-items: center; gap: 12px; padding: 10px 14px;
+  background: rgba(255,255,255,0.03); border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.workflow-step-num {
+  width: 24px; height: 24px; border-radius: 50%;
+  background: rgba(200,241,53,0.12); color: var(--lime);
+  font-family: 'Syne', sans-serif; font-weight: 700; font-size: 11px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.workflow-step-text { font-size: 13px; color: rgba(255,255,255,0.6); }
+.workflow-step-text strong { color: #fff; }
+
+/* Site status indicators */
+.site-status-live {
+  border-left: 3px solid var(--lime) !important;
+}
+.site-status-demo {
+  border-left: 3px solid #ffb400 !important;
+}
+.site-status-offline {
+  border-left: 3px solid rgba(220,50,50,0.6) !important;
+}
+
+/* Stripe not ready notice */
+.stripe-notice {
+  background: rgba(255,180,0,0.08); border: 1px solid rgba(255,180,0,0.2);
+  border-radius: 12px; padding: 14px 18px; margin-bottom: 16px;
+  font-size: 13px; color: #ffb400; display: flex; gap: 10px; align-items: flex-start;
+}
+
 </style>
 </head>
 <body>
@@ -522,6 +654,7 @@ body::before {
       <button class="tab" onclick="showTab('edit-requests')">Edit Requests</button>
       <button class="tab" onclick="showTab('clients')">Clients</button>
       <button class="tab" onclick="showTab('sites-mgmt')">🌐 Manage Sites</button>
+      <button class="tab" onclick="showTab('stripe-settings')">⚙️ Stripe Links</button>
     </div>
 
     <!-- PROTOTYPE REQUESTS -->
@@ -579,6 +712,49 @@ body::before {
       <div id="all-sites-list"><div class="loading">Loading sites...</div></div>
     </div>
 
+  <!-- STRIPE SETTINGS -->
+    <div id="tab-stripe-settings" class="tab-panel">
+      <!-- Stripe not ready notice -->
+      <div class="stripe-notice">
+        ⚠️ <div><strong>Stripe not fully set up yet.</strong> Add your billing info at <a href="https://dashboard.stripe.com/settings/billing" target="_blank" style="color:#ffb400;">dashboard.stripe.com</a> first. Once ready, create payment links for each plan and paste them below.</div>
+      </div>
+
+      <div class="stripe-setup-box">
+        <h3>⚙️ Stripe Payment Links</h3>
+        <p style="font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:6px;">How to get your links:</p>
+        <ol style="font-size:12px;color:rgba(255,255,255,0.35);margin-bottom:18px;padding-left:18px;line-height:2;">
+          <li>Go to <strong style="color:#fff;">dashboard.stripe.com → Product catalog</strong></li>
+          <li>Create a product for each plan with recurring monthly pricing</li>
+          <li>Click <strong style="color:#fff;">Create payment link</strong> on each</li>
+          <li>Paste the links below and hit Save</li>
+        </ol>
+        <div class="stripe-link-row">
+          <label>Starter</label>
+          <input type="text" id="sl-starter" placeholder="https://buy.stripe.com/...">
+        </div>
+        <div class="stripe-link-row">
+          <label>Professional</label>
+          <input type="text" id="sl-professional" placeholder="https://buy.stripe.com/...">
+        </div>
+        <div class="stripe-link-row">
+          <label>Premium</label>
+          <input type="text" id="sl-premium" placeholder="https://buy.stripe.com/...">
+        </div>
+        <button class="save-stripe-btn" onclick="saveStripeLinks()">Save Links</button>
+        <span id="stripe-save-msg" style="font-size:12px;color:var(--lime);margin-left:12px;display:none;">✓ Saved!</span>
+      </div>
+      <div class="req-card">
+        <div class="card-label">Full Client Workflow</div>
+        <div class="workflow-steps">
+          <div class="workflow-step"><div class="workflow-step-num">1</div><div class="workflow-step-text">Client submits inquiry → appears in <strong>Prototype Requests</strong></div></div>
+          <div class="workflow-step"><div class="workflow-step-num">2</div><div class="workflow-step-text">You build their demo → go to <strong>🌐 Manage Sites</strong> → add site → set status to <strong style="color:#ffb400;">Demo</strong></div></div>
+          <div class="workflow-step"><div class="workflow-step-num">3</div><div class="workflow-step-text">Client reviews demo → you select plan → click <strong style="color:var(--lime);">Send Payment Link</strong></div></div>
+          <div class="workflow-step"><div class="workflow-step-num">4</div><div class="workflow-step-text">Client pays via Stripe → you switch site status to <strong style="color:var(--lime);">Live</strong></div></div>
+          <div class="workflow-step"><div class="workflow-step-num">5</div><div class="workflow-step-text">Plan changes → <strong>Clients</strong> tab → Change Plan → old sub cancelled, new one starts</div></div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -609,7 +785,7 @@ function showTab(name) {
   document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('tab-'+name).classList.add('active');
-  const tabs=['contacts','edit-requests','clients','sites-mgmt'];
+  const tabs=['contacts','edit-requests','clients','sites-mgmt','stripe-settings'];
   const idx=tabs.indexOf(name);
   if(idx>-1) document.querySelectorAll('.tab')[idx].classList.add('active');
   if(name==='sites-mgmt') loadSitesMgmt();
@@ -630,17 +806,107 @@ async function loadContacts() {
   const c=document.getElementById('contacts-list');
   if(!data||!data.length){c.innerHTML='<div class="empty">No prototype requests yet.</div>';return;}
   c.innerHTML=data.map(r=>`
-    <div class="req-card">
+    <div class="req-card" id="contact-${r.id}">
       <div class="req-top">
-        <div>
+        <div style="flex:1;min-width:0;">
           <div class="req-type">${r.business||'—'}</div>
           <div class="req-meta">👤 ${r.first_name||''} ${r.last_name||''} &nbsp;·&nbsp; 📧 <a href="mailto:${r.email}" style="color:var(--lime);text-decoration:none;">${r.email}</a>${r.phone?' &nbsp;·&nbsp; 📞 '+r.phone:''}</div>
         </div>
-        <span class="badge new"><span class="badge-dot"></span>${r.plan||'Not sure'}</span>
+        <span class="contact-status ${r.payment_sent?'payment-sent':r.status||'pending'}">
+          <span style="width:4px;height:4px;border-radius:50%;background:currentColor;display:inline-block;"></span>
+          ${r.payment_sent?'Payment Sent':r.status||'Pending'}
+        </span>
       </div>
-      ${r.message?`<div class="req-msg">${r.message}</div>`:''}
+      ${r.message?`<div class="req-msg" style="margin-top:8px;">${r.message}</div>`:''}
+
+      <!-- PLAN SELECT + SEND PAYMENT -->
+      <div class="change-plan-row">
+        <select class="plan-select" id="plan-sel-${r.id}">
+          <option value="">Select plan to offer...</option>
+          <option value="starter" ${r.plan_key==='starter'?'selected':''}>Starter — $299 setup + $55/mo</option>
+          <option value="professional" ${r.plan_key==='professional'?'selected':''}>Professional — $599 setup + $85/mo</option>
+          <option value="premium" ${r.plan_key==='premium'?'selected':''}>Premium — $1,200 setup + $150/mo</option>
+        </select>
+        <button class="pay-btn ${r.payment_sent?'sent':''}" id="pay-btn-${r.id}"
+          onclick="sendPaymentLink('${r.id}','${r.email}','${r.first_name}')"
+          ${r.payment_sent?'disabled':''}>
+          ${r.payment_sent?'✓ Link Sent':'Send Payment Link →'}
+        </button>
+        <button onclick="updateContactStatus('${r.id}','declined')"
+          style="padding:6px 14px;border-radius:100px;font-size:11px;font-family:Syne,sans-serif;font-weight:600;cursor:pointer;border:1px solid rgba(220,50,50,0.2);background:rgba(220,50,50,0.06);color:#ff8080;">
+          Decline
+        </button>
+      </div>
       <div class="req-date">${fmt(r.created_at)}</div>
     </div>`).join('');
+}
+
+// Stripe links stored in localStorage
+function saveStripeLinks() {
+  const links = {
+    starter: document.getElementById('sl-starter').value.trim(),
+    professional: document.getElementById('sl-professional').value.trim(),
+    premium: document.getElementById('sl-premium').value.trim(),
+  };
+  localStorage.setItem('stripe_links', JSON.stringify(links));
+  const msg = document.getElementById('stripe-save-msg');
+  msg.style.display = 'inline'; setTimeout(()=>msg.style.display='none', 2000);
+}
+
+function getStripeLinks() {
+  try { return JSON.parse(localStorage.getItem('stripe_links'))||{}; } catch { return {}; }
+}
+
+function loadStripeInputs() {
+  const links = getStripeLinks();
+  if(links.starter) document.getElementById('sl-starter').value = links.starter;
+  if(links.professional) document.getElementById('sl-professional').value = links.professional;
+  if(links.premium) document.getElementById('sl-premium').value = links.premium;
+}
+
+async function sendPaymentLink(contactId, email, firstName) {
+  const planKey = document.getElementById('plan-sel-'+contactId).value;
+  if(!planKey){ alert('Please select a plan first.'); return; }
+
+  const links = getStripeLinks();
+  const stripeLink = links[planKey];
+  if(!stripeLink || stripeLink.includes('buy.stripe.com') === false) {
+    alert('No Stripe link saved for this plan. Go to ⚙️ Stripe Links tab and add it first.');
+    return;
+  }
+
+  const planNames = { starter:'Starter ($299 setup + $55/mo)', professional:'Professional ($599 setup + $85/mo)', premium:'Premium ($1,200 setup + $150/mo)' };
+  const btn = document.getElementById('pay-btn-'+contactId);
+  btn.textContent = 'Sending...'; btn.disabled = true;
+
+  // Save plan key and mark payment sent
+  await sb.from('contact_requests').update({
+    plan_key: planKey,
+    payment_sent: true,
+    status: 'payment-sent'
+  }).eq('id', contactId);
+
+  // Email the client their payment link via Gmail (or just show confirmation)
+  // For now — open mailto with the link
+  const subject = encodeURIComponent('Your Tech Bros for Yeshua Website Payment Link');
+  const body = encodeURIComponent(
+    `Hi ${firstName||'there'},\n\nThank you for your interest! Here is your payment link for the ${planNames[planKey]} plan:\n\n${stripeLink}\n\nOnce payment is complete, you'll receive access to your client portal.\n\nGod bless,\nNathan\nTech Bros for Yeshua`
+  );
+  window.open(`mailto:${email}?subject=${subject}&body=${body}`);
+
+  btn.textContent = '✓ Link Sent'; btn.className = 'pay-btn sent';
+
+  // Update status badge in card
+  const card = document.getElementById('contact-'+contactId);
+  if(card) {
+    const badge = card.querySelector('.contact-status');
+    if(badge){ badge.className='contact-status payment-sent'; badge.innerHTML='<span style="width:4px;height:4px;border-radius:50%;background:currentColor;display:inline-block;"></span> Payment Sent'; }
+  }
+}
+
+async function updateContactStatus(id, status) {
+  await sb.from('contact_requests').update({status}).eq('id', id);
+  loadContacts();
 }
 
 async function loadEditRequests() {
@@ -694,19 +960,105 @@ async function loadClients() {
   const c=document.getElementById('clients-list');
   if(!data||!data.length){c.innerHTML='<div class="empty">No clients yet.</div>';return;}
   c.innerHTML=data.map(r=>`
-    <div class="req-card">
+    <div class="req-card" id="client-${r.id}">
       <div class="req-top">
-        <div>
+        <div style="flex:1;min-width:0;">
           <div class="req-type">${r.full_name||'—'}</div>
-          <div class="req-meta">📧 <a href="mailto:${r.email}" style="color:var(--lime);text-decoration:none;">${r.email}</a> &nbsp;·&nbsp; Plan: ${r.subscriptions?.[0]?.plan||'None'}</div>
+          <div class="req-meta">📧 <a href="mailto:${r.email}" style="color:var(--lime);text-decoration:none;">${r.email}</a> &nbsp;·&nbsp; Current Plan: <strong style="color:#fff;">${r.subscriptions?.[0]?.plan||'None'}</strong></div>
         </div>
         <span class="badge ${r.status==='active'?'new':'pending'}"><span class="badge-dot"></span>${r.status||'active'}</span>
+      </div>
+      <!-- CHANGE PLAN -->
+      <div class="change-plan-row" style="margin-top:10px;">
+        <select class="plan-select" id="change-plan-${r.id}">
+          <option value="">Change plan...</option>
+          <option value="starter">Starter — $55/mo</option>
+          <option value="professional">Professional — $85/mo</option>
+          <option value="premium">Premium — $150/mo</option>
+        </select>
+        <button class="pay-btn" onclick="changePlan('${r.id}','${r.email}','${r.full_name||r.email}')">
+          Change Plan →
+        </button>
+        <button onclick="addManualSub('${r.id}')" style="padding:6px 14px;border-radius:100px;font-size:11px;font-family:Syne,sans-serif;font-weight:600;cursor:pointer;border:1px solid rgba(200,241,53,0.2);background:rgba(200,241,53,0.05);color:var(--lime);">
+          + Add Subscription
+        </button>
       </div>
       <div class="req-date">Joined ${fmt(r.created_at)}</div>
     </div>`).join('');
 }
 
 sb.auth.getSession().then(({data:{session}})=>{if(session)loadAdmin();});
+
+async function changePlan(userId, email, name) {
+  const newPlan = document.getElementById('change-plan-'+userId).value;
+  if(!newPlan){ alert('Select a new plan first.'); return; }
+
+  const planNames = { starter:'Starter ($55/mo)', professional:'Professional ($85/mo)', premium:'Premium ($150/mo)' };
+  const planAmounts = { starter:55, professional:85, premium:150 };
+
+  if(!confirm(`Change ${name}'s plan to ${planNames[newPlan]}? Their current subscription will be cancelled and replaced.`)) return;
+
+  // Cancel old subscription
+  await sb.from('subscriptions').update({status:'cancelled'}).eq('user_id', userId).eq('status','active');
+
+  // Create new subscription
+  const billingDate = new Date();
+  billingDate.setMonth(billingDate.getMonth() + 1);
+
+  await sb.from('subscriptions').insert({
+    user_id: userId,
+    plan: newPlan,
+    amount: planAmounts[newPlan],
+    billing_date: billingDate.toISOString().split('T')[0],
+    status: 'active',
+    stripe_link: getStripeLinks()[newPlan] || null
+  });
+
+  // Send them new payment link via mailto
+  const links = getStripeLinks();
+  const stripeLink = links[newPlan];
+  if(stripeLink) {
+    const subject = encodeURIComponent('Your Plan Has Been Updated — Tech Bros for Yeshua');
+    const body = encodeURIComponent(
+      `Hi ${name},\n\nYour plan has been updated to ${planNames[newPlan]}.\n\nYour new payment link:\n${stripeLink}\n\nGod bless,\nNathan\nTech Bros for Yeshua`
+    );
+    window.open(`mailto:${email}?subject=${subject}&body=${body}`);
+  }
+
+  alert(`✓ Plan changed to ${planNames[newPlan]}. Old subscription cancelled.`);
+  loadClients();
+}
+
+async function addManualSub(userId) {
+  const plan = document.getElementById('change-plan-'+userId).value;
+  if(!plan){ alert('Select a plan first.'); return; }
+
+  const planAmounts = { starter:55, professional:85, premium:150 };
+  const billing = new Date();
+  billing.setMonth(billing.getMonth() + 1);
+
+  // Cancel any existing active sub first
+  await sb.from('subscriptions').update({status:'cancelled'}).eq('user_id',userId).eq('status','active');
+
+  await sb.from('subscriptions').insert({
+    user_id: userId,
+    plan,
+    amount: planAmounts[plan],
+    billing_date: billing.toISOString().split('T')[0],
+    status: 'active',
+    stripe_link: getStripeLinks()[plan] || null
+  });
+
+  alert('✓ Subscription added!');
+  loadClients();
+}
+
+// Load stripe inputs when tab opens
+const origShowTab = showTab;
+function showTab(name) {
+  origShowTab(name);
+  if(name==='stripe-settings') loadStripeInputs();
+}
 
 async function loadSitesMgmt() {
   // Load clients into dropdown
@@ -723,20 +1075,21 @@ async function loadSitesMgmt() {
   if (!sites||!sites.length) { c.innerHTML='<div class="empty">No sites yet. Add one above.</div>'; return; }
 
   c.innerHTML = sites.map(s => `
-    <div class="req-card" id="site-card-${s.id}" style="border-left:3px solid ${s.status==='active'?'var(--lime)':s.status==='paused'?'#ffb400':'rgba(255,255,255,0.1)'};">
+    <div class="req-card site-status-${s.status==='active'?'live':s.status==='demo'?'demo':'offline'}" id="site-card-${s.id}">
       <div class="req-top">
         <div style="flex:1;min-width:0;">
           <div class="req-type" style="display:flex;align-items:center;gap:8px;">
             ${s.site_name}
-            <span id="lbl-${s.id}" style="font-size:10px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:3px 10px;border-radius:100px;background:${s.status==='active'?'rgba(200,241,53,0.12)':s.status==='paused'?'rgba(255,180,0,0.12)':'rgba(255,255,255,0.08)'};color:${s.status==='active'?'var(--lime)':s.status==='paused'?'#ffb400':'rgba(255,255,255,0.4)'};">${s.status==='active'?'Live':s.status==='paused'?'Paused':'Demo'}</span>
+            <span id="lbl-${s.id}" style="font-size:10px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:3px 10px;border-radius:100px;background:${s.status==='active'?'rgba(200,241,53,0.12)':s.status==='demo'?'rgba(255,180,0,0.12)':s.status==='paused'?'rgba(220,50,50,0.12)':'rgba(255,255,255,0.08)'};color:${s.status==='active'?'var(--lime)':s.status==='demo'?'#ffb400':s.status==='paused'?'#ff8080':'rgba(255,255,255,0.4)'};">${s.status==='active'?'🟢 Live':s.status==='demo'?'🔧 Demo':s.status==='paused'?'⏸ Paused':'Inactive'}</span>
           </div>
           <div class="req-meta">👤 ${s.profiles?.full_name||s.profiles?.email||'—'} &nbsp;·&nbsp; ${s.pages||1} page${(s.pages||1)!==1?'s':''} &nbsp;·&nbsp; ${s.site_url?`<a href="${s.site_url}" target="_blank" style="color:var(--lime);text-decoration:none;">${s.site_url}</a>`:'No URL yet'}</div>
         </div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;flex-shrink:0;">
-          <button onclick="updateSiteStatus('${s.id}','active')" style="padding:6px 14px;border-radius:100px;font-size:11px;font-family:Syne,sans-serif;font-weight:700;cursor:pointer;border:1px solid rgba(200,241,53,0.3);background:rgba(200,241,53,0.08);color:var(--lime);transition:all 0.2s;" onmouseover="this.style.background='rgba(200,241,53,0.18)'" onmouseout="this.style.background='rgba(200,241,53,0.08)'">Set Live</button>
-          <button onclick="updateSiteStatus('${s.id}','paused')" style="padding:6px 14px;border-radius:100px;font-size:11px;font-family:Syne,sans-serif;font-weight:700;cursor:pointer;border:1px solid rgba(255,180,0,0.3);background:rgba(255,180,0,0.08);color:#ffb400;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,180,0,0.18)'" onmouseout="this.style.background='rgba(255,180,0,0.08)'">Pause</button>
-          <button onclick="editSiteUrl('${s.id}','${s.site_url||''}')" style="padding:6px 14px;border-radius:100px;font-size:11px;font-family:Syne,sans-serif;font-weight:700;cursor:pointer;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.5);transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'">Edit URL</button>
-          <button onclick="deleteSite('${s.id}')" style="padding:6px 14px;border-radius:100px;font-size:11px;font-family:Syne,sans-serif;font-weight:700;cursor:pointer;border:1px solid rgba(220,50,50,0.2);background:rgba(220,50,50,0.06);color:#ff8080;transition:all 0.2s;" onmouseover="this.style.background='rgba(220,50,50,0.15)'" onmouseout="this.style.background='rgba(220,50,50,0.06)'">Remove</button>
+        <div class="status-toggle">
+          <button onclick="updateSiteStatus('${s.id}','demo')" class="status-toggle-btn demo ${s.status==='demo'?'active':''}">🔧 Demo</button>
+          <button onclick="updateSiteStatus('${s.id}','active')" class="status-toggle-btn live ${s.status==='active'?'active':''}">🟢 Live</button>
+          <button onclick="updateSiteStatus('${s.id}','paused')" class="status-toggle-btn offline ${s.status==='paused'?'active':''}">⏸ Paused</button>
+          <button onclick="editSiteUrl('${s.id}','${s.site_url||''}')" style="padding:6px 14px;border-radius:100px;font-size:11px;font-family:Syne,sans-serif;font-weight:600;cursor:pointer;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.5);">Edit URL</button>
+          <button onclick="deleteSite('${s.id}')" style="padding:6px 14px;border-radius:100px;font-size:11px;font-family:Syne,sans-serif;font-weight:600;cursor:pointer;border:1px solid rgba(220,50,50,0.2);background:rgba(220,50,50,0.05);color:#ff8080;">Remove</button>
         </div>
       </div>
       <div class="req-date" style="margin-top:8px;">Added ${fmt(s.created_at)}</div>
@@ -761,14 +1114,8 @@ async function addSite() {
 
 async function updateSiteStatus(id, status) {
   await sb.from('sites').update({status}).eq('id',id);
-  const lbl = document.getElementById('lbl-'+id);
-  const card = document.getElementById('site-card-'+id);
-  if (lbl) {
-    lbl.textContent = status==='active'?'Live':status==='paused'?'Paused':'Demo';
-    lbl.style.background = status==='active'?'rgba(200,241,53,0.12)':status==='paused'?'rgba(255,180,0,0.12)':'rgba(255,255,255,0.08)';
-    lbl.style.color = status==='active'?'var(--lime)':status==='paused'?'#ffb400':'rgba(255,255,255,0.4)';
-  }
-  if (card) card.style.borderLeftColor = status==='active'?'var(--lime)':status==='paused'?'#ffb400':'rgba(255,255,255,0.1)';
+  // Refresh to update all button states and colors
+  loadSitesMgmt();
 }
 
 async function editSiteUrl(id, currentUrl) {
