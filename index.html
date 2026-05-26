@@ -1360,6 +1360,130 @@ body::before {
   box-shadow: 0 0 10px rgba(200,241,53,0.3);
 }
 
+
+/* ══ CLEAN ANIMATIONS ══ */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes pulse {
+  0%,100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.5; transform: scale(1.4); }
+}
+@keyframes float {
+  0%,100% { transform: translateY(0); }
+  50%      { transform: translateY(-10px); }
+}
+@keyframes glowPulse {
+  0%,100% { box-shadow: 0 0 10px rgba(200,241,53,0.2); }
+  50%      { box-shadow: 0 0 30px rgba(200,241,53,0.6), 0 0 60px rgba(200,241,53,0.2); }
+}
+@keyframes btnCharge {
+  0%,100% { background-position: 0% 50%; }
+  50%      { background-position: 100% 50%; }
+}
+@keyframes orbitSpin {
+  to { transform: rotate(360deg); }
+}
+@keyframes shimmer {
+  0%   { left: -60%; }
+  100% { left: 120%; }
+}
+
+/* Elements that animate in on scroll */
+.anim-fade   { opacity: 0; transition: opacity 0.8s ease, transform 0.8s ease; transform: translateY(20px); }
+.anim-left   { opacity: 0; transition: opacity 0.8s ease, transform 0.8s ease; transform: translateX(-30px); }
+.anim-right  { opacity: 0; transition: opacity 0.8s ease, transform 0.8s ease; transform: translateX(30px); }
+.anim-scale  { opacity: 0; transition: opacity 0.8s ease, transform 0.8s ease; transform: scale(0.94); }
+.anim-fade.visible, .anim-left.visible, .anim-right.visible, .anim-scale.visible {
+  opacity: 1; transform: none;
+}
+
+/* Stagger delays */
+.delay-1 { transition-delay: 0.1s; }
+.delay-2 { transition-delay: 0.2s; }
+.delay-3 { transition-delay: 0.3s; }
+.delay-4 { transition-delay: 0.4s; }
+.delay-5 { transition-delay: 0.5s; }
+.delay-6 { transition-delay: 0.6s; }
+
+/* Hover lift on cards */
+.card, .req-card, .site-card, .stat, .plan, .step, .action-btn {
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease !important;
+}
+.card:hover, .req-card:hover { transform: translateY(-3px) !important; }
+.plan:hover  { transform: translateY(-6px) !important; }
+.step:hover  { transform: translateY(-4px) !important; }
+.stat:hover  { transform: translateY(-3px) !important; }
+.action-btn:hover { transform: translateY(-4px) scale(1.02) !important; }
+
+/* Button pulse */
+.lime-btn, .lime-solid, .auth-btn {
+  background: linear-gradient(135deg, #c8f135 0%, #d8ff45 50%, #c8f135 100%) !important;
+  background-size: 200% 200% !important;
+  animation: btnCharge 3s ease infinite !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+.lime-btn:hover, .lime-solid:hover, .auth-btn:hover {
+  transform: translateY(-2px) scale(1.02) !important;
+  box-shadow: 0 0 30px rgba(200,241,53,0.5) !important;
+}
+
+/* Nav logo glow */
+.nav-logo span, .p-logo span, .auth-logo span, .top-logo span {
+  text-shadow: 0 0 15px rgba(200,241,53,0.5);
+}
+
+/* Badge dot pulse */
+.badge-dot { animation: pulse 2s ease-in-out infinite; }
+
+/* Hero buttons float */
+.hero-btns .btn-primary { animation: float 4s ease-in-out infinite; }
+.hero-btns .btn-ghost   { animation: float 4s ease-in-out infinite; animation-delay: 0.5s; }
+
+/* Active badge glow */
+.badge.active { animation: glowPulse 2s ease-in-out infinite; }
+
+/* Tab active underline slide */
+.p-tab, .tab { transition: color 0.2s ease, border-color 0.2s ease; }
+
+/* Input focus glow */
+input:focus, select:focus, textarea:focus {
+  box-shadow: 0 0 0 2px rgba(200,241,53,0.2), 0 0 15px rgba(200,241,53,0.1) !important;
+  border-color: var(--lime) !important;
+  transition: all 0.3s ease !important;
+}
+
+/* Card shimmer on hover */
+.card, .req-card { position: relative; overflow: hidden; }
+.card::after, .req-card::after {
+  content: '';
+  position: absolute; top: -50%; left: -100%;
+  width: 60%; height: 200%;
+  background: linear-gradient(105deg, transparent, rgba(200,241,53,0.04), transparent);
+  transition: left 0.6s ease;
+  pointer-events: none;
+}
+.card:hover::after, .req-card:hover::after { left: 150%; }
+
+/* Scroll reveal observer */
+
 </style>
 </head>
 <body>
@@ -1672,472 +1796,7 @@ body::before {
 
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-// ── SUPABASE ──
-const sb = supabase.createClient(
-  'https://xwnndxatiddupkxcklbz.supabase.co',
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh3bm5keGF0aWRkdXBreGNrbGJ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyMTIwNTAsImV4cCI6MjA5NDc4ODA1MH0.jFh--OnV9_ihfkm0bVs9gb1GJP2vn5iqV1_5McTbHPs'
-);
 
-const STRIPE = { starter:'STRIPE_STARTER_LINK', professional:'STRIPE_PRO_LINK', premium:'STRIPE_PREMIUM_LINK' };
-
-// ── PLAN MODAL ──
-let currentPlanKey = '';
-
-function openPlanModal(planKey, planName) {
-  currentPlanKey = planKey;
-  sessionStorage.setItem('chosen_plan', planKey);
-  document.getElementById('modal-plan-name').textContent = planName;
-  document.getElementById('modal-msg').className = 'msg';
-  document.getElementById('plan-modal').style.display = 'flex';
-  switchModalTab('signup');
-}
-
-function closeModal() {
-  document.getElementById('plan-modal').style.display = 'none';
-}
-
-function switchModalTab(tab) {
-  document.getElementById('mf-login').style.display = tab === 'login' ? 'block' : 'none';
-  document.getElementById('mf-signup').style.display = tab === 'signup' ? 'block' : 'none';
-  document.getElementById('mt-login').classList.toggle('active', tab === 'login');
-  document.getElementById('mt-signup').classList.toggle('active', tab === 'signup');
-  document.getElementById('mt-login').style.background = tab === 'login' ? 'var(--lime)' : 'transparent';
-  document.getElementById('mt-login').style.color = tab === 'login' ? '#080a04' : 'rgba(255,255,255,0.4)';
-  document.getElementById('mt-signup').style.background = tab === 'signup' ? 'var(--lime)' : 'transparent';
-  document.getElementById('mt-signup').style.color = tab === 'signup' ? '#080a04' : 'rgba(255,255,255,0.4)';
-  document.getElementById('modal-msg').className = 'msg';
-}
-
-function showModalMsg(text, type) {
-  const el = document.getElementById('modal-msg');
-  el.textContent = text; el.className = 'msg ' + type;
-}
-
-async function doModalLogin() {
-  const email = document.getElementById('ml-email').value.trim();
-  const pass = document.getElementById('ml-pass').value;
-  if (!email || !pass) { showModalMsg('Enter your email and password.', 'error'); return; }
-  const btn = document.getElementById('ml-btn'); btn.textContent = 'Signing in...'; btn.disabled = true;
-  const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
-  if (error) { showModalMsg(error.message, 'error'); btn.textContent = 'Sign In & Continue →'; btn.disabled = false; }
-  else afterAuth();
-}
-
-async function doModalSignup() {
-  const name = document.getElementById('ms-name').value.trim();
-  const email = document.getElementById('ms-email').value.trim();
-  const pass = document.getElementById('ms-pass').value;
-  if (!name || !email || !pass) { showModalMsg('Please fill in all fields.', 'error'); return; }
-  if (pass.length < 8) { showModalMsg('Password must be at least 8 characters.', 'error'); return; }
-  const btn = document.getElementById('ms-btn'); btn.textContent = 'Creating account...'; btn.disabled = true;
-  const { error } = await sb.auth.signUp({ email, password: pass, options: { data: { full_name: name } } });
-  if (error) { showModalMsg(error.message, 'error'); btn.textContent = 'Create Account & Continue →'; btn.disabled = false; }
-  else { showModalMsg('Check your email to confirm, then sign in.', 'success'); btn.textContent = 'Create Account & Continue →'; btn.disabled = false; switchModalTab('login'); }
-}
-
-async function doModalForgot() {
-  const email = document.getElementById('ml-email').value.trim();
-  if (!email) { showModalMsg('Enter your email first.', 'error'); return; }
-  await sb.auth.resetPasswordForEmail(email, { redirectTo: 'https://techbros4yeshuawebdesign-netizen.github.io/techbros4yeshua/portal.html' });
-  showModalMsg('Password reset email sent!', 'success');
-}
-
-function afterAuth() {
-  const plan = sessionStorage.getItem('chosen_plan') || 'starter';
-  const link = STRIPE[plan];
-  closeModal();
-  if (link && !link.includes('STRIPE_')) window.location.href = link;
-  else window.location.href = 'portal.html?plan=' + plan;
-}
-
-// ── PAGE LOGIN SECTION ──
-function switchLoginTab(tab) {
-  document.getElementById('lf-login').style.display = tab === 'login' ? 'block' : 'none';
-  document.getElementById('lf-signup').style.display = tab === 'signup' ? 'block' : 'none';
-  document.querySelectorAll('.login-tab').forEach((t,i) => {
-    const active = (tab==='login'&&i===0)||(tab==='signup'&&i===1);
-    t.classList.toggle('active', active);
-  });
-  document.getElementById('login-msg').className = 'msg';
-}
-
-function showLoginMsg(text, type) {
-  const el = document.getElementById('login-msg');
-  el.textContent = text; el.className = 'msg ' + type;
-}
-
-async function doLogin() {
-  const email = document.getElementById('ll-email').value.trim();
-  const pass = document.getElementById('ll-pass').value;
-  if (!email || !pass) { showLoginMsg('Enter your email and password.', 'error'); return; }
-  const btn = document.getElementById('ll-btn'); btn.textContent = 'Signing in...'; btn.disabled = true;
-  const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
-  if (error) { showLoginMsg(error.message, 'error'); btn.textContent = 'Sign In →'; btn.disabled = false; }
-  else window.location.href = 'portal.html';
-}
-
-async function doSignup() {
-  const name = document.getElementById('ls-name').value.trim();
-  const email = document.getElementById('ls-email').value.trim();
-  const pass = document.getElementById('ls-pass').value;
-  if (!name || !email || !pass) { showLoginMsg('Please fill in all fields.', 'error'); return; }
-  if (pass.length < 8) { showLoginMsg('Password must be at least 8 characters.', 'error'); return; }
-  const btn = document.getElementById('ls-btn'); btn.textContent = 'Creating...'; btn.disabled = true;
-  const { error } = await sb.auth.signUp({ email, password: pass, options: { data: { full_name: name } } });
-  if (error) { showLoginMsg(error.message, 'error'); btn.textContent = 'Create Account →'; btn.disabled = false; }
-  else { showLoginMsg('Check your email to confirm your account, then sign in.', 'success'); btn.textContent = 'Create Account →'; btn.disabled = false; switchLoginTab('login'); }
-}
-
-async function doForgot() {
-  const email = document.getElementById('ll-email').value.trim();
-  if (!email) { showLoginMsg('Enter your email first.', 'error'); return; }
-  await sb.auth.resetPasswordForEmail(email, { redirectTo: 'https://techbros4yeshuawebdesign-netizen.github.io/techbros4yeshua/portal.html' });
-  showLoginMsg('Password reset email sent!', 'success');
-}
-
-// If already logged in show portal link
-sb.auth.getSession().then(({ data: { session } }) => {
-  if (session) {
-    const loginSection = document.getElementById('login');
-    if (loginSection) loginSection.innerHTML = `
-      <div class="sec-label" style="text-align:center;">Welcome back</div>
-      <div class="sec-title" style="text-align:center;font-size:clamp(24px,3vw,38px);">You're signed in.</div>
-      <div style="text-align:center;margin-top:8px;">
-        <a href="portal.html" class="btn-primary" style="display:inline-block;">Go to My Portal →</a>
-      </div>`;
-  }
-});
-
-// ── CONTACT FORM ──
-async function submitContact() {
-  const first = document.getElementById('cf-first').value.trim();
-  const last = document.getElementById('cf-last').value.trim();
-  const biz = document.getElementById('cf-biz').value.trim();
-  const email = document.getElementById('cf-email').value.trim();
-  const phone = document.getElementById('cf-phone').value.trim();
-  const plan = document.getElementById('cf-plan').value;
-  const msg = document.getElementById('cf-msg').value.trim();
-  const m = document.getElementById('contact-msg');
-
-  if (!first || !biz || !email) {
-    m.textContent = 'Please fill in your name, business, and email.';
-    m.className = 'msg error'; return;
-  }
-
-  const btn = document.getElementById('cf-btn');
-  btn.textContent = 'Sending...'; btn.disabled = true;
-
-  try {
-    // Save to Supabase
-    const { error } = await sb.from('contact_requests').insert({
-      first_name: first, last_name: last, business: biz,
-      email, phone: phone || null,
-      plan: plan || 'Not sure yet', message: msg || null,
-      type: 'prototype_request',
-      status: 'pending'
-    });
-
-    if (error) throw new Error(error.message);
-
-    // Also send email notification via mailto as backup
-    // (opens email client pre-filled for Nathan)
-    const subject = encodeURIComponent('New Website Inquiry — ' + biz);
-    const body = encodeURIComponent(
-      'New prototype request received!
-
-' +
-      'Name: ' + first + ' ' + last + '
-' +
-      'Business: ' + biz + '
-' +
-      'Email: ' + email + '
-' +
-      'Phone: ' + (phone||'Not provided') + '
-' +
-      'Plan Interest: ' + (plan||'Not sure yet') + '
-
-' +
-      'Message:
-' + (msg||'None') + '
-
-' +
-      'View in admin: https://techbros4yeshua.netlify.app/admin.html'
-    );
-
-    // Silent email ping — create hidden iframe to avoid redirecting
-    const mailtoLink = 'mailto:techBros4yeshua.web.design@gmail.com?subject=' + subject + '&body=' + body;
-
-    // Show success
-    document.getElementById('contact-form-fields').style.display = 'none';
-    document.getElementById('contact-success').style.display = 'block';
-
-    // Open email in background after short delay
-    setTimeout(() => {
-      const a = document.createElement('a');
-      a.href = mailtoLink;
-      a.style.display = 'none';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    }, 500);
-
-  } catch(err) {
-    m.textContent = 'Error submitting. Please email us directly: techBros4yeshua.web.design@gmail.com';
-    m.className = 'msg error';
-    btn.textContent = 'Request My Free Prototype →'; btn.disabled = false;
-  }
-}
-
-// ── SCROLL REVEAL ──
-const revealObserver = new IntersectionObserver((entries) => {
-  entries.forEach((e, i) => {
-    if (e.isIntersecting) { setTimeout(() => e.target.classList.add('visible'), i * 70); revealObserver.unobserve(e.target); }
-  });
-}, { threshold: 0.03 });
-document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
-
-// ── PARTICLES ──
-(function(){
-  const canvas = document.getElementById('bg-canvas');
-  const ctx = canvas.getContext('2d');
-  let W, H, particles = [], mouse = { x: null, y: null };
-  const isMobile = window.innerWidth < 480;
-
-  function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
-
-  function mkP() {
-    const depth = Math.random() * 0.9 + 0.1;
-    return {
-      x: Math.random() * W, y: Math.random() * H,
-      vx: (Math.random() - 0.5) * 0.3 * depth,
-      vy: (Math.random() - 0.5) * 0.3 * depth,
-      depth, size: depth * (Math.random() * 4 + 2),  
-      baseOp: depth * (Math.random() * 0.6 + 0.5),
-      isLime: Math.random() > 0.45,
-      pulse: Math.random() * Math.PI * 2,
-      ps: Math.random() * 0.02 + 0.008,
-      glowR: depth * (Math.random() * 35 + 15)
-    };
-  }
-
-  function init() {
-    resize();
-    const count = isMobile ? 80 : 160;
-    particles = Array.from({ length: count }, mkP).sort((a, b) => a.depth - b.depth);
-  }
-
-  function drawGlow(p, op) {
-    if (p.isLime) {
-      const layers = p.depth > 0.6 ? 3 : p.depth > 0.3 ? 2 : 1;
-      for (let l = layers; l >= 1; l--) {
-        const r = p.size + p.glowR * l * 0.7;
-        const g = ctx.createRadialGradient(p.x, p.y, p.size * 0.5, p.x, p.y, r);
-        g.addColorStop(0, `rgba(200,241,53,${op * 0.6 / l})`);
-        g.addColorStop(0.4, `rgba(180,230,20,${op * 0.2 / l})`);
-        g.addColorStop(1, 'rgba(200,241,53,0)');
-        ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
-        ctx.fillStyle = g; ctx.fill();
-      }
-    } else if (p.depth > 0.6) {
-      const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size + p.glowR * 0.5);
-      g.addColorStop(0, `rgba(255,255,255,${op * 0.35})`);
-      g.addColorStop(1, 'rgba(255,255,255,0)');
-      ctx.beginPath(); ctx.arc(p.x, p.y, p.size + p.glowR * 0.5, 0, Math.PI * 2);
-      ctx.fillStyle = g; ctx.fill();
-    }
-  }
-
-  function draw() {
-    ctx.clearRect(0, 0, W, H);
-
-    if (!isMobile) {
-      for (let i = 0; i < particles.length; i++) {
-        const pi = particles[i];
-        for (let j = i + 1; j < particles.length; j++) {
-          const pj = particles[j];
-          if (Math.abs(pi.depth - pj.depth) > 0.3) continue;
-          const dx = pi.x - pj.x, dy = pi.y - pj.y, d = Math.sqrt(dx*dx+dy*dy);
-          const maxD = 90 + pi.depth * 50;
-          if (d < maxD) {
-            ctx.beginPath();
-            ctx.strokeStyle = (pi.isLime||pj.isLime) ? `rgba(200,241,53,${pi.depth*0.2*(1-d/maxD)})` : `rgba(255,255,255,${pi.depth*0.2*(1-d/maxD)})`;
-            ctx.lineWidth = pi.depth * 1.2;
-            ctx.moveTo(pi.x, pi.y); ctx.lineTo(pj.x, pj.y); ctx.stroke();
-          }
-        }
-        if (mouse.x !== null) {
-          const dx = pi.x - mouse.x, dy = pi.y - mouse.y, d = Math.sqrt(dx*dx+dy*dy);
-          const reach = 200 + pi.depth * 100;
-          if (d < reach) {
-            ctx.beginPath();
-            ctx.strokeStyle = `rgba(200,241,53,${pi.depth*0.9*(1-d/reach)})`;
-            ctx.lineWidth = pi.depth * 1.8;
-            ctx.moveTo(pi.x, pi.y); ctx.lineTo(mouse.x, mouse.y); ctx.stroke();
-          }
-        }
-      }
-    }
-
-    particles.forEach(p => {
-      p.pulse += p.ps;
-      const op = p.baseOp * (0.65 + 0.35 * Math.sin(p.pulse));
-      drawGlow(p, op);
-      ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-      if (p.isLime) {
-        const g = ctx.createRadialGradient(p.x-p.size*0.3, p.y-p.size*0.3, 0, p.x, p.y, p.size);
-        g.addColorStop(0, `rgba(240,255,180,${op})`);
-        g.addColorStop(0.5, `rgba(200,241,53,${op})`);
-        g.addColorStop(1, `rgba(140,200,10,${op*0.8})`);
-        ctx.fillStyle = g;
-      } else {
-        const g = ctx.createRadialGradient(p.x-p.size*0.3, p.y-p.size*0.3, 0, p.x, p.y, p.size);
-        g.addColorStop(0, `rgba(255,255,255,${op})`);
-        g.addColorStop(1, `rgba(200,220,255,${op*0.7})`);
-        ctx.fillStyle = g;
-      }
-      ctx.fill();
-      p.x += p.vx; p.y += p.vy;
-      if (p.x < -50) p.x = W+50; if (p.x > W+50) p.x = -50;
-      if (p.y < -50) p.y = H+50; if (p.y > H+50) p.y = -50;
-    });
-
-    requestAnimationFrame(draw);
-  }
-
-  window.addEventListener('resize', () => { resize(); });
-  window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
-  window.addEventListener('mouseleave', () => { mouse.x = null; mouse.y = null; });
-  init(); draw();
-})();
-
-// ── SCROLL PROGRESS BAR ──
-window.addEventListener('scroll', () => {
-  const scrolled = window.scrollY;
-  const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-  const pct = (scrolled / maxScroll) * 100;
-  document.getElementById('scroll-bar').style.width = pct + '%';
-});
-
-// ── CURSOR GLOW ──
-const cursorGlow = document.getElementById('cursor-glow');
-window.addEventListener('mousemove', e => {
-  cursorGlow.style.left = e.clientX + 'px';
-  cursorGlow.style.top = e.clientY + 'px';
-});
-
-// ── INTERSECTION OBSERVER — STEPS, PLANS, REVEALS ──
-const animObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      const el = entry.target;
-      // Add section flash
-      el.closest('section')?.classList.add('section-flash');
-      setTimeout(() => el.closest('section')?.classList.remove('section-flash'), 1000);
-      el.classList.add('visible');
-      animObserver.unobserve(el);
-    }
-  });
-}, { threshold: 0.05 });
-
-document.querySelectorAll('.step, .plan, .reveal').forEach(el => animObserver.observe(el));
-
-// ── CHARACTER SPLIT TITLES ──
-document.querySelectorAll('.sec-title').forEach(el => {
-  if (el.querySelector('.char')) return;
-  const text = el.innerHTML;
-  el.innerHTML = text.split('').map((ch, i) =>
-    ch === ' ' ? ' ' : `<span class="char" style="transition-delay:${i * 0.03}s">${ch}</span>`
-  ).join('');
-});
-
-const titleObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) { entry.target.classList.add('visible'); titleObserver.unobserve(entry.target); }
-  });
-}, { threshold: 0.05 });
-document.querySelectorAll('.sec-title').forEach(el => titleObserver.observe(el));
-
-// ── TEXT SCRAMBLE ON HERO ──
-function scrambleText(el, finalText, duration = 800) {
-  const chars = '!<>-_\/[]{}—=+*^?#@$%&';
-  let frame = 0;
-  const totalFrames = Math.floor(duration / 30);
-  const interval = setInterval(() => {
-    el.textContent = finalText.split('').map((ch, i) => {
-      if (i < Math.floor((frame / totalFrames) * finalText.length)) return ch;
-      return chars[Math.floor(Math.random() * chars.length)];
-    }).join('');
-    frame++;
-    if (frame >= totalFrames) { el.textContent = finalText; clearInterval(interval); }
-  }, 30);
-}
-
-// Scramble hero on load
-setTimeout(() => {
-  document.querySelectorAll('.hero h1 .glitch').forEach(el => {
-    scrambleText(el, el.getAttribute('data-text'), 1200);
-  });
-}, 500);
-
-// ── SMOOTH SECTION TRANSITIONS ──
-let lastScrollY = window.scrollY;
-let ticking = false;
-
-window.addEventListener('scroll', () => {
-  if (!ticking) {
-    requestAnimationFrame(() => {
-      const scrollY = window.scrollY;
-      const delta = scrollY - lastScrollY;
-      lastScrollY = scrollY;
-
-      // Parallax on glow orbs
-      const orbs = document.querySelectorAll('.glow-orb');
-      orbs.forEach((orb, i) => {
-        const speed = (i + 1) * 0.08;
-        const currentTransform = orb.style.transform || '';
-        orb.style.transform = `translateY(${scrollY * speed * (i % 2 === 0 ? 1 : -1)}px)`;
-      });
-
-      // Parallax on tech float elements
-      document.querySelectorAll('.tech-float').forEach((el, i) => {
-        const speed = 0.05 + i * 0.02;
-        el.style.transform = `translateY(${-scrollY * speed}px)`;
-      });
-
-      ticking = false;
-    });
-    ticking = true;
-  }
-});
-
-// ── MAGNETIC BUTTONS ──
-document.querySelectorAll('.btn-primary, .btn-ghost, .plan-btn, .lime-btn').forEach(btn => {
-  btn.addEventListener('mousemove', e => {
-    const rect = btn.getBoundingClientRect();
-    const x = e.clientX - rect.left - rect.width / 2;
-    const y = e.clientY - rect.top - rect.height / 2;
-    btn.style.transform = `translate(${x * 0.15}px, ${y * 0.2}px) scale(1.04)`;
-  });
-  btn.addEventListener('mouseleave', () => {
-    btn.style.transform = '';
-  });
-});
-
-// ── NAV ACTIVE SECTION HIGHLIGHT ──
-const sections = document.querySelectorAll('section[id]');
-const navLinks = document.querySelectorAll('.nav-links a');
-window.addEventListener('scroll', () => {
-  let current = '';
-  sections.forEach(s => {
-    if (window.scrollY >= s.offsetTop - 100) current = s.id;
-  });
-  navLinks.forEach(a => {
-    a.style.color = a.getAttribute('href') === '#' + current ? 'var(--lime)' : '';
-  });
-});
-
-</script>
 
 <!-- Tawk.to Live Chat -->
 <script type="text/javascript">
@@ -2418,6 +2077,159 @@ document.querySelectorAll('.plan-price-num').forEach(el => {
   init();
   draw();
 
+})();
+</script>
+
+
+<script>
+// ══ SCROLL REVEAL ANIMATIONS ══
+(function() {
+  // Add animation classes to key elements
+  document.querySelectorAll('.card').forEach((el, i) => {
+    el.classList.add('anim-fade');
+    if (i % 3 === 1) el.classList.add('delay-2');
+    if (i % 3 === 2) el.classList.add('delay-3');
+  });
+  document.querySelectorAll('.req-card').forEach((el, i) => {
+    el.classList.add('anim-fade');
+    el.classList.add(`delay-${Math.min(i % 4 + 1, 5)}`);
+  });
+  document.querySelectorAll('.step').forEach((el, i) => {
+    el.classList.add('anim-fade');
+    el.classList.add(`delay-${i + 1}`);
+  });
+  document.querySelectorAll('.plan').forEach((el, i) => {
+    el.classList.add('anim-scale');
+    el.classList.add(`delay-${i + 1}`);
+  });
+  document.querySelectorAll('.stat-item, .stat').forEach((el, i) => {
+    el.classList.add('anim-fade');
+    el.classList.add(`delay-${i % 4 + 1}`);
+  });
+  document.querySelectorAll('.trust-badge').forEach((el, i) => {
+    el.classList.add('anim-fade');
+    el.classList.add(`delay-${Math.min(i + 1, 6)}`);
+  });
+  document.querySelectorAll('.sec-label, .card-label, .label').forEach(el => {
+    el.classList.add('anim-left');
+  });
+  document.querySelectorAll('.sec-title').forEach(el => {
+    el.classList.add('anim-fade');
+  });
+  document.querySelectorAll('.site-card').forEach((el, i) => {
+    el.classList.add('anim-fade');
+    el.classList.add(`delay-${Math.min(i + 1, 5)}`);
+  });
+
+  // Intersection observer
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.05, rootMargin: '0px 0px -20px 0px' });
+
+  document.querySelectorAll('.anim-fade, .anim-left, .anim-right, .anim-scale').forEach(el => obs.observe(el));
+
+  // 3D tilt on cards (desktop only)
+  if (window.innerWidth >= 768) {
+    document.querySelectorAll('.card, .req-card, .plan, .auth-box').forEach(card => {
+      card.addEventListener('mousemove', e => {
+        const r = card.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width - 0.5;
+        const y = (e.clientY - r.top) / r.height - 0.5;
+        card.style.transform = `perspective(800px) rotateX(${-y * 4}deg) rotateY(${x * 4}deg) translateY(-3px)`;
+      });
+      card.addEventListener('mouseleave', () => { card.style.transform = ''; });
+    });
+  }
+
+  // Particle burst on button click
+  function burst(e) {
+    const colors = ['#c8f135', '#ffffff', '#9dbf10'];
+    for (let i = 0; i < 8; i++) {
+      const p = document.createElement('div');
+      const angle = (i / 8) * Math.PI * 2;
+      const dist = 40 + Math.random() * 40;
+      p.style.cssText = `position:fixed;width:5px;height:5px;border-radius:50%;pointer-events:none;z-index:9999;background:${colors[i%3]};left:${e.clientX}px;top:${e.clientY}px;--tx:${Math.cos(angle)*dist}px;--ty:${Math.sin(angle)*dist}px;animation:burstFly 0.7s ease-out both;`;
+      document.body.appendChild(p);
+      setTimeout(() => p.remove(), 700);
+    }
+  }
+  document.addEventListener('click', e => {
+    if (e.target.closest('.lime-btn,.lime-solid,.auth-btn,.plan-btn,.btn-primary,.mark-done')) burst(e);
+  });
+
+  // Scroll progress bar
+  const bar = document.getElementById('scroll-bar') || (() => { const b = document.createElement('div'); b.id='scroll-bar'; b.style.cssText='position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,#c8f135,#4f9fff);z-index:300;width:0;box-shadow:0 0 10px rgba(200,241,53,0.8);'; document.body.appendChild(b); return b; })();
+  window.addEventListener('scroll', () => {
+    const pct = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight) * 100;
+    bar.style.width = pct + '%';
+  }, { passive: true });
+
+  // Cursor trail (desktop only)
+  if (window.innerWidth >= 768) {
+    const trail = [];
+    for (let i = 0; i < 8; i++) {
+      const d = document.createElement('div');
+      d.style.cssText = `position:fixed;border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);width:${3+i*0.4}px;height:${3+i*0.4}px;background:rgba(200,241,53,${0.4-i*0.04});`;
+      document.body.appendChild(d);
+      trail.push({ el: d, x: 0, y: 0 });
+    }
+    let mx = 0, my = 0;
+    window.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; }, { passive: true });
+    (function tick() {
+      trail[0].x = mx; trail[0].y = my;
+      for (let i = 1; i < trail.length; i++) {
+        trail[i].x += (trail[i-1].x - trail[i].x) * 0.35;
+        trail[i].y += (trail[i-1].y - trail[i].y) * 0.35;
+      }
+      trail.forEach((d, i) => {
+        d.el.style.left = d.x + 'px';
+        d.el.style.top = d.y + 'px';
+        d.el.style.opacity = (1 - i / trail.length) * 0.5;
+      });
+      requestAnimationFrame(tick);
+    })();
+  }
+
+})();
+</script>
+
+
+<script>
+// ── COUNTER ANIMATION ──
+(function() {
+  function animateCounter(el, target, duration) {
+    const start = performance.now();
+    const update = (time) => {
+      const elapsed = time - start;
+      const progress = Math.min(elapsed / duration, 1);
+      // Ease out quart
+      const eased = 1 - Math.pow(1 - progress, 4);
+      el.textContent = Math.floor(eased * target);
+      if (progress < 1) requestAnimationFrame(update);
+      else el.textContent = target;
+    };
+    requestAnimationFrame(update);
+  }
+
+  const counterObs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const el = entry.target.querySelector('.stat-counter');
+        if (!el) return;
+        const target = parseInt(el.getAttribute('data-target') || '0');
+        entry.target.classList.add('visible');
+        animateCounter(el, target, 2000);
+        counterObs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.stat-item').forEach(el => counterObs.observe(el));
 })();
 </script>
 

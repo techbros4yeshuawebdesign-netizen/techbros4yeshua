@@ -616,6 +616,130 @@ body::before {
   font-size: 13px; color: #ffb400; display: flex; gap: 10px; align-items: flex-start;
 }
 
+
+/* ══ CLEAN ANIMATIONS ══ */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes pulse {
+  0%,100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.5; transform: scale(1.4); }
+}
+@keyframes float {
+  0%,100% { transform: translateY(0); }
+  50%      { transform: translateY(-10px); }
+}
+@keyframes glowPulse {
+  0%,100% { box-shadow: 0 0 10px rgba(200,241,53,0.2); }
+  50%      { box-shadow: 0 0 30px rgba(200,241,53,0.6), 0 0 60px rgba(200,241,53,0.2); }
+}
+@keyframes btnCharge {
+  0%,100% { background-position: 0% 50%; }
+  50%      { background-position: 100% 50%; }
+}
+@keyframes orbitSpin {
+  to { transform: rotate(360deg); }
+}
+@keyframes shimmer {
+  0%   { left: -60%; }
+  100% { left: 120%; }
+}
+
+/* Elements that animate in on scroll */
+.anim-fade   { opacity: 0; transition: opacity 0.8s ease, transform 0.8s ease; transform: translateY(20px); }
+.anim-left   { opacity: 0; transition: opacity 0.8s ease, transform 0.8s ease; transform: translateX(-30px); }
+.anim-right  { opacity: 0; transition: opacity 0.8s ease, transform 0.8s ease; transform: translateX(30px); }
+.anim-scale  { opacity: 0; transition: opacity 0.8s ease, transform 0.8s ease; transform: scale(0.94); }
+.anim-fade.visible, .anim-left.visible, .anim-right.visible, .anim-scale.visible {
+  opacity: 1; transform: none;
+}
+
+/* Stagger delays */
+.delay-1 { transition-delay: 0.1s; }
+.delay-2 { transition-delay: 0.2s; }
+.delay-3 { transition-delay: 0.3s; }
+.delay-4 { transition-delay: 0.4s; }
+.delay-5 { transition-delay: 0.5s; }
+.delay-6 { transition-delay: 0.6s; }
+
+/* Hover lift on cards */
+.card, .req-card, .site-card, .stat, .plan, .step, .action-btn {
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease !important;
+}
+.card:hover, .req-card:hover { transform: translateY(-3px) !important; }
+.plan:hover  { transform: translateY(-6px) !important; }
+.step:hover  { transform: translateY(-4px) !important; }
+.stat:hover  { transform: translateY(-3px) !important; }
+.action-btn:hover { transform: translateY(-4px) scale(1.02) !important; }
+
+/* Button pulse */
+.lime-btn, .lime-solid, .auth-btn {
+  background: linear-gradient(135deg, #c8f135 0%, #d8ff45 50%, #c8f135 100%) !important;
+  background-size: 200% 200% !important;
+  animation: btnCharge 3s ease infinite !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+.lime-btn:hover, .lime-solid:hover, .auth-btn:hover {
+  transform: translateY(-2px) scale(1.02) !important;
+  box-shadow: 0 0 30px rgba(200,241,53,0.5) !important;
+}
+
+/* Nav logo glow */
+.nav-logo span, .p-logo span, .auth-logo span, .top-logo span {
+  text-shadow: 0 0 15px rgba(200,241,53,0.5);
+}
+
+/* Badge dot pulse */
+.badge-dot { animation: pulse 2s ease-in-out infinite; }
+
+/* Hero buttons float */
+.hero-btns .btn-primary { animation: float 4s ease-in-out infinite; }
+.hero-btns .btn-ghost   { animation: float 4s ease-in-out infinite; animation-delay: 0.5s; }
+
+/* Active badge glow */
+.badge.active { animation: glowPulse 2s ease-in-out infinite; }
+
+/* Tab active underline slide */
+.p-tab, .tab { transition: color 0.2s ease, border-color 0.2s ease; }
+
+/* Input focus glow */
+input:focus, select:focus, textarea:focus {
+  box-shadow: 0 0 0 2px rgba(200,241,53,0.2), 0 0 15px rgba(200,241,53,0.1) !important;
+  border-color: var(--lime) !important;
+  transition: all 0.3s ease !important;
+}
+
+/* Card shimmer on hover */
+.card, .req-card { position: relative; overflow: hidden; }
+.card::after, .req-card::after {
+  content: '';
+  position: absolute; top: -50%; left: -100%;
+  width: 60%; height: 200%;
+  background: linear-gradient(105deg, transparent, rgba(200,241,53,0.04), transparent);
+  transition: left 0.6s ease;
+  pointer-events: none;
+}
+.card:hover::after, .req-card:hover::after { left: 150%; }
+
+/* Scroll reveal observer */
+
 </style>
 </head>
 <body>
@@ -1166,106 +1290,7 @@ function setupRealtime() {
 
 
 
-<script>
-// ══ SHARED EFFECTS ══
 
-// Scroll bar
-const _sb2 = document.createElement('div'); _sb2.id='scroll-bar'; document.body.appendChild(_sb2);
-window.addEventListener('scroll',()=>{
-  const pct=(window.scrollY/(document.documentElement.scrollHeight-window.innerHeight))*100;
-  _sb2.style.width=pct+'%';
-},{passive:true});
-
-// Cursor glow
-const _cg=document.createElement('div');_cg.id='cursor-glow';document.body.appendChild(_cg);
-window.addEventListener('mousemove',e=>{_cg.style.left=e.clientX+'px';_cg.style.top=e.clientY+'px';});
-
-// Cursor trail
-if(window.innerWidth>=768){
-  const trail=[];
-  for(let i=0;i<10;i++){
-    const d=document.createElement('div');d.className='trail-dot';
-    d.style.cssText=`width:${3+i*0.4}px;height:${3+i*0.4}px;background:rgba(200,241,53,${0.5-i*0.04});z-index:9999;`;
-    document.body.appendChild(d);trail.push({el:d,x:0,y:0});
-  }
-  let mx=0,my=0;
-  window.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;},{passive:true});
-  (function tick(){
-    trail[0].x=mx;trail[0].y=my;
-    for(let i=1;i<trail.length;i++){trail[i].x+=(trail[i-1].x-trail[i].x)*0.4;trail[i].y+=(trail[i-1].y-trail[i].y)*0.4;}
-    trail.forEach((d,i)=>{d.el.style.left=d.x+'px';d.el.style.top=d.y+'px';d.el.style.opacity=(1-i/trail.length)*0.6;});
-    requestAnimationFrame(tick);
-  })();
-}
-
-// Scanline
-const _sl=document.createElement('div');_sl.className='scanline';document.body.appendChild(_sl);
-
-// Particle burst
-function createBurst(e){
-  const colors=['#c8f135','#ffffff','#9dbf10','#4f9fff'];
-  for(let i=0;i<10;i++){
-    const p=document.createElement('div');p.className='burst-particle';
-    const angle=(i/10)*Math.PI*2,dist=50+Math.random()*50;
-    p.style.setProperty('--tx',Math.cos(angle)*dist+'px');
-    p.style.setProperty('--ty',Math.sin(angle)*dist+'px');
-    p.style.left=e.clientX+'px';p.style.top=e.clientY+'px';
-    p.style.background=colors[Math.floor(Math.random()*colors.length)];
-    p.style.width=(4+Math.random()*5)+'px';p.style.height=p.style.width;
-    document.body.appendChild(p);setTimeout(()=>p.remove(),800);
-  }
-}
-document.addEventListener('click',e=>{
-  if(e.target.closest('.lime-btn,.lime-solid,.auth-btn,.mark-done,.action-btn')) createBurst(e);
-});
-
-// 3D tilt on cards
-document.querySelectorAll('.card,.req-card,.auth-box').forEach(card=>{
-  card.addEventListener('mousemove',e=>{
-    const r=card.getBoundingClientRect();
-    const x=(e.clientX-r.left)/r.width-0.5;
-    const y=(e.clientY-r.top)/r.height-0.5;
-    card.style.transform=`perspective(800px) rotateX(${-y*5}deg) rotateY(${x*5}deg) translateY(-2px)`;
-  });
-  card.addEventListener('mouseleave',()=>{card.style.transform='';});
-});
-
-// Label glitch on scroll
-const _lobs=new IntersectionObserver(entries=>{
-  entries.forEach(entry=>{
-    if(entry.isIntersecting){
-      const el=entry.target,orig=el.textContent;
-      const chars='ABCDEFGHIJKLMNOPQRSTUVWXYZ#@!$%';
-      let iter=0;
-      const interval=setInterval(()=>{
-        el.textContent=orig.split('').map((c,i)=>i<iter?orig[i]:c===' '?' ':chars[Math.floor(Math.random()*chars.length)]).join('');
-        iter+=0.5;
-        if(iter>=orig.length){el.textContent=orig;clearInterval(interval);}
-      },40);
-      _lobs.unobserve(el);
-    }
-  });
-},{threshold:0.5});
-document.querySelectorAll('.card-label,.label,.sec-label').forEach(el=>_lobs.observe(el));
-
-// Section sweep flash
-const _sobs=new IntersectionObserver(entries=>{
-  entries.forEach(entry=>{
-    if(entry.isIntersecting){
-      const sweep=document.createElement('div');
-      sweep.style.cssText='position:fixed;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(200,241,53,0.03),transparent);pointer-events:none;z-index:50;animation:sweepAcross 0.8s ease both;';
-      document.body.appendChild(sweep);setTimeout(()=>sweep.remove(),800);
-    }
-  });
-},{threshold:0.3});
-document.querySelectorAll('.card').forEach(s=>_sobs.observe(s));
-
-// Price/stat number glow on hover
-document.querySelectorAll('.stat-num').forEach(el=>{
-  el.addEventListener('mouseenter',()=>{el.style.transform='scale(1.08)';el.style.transition='all 0.3s';});
-  el.addEventListener('mouseleave',()=>{el.style.transform='';});
-});
-</script>
 
 
 <script>
@@ -1361,6 +1386,124 @@ document.querySelectorAll('.stat-num').forEach(el=>{
   window.addEventListener('mousemove',e=>{mouse.x=e.clientX;mouse.y=e.clientY;});
   window.addEventListener('mouseleave',()=>{mouse.x=null;mouse.y=null;});
   init();draw();
+})();
+</script>
+
+
+<script>
+// ══ SCROLL REVEAL ANIMATIONS ══
+(function() {
+  // Add animation classes to key elements
+  document.querySelectorAll('.card').forEach((el, i) => {
+    el.classList.add('anim-fade');
+    if (i % 3 === 1) el.classList.add('delay-2');
+    if (i % 3 === 2) el.classList.add('delay-3');
+  });
+  document.querySelectorAll('.req-card').forEach((el, i) => {
+    el.classList.add('anim-fade');
+    el.classList.add(`delay-${Math.min(i % 4 + 1, 5)}`);
+  });
+  document.querySelectorAll('.step').forEach((el, i) => {
+    el.classList.add('anim-fade');
+    el.classList.add(`delay-${i + 1}`);
+  });
+  document.querySelectorAll('.plan').forEach((el, i) => {
+    el.classList.add('anim-scale');
+    el.classList.add(`delay-${i + 1}`);
+  });
+  document.querySelectorAll('.stat-item, .stat').forEach((el, i) => {
+    el.classList.add('anim-fade');
+    el.classList.add(`delay-${i % 4 + 1}`);
+  });
+  document.querySelectorAll('.trust-badge').forEach((el, i) => {
+    el.classList.add('anim-fade');
+    el.classList.add(`delay-${Math.min(i + 1, 6)}`);
+  });
+  document.querySelectorAll('.sec-label, .card-label, .label').forEach(el => {
+    el.classList.add('anim-left');
+  });
+  document.querySelectorAll('.sec-title').forEach(el => {
+    el.classList.add('anim-fade');
+  });
+  document.querySelectorAll('.site-card').forEach((el, i) => {
+    el.classList.add('anim-fade');
+    el.classList.add(`delay-${Math.min(i + 1, 5)}`);
+  });
+
+  // Intersection observer
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.05, rootMargin: '0px 0px -20px 0px' });
+
+  document.querySelectorAll('.anim-fade, .anim-left, .anim-right, .anim-scale').forEach(el => obs.observe(el));
+
+  // 3D tilt on cards (desktop only)
+  if (window.innerWidth >= 768) {
+    document.querySelectorAll('.card, .req-card, .plan, .auth-box').forEach(card => {
+      card.addEventListener('mousemove', e => {
+        const r = card.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width - 0.5;
+        const y = (e.clientY - r.top) / r.height - 0.5;
+        card.style.transform = `perspective(800px) rotateX(${-y * 4}deg) rotateY(${x * 4}deg) translateY(-3px)`;
+      });
+      card.addEventListener('mouseleave', () => { card.style.transform = ''; });
+    });
+  }
+
+  // Particle burst on button click
+  function burst(e) {
+    const colors = ['#c8f135', '#ffffff', '#9dbf10'];
+    for (let i = 0; i < 8; i++) {
+      const p = document.createElement('div');
+      const angle = (i / 8) * Math.PI * 2;
+      const dist = 40 + Math.random() * 40;
+      p.style.cssText = `position:fixed;width:5px;height:5px;border-radius:50%;pointer-events:none;z-index:9999;background:${colors[i%3]};left:${e.clientX}px;top:${e.clientY}px;--tx:${Math.cos(angle)*dist}px;--ty:${Math.sin(angle)*dist}px;animation:burstFly 0.7s ease-out both;`;
+      document.body.appendChild(p);
+      setTimeout(() => p.remove(), 700);
+    }
+  }
+  document.addEventListener('click', e => {
+    if (e.target.closest('.lime-btn,.lime-solid,.auth-btn,.plan-btn,.btn-primary,.mark-done')) burst(e);
+  });
+
+  // Scroll progress bar
+  const bar = document.getElementById('scroll-bar') || (() => { const b = document.createElement('div'); b.id='scroll-bar'; b.style.cssText='position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,#c8f135,#4f9fff);z-index:300;width:0;box-shadow:0 0 10px rgba(200,241,53,0.8);'; document.body.appendChild(b); return b; })();
+  window.addEventListener('scroll', () => {
+    const pct = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight) * 100;
+    bar.style.width = pct + '%';
+  }, { passive: true });
+
+  // Cursor trail (desktop only)
+  if (window.innerWidth >= 768) {
+    const trail = [];
+    for (let i = 0; i < 8; i++) {
+      const d = document.createElement('div');
+      d.style.cssText = `position:fixed;border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);width:${3+i*0.4}px;height:${3+i*0.4}px;background:rgba(200,241,53,${0.4-i*0.04});`;
+      document.body.appendChild(d);
+      trail.push({ el: d, x: 0, y: 0 });
+    }
+    let mx = 0, my = 0;
+    window.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; }, { passive: true });
+    (function tick() {
+      trail[0].x = mx; trail[0].y = my;
+      for (let i = 1; i < trail.length; i++) {
+        trail[i].x += (trail[i-1].x - trail[i].x) * 0.35;
+        trail[i].y += (trail[i-1].y - trail[i].y) * 0.35;
+      }
+      trail.forEach((d, i) => {
+        d.el.style.left = d.x + 'px';
+        d.el.style.top = d.y + 'px';
+        d.el.style.opacity = (1 - i / trail.length) * 0.5;
+      });
+      requestAnimationFrame(tick);
+    })();
+  }
+
 })();
 </script>
 
