@@ -1511,7 +1511,7 @@ input:focus, select:focus, textarea:focus {
   </div>
   <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
     <a href="portal.html" class="nav-btn outline">Client Login</a>
-    <a href="#contact" class="nav-btn">Get Free Prototype →</a>
+    <a href="portal.html?action=inquiry" class="nav-btn">Get Free Prototype →</a>
   </div>
 </nav>
 
@@ -1532,7 +1532,7 @@ input:focus, select:focus, textarea:focus {
   <h1><span class="glitch" data-text="Your business">Your business</span><br><em>deserves a real</em><br><span class="glitch" data-text="website.">website.</span></h1>
   <p>We build fast, modern websites for small businesses — starting at $25/month. No upfront cost. See your site before you pay a dime.</p>
   <div class="hero-btns">
-    <a href="#contact" class="btn-primary">Get a Free Prototype →</a>
+    <a href="portal.html?action=inquiry" class="btn-primary">Get a Free Prototype →</a>
     <a href="#pricing" class="btn-ghost">See Pricing</a>
   </div>
 </section>
@@ -1722,34 +1722,17 @@ input:focus, select:focus, textarea:focus {
 <div class="section-divider"></div>
 
 <!-- CONTACT / FREE PROTOTYPE -->
-<section id="contact" class="contact-section">
-  <div class="sec-label reveal" style="text-align:center;">Get started</div>
-  <div class="sec-title reveal" style="text-align:center;font-size:clamp(24px,3vw,38px);">Request your free prototype.</div>
-  <div class="contact-box reveal"><span class="bracket-tr"></span><span class="bracket-bl"></span><div class="data-tag" style="top:-20px;left:10px;animation-delay:-1s;">prototype.init()</div><div class="data-tag" style="bottom:-20px;right:10px;animation-delay:-3s;">status: free</div>
-    <form action="REMOVED" method="POST">
-      <input type="hidden" name="_subject" value="New Website Request — Tech Bros for Yeshua">
-      <input type="hidden" name="_next" value="https://techbros4yeshuawebdesign-netizen.github.io/techbros4yeshua/?sent=true">
-      <div class="form-row">
-        <div class="f-group"><label>First Name</label><input type="text" name="first_name" placeholder="John" required></div>
-        <div class="f-group"><label>Last Name</label><input type="text" name="last_name" placeholder="Smith"></div>
-      </div>
-      <div class="f-group"><label>Business Name</label><input type="text" name="business" placeholder="Smith's Auto Repair" required></div>
-      <div class="f-group"><label>Email</label><input type="email" name="email" placeholder="john@smithsauto.com" required></div>
-      <div class="f-group"><label>Phone (optional)</label><input type="tel" name="phone" placeholder="(555) 000-0000"></div>
-      <div class="f-group">
-        <label>Plan Interest</label>
-        <select name="plan">
-          <option value="">Not sure yet</option>
-          <option>Starter — $25/month</option>
-          <option>Professional — $50/month</option>
-          <option>Premium — $100/month</option>
-        </select>
-      </div>
-      <div class="f-group"><label>Tell us about your business</label><textarea name="message" placeholder="What do you do, who are your customers, any existing branding?"></textarea></div>
-      <button type="submit" class="lime-btn">Request My Free Prototype →</button>
-      <p style="font-size:12px;color:rgba(255,255,255,0.25);text-align:center;margin-top:14px;">No card required. We'll reach out within 24 hours to start your discovery chat.</p>
-    </form>
+<section id="contact" class="section" style="text-align:center;max-width:700px;margin:0 auto;padding:80px 40px;">
+  <div class="sec-label anim-fade" style="text-align:center;">Get Started</div>
+  <div class="sec-title anim-fade" style="text-align:center;font-size:clamp(28px,4vw,52px);">Ready for your<br>free prototype?</div>
+  <p style="color:var(--mid);font-size:17px;line-height:1.7;margin-bottom:40px;opacity:0.8;" class="anim-fade">
+    Create a free account to submit your inquiry. We'll review it and reach out within 24 hours to start building your prototype.
+  </p>
+  <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;" class="anim-fade">
+    <a href="portal.html?action=inquiry" class="btn-primary" style="font-size:16px;padding:18px 36px;">Create Account & Get Started →</a>
+    <a href="portal.html" class="btn-ghost" style="font-size:16px;padding:18px 36px;">Sign In</a>
   </div>
+  <p style="font-size:12px;color:rgba(255,255,255,0.25);margin-top:20px;">No credit card required · Free prototype · No obligation</p>
 </section>
 
 <!-- FOOTER -->
@@ -1759,7 +1742,7 @@ input:focus, select:focus, textarea:focus {
     <a href="#how">How It Works</a>
     <a href="#pricing">Pricing</a>
     <a href="#login">Client Login</a>
-    <a href="#contact">Get Started</a>
+    <a href="portal.html?action=inquiry">Get Started</a>
   </div>
   <p>© 2026 Tech Bros for Yeshua. Built for small businesses.</p>
 </footer>
