@@ -14,7 +14,7 @@ body{font-family:'DM Sans',sans-serif;background:transparent;color:#fff;min-heig
 
 /* BG */
 #bg-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:3;pointer-events:none;}
-.glow-orb{position:fixed;border-radius:50%;filter:blur(90px);opacity:0.3;pointer-events:none;z-index:0;animation:orbFloat 14s ease-in-out infinite;}
+.glow-orb{position:fixed;border-radius:50%;filter:blur(90px);opacity:0.12;pointer-events:none;z-index:0;animation:orbFloat 14s ease-in-out infinite;}
 .glow-orb:nth-child(1){width:500px;height:500px;background:#c8f135;top:-100px;left:-100px;animation-delay:0s;}
 .glow-orb:nth-child(2){width:350px;height:350px;background:#4f9fff;top:45%;right:-80px;animation-delay:-5s;}
 .glow-orb:nth-child(3){width:400px;height:400px;background:#c8f135;bottom:-80px;left:35%;animation-delay:-9s;}
@@ -787,315 +787,7 @@ body::before {
   </div>
 </div>
 
-<script>
-const SURL = 'https://xwnndxatiddupkxcklbz.supabase.co';
-const SKEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh3bm5keGF0aWRkdXBreGNrbGJ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyMTIwNTAsImV4cCI6MjA5NDc4ODA1MH0.jFh--OnV9_ihfkm0bVs9gb1GJP2vn5iqV1_5McTbHPs';
-const sb = supabase.createClient(SURL, SKEY);
 
-const PLANS = {
-  starter:      { name:'Starter',      price:'$299 setup + $55/mo', features:['Up to 5 pages','Mobile responsive','Contact form','Basic SEO','Hosting + SSL','1 month free edits'] },
-  professional: { name:'Professional', price:'$599 setup + $85/mo', features:['Up to 10 pages','Mobile responsive','Contact form + live chat','Advanced SEO','Hosting + SSL','1 year free edits','Payment processing'] },
-  premium:      { name:'Premium',      price:'$1,200 setup + $150/mo', features:['Unlimited pages','Mobile responsive','Full feature set','Advanced SEO + analytics','Hosting + SSL','Unlimited edits forever','Payments + subscription management'] }
-};
-
-let currentUser = null;
-
-// ── URL PARAMS ──
-const params = new URLSearchParams(window.location.search);
-const inPlan = params.get('plan');
-const inAuth = params.get('auth');
-if (inPlan) {
-  sessionStorage.setItem('chosen_plan', inPlan);
-  const names = { starter:'Starter — $25/mo', professional:'Professional — $50/mo', premium:'Premium — $100/mo' };
-  const b = document.getElementById('plan-banner');
-  b.textContent = '🎯 You selected ' + (names[inPlan] || inPlan) + ' — sign in or create an account to continue.';
-  b.style.display = 'block';
-}
-if (inAuth === 'signup') switchTab('signup');
-
-// ── AUTH ──
-function switchTab(t) {
-  document.getElementById('af-login').style.display = t==='login' ? 'flex' : 'none';
-  document.getElementById('af-signup').style.display = t==='signup' ? 'flex' : 'none';
-  document.getElementById('at-login').classList.toggle('active', t==='login');
-  document.getElementById('at-signup').classList.toggle('active', t==='signup');
-  document.getElementById('auth-msg').className = 'msg';
-}
-
-function showAuthMsg(txt, type) { const e=document.getElementById('auth-msg'); e.textContent=txt; e.className='msg '+type; }
-
-async function doLogin() {
-  const email=document.getElementById('al-email').value.trim(), pass=document.getElementById('al-pass').value;
-  if(!email||!pass){showAuthMsg('Enter your email and password.','error');return;}
-  const btn=document.getElementById('al-btn'); btn.textContent='Signing in...'; btn.disabled=true;
-  const {data,error}=await sb.auth.signInWithPassword({email,password:pass});
-  if(error){showAuthMsg(error.message,'error');btn.textContent='Sign In →';btn.disabled=false;}
-  else loadPortal(data.user);
-}
-
-async function doSignup() {
-  const name=document.getElementById('as-name').value.trim(), email=document.getElementById('as-email').value.trim(), pass=document.getElementById('as-pass').value;
-  if(!name||!email||!pass){showAuthMsg('Please fill in all fields.','error');return;}
-  if(pass.length<8){showAuthMsg('Password must be at least 8 characters.','error');return;}
-  const btn=document.getElementById('as-btn'); btn.textContent='Creating...'; btn.disabled=true;
-  const {error}=await sb.auth.signUp({email,password:pass,options:{data:{full_name:name}}});
-  if(error){showAuthMsg(error.message,'error');btn.textContent='Create Account →';btn.disabled=false;}
-  else{showAuthMsg('Check your email to confirm your account, then sign in.','success');btn.textContent='Create Account →';btn.disabled=false;switchTab('login');}
-}
-
-async function doForgot() {
-  const email=document.getElementById('al-email').value.trim();
-  if(!email){showAuthMsg('Enter your email first.','error');return;}
-  await sb.auth.resetPasswordForEmail(email,{redirectTo:'https://techbros4yeshuawebdesign-netizen.github.io/techbros4yeshua/portal.html'});
-  showAuthMsg('Password reset email sent!','success');
-}
-
-async function doSignout() {
-  await sb.auth.signOut();
-  currentUser=null;
-  document.getElementById('portal-screen').style.display='none';
-  document.getElementById('auth-screen').style.display='flex';
-}
-
-// ── PORTAL ──
-function showTab(name) {
-  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.p-tab').forEach(t=>t.classList.remove('active'));
-  const panel=document.getElementById('tab-'+name); if(panel) panel.classList.add('active');
-  const tabs=['overview','sites','subscription','requests','new-request'];
-  const idx=tabs.indexOf(name);
-  if(idx>-1) document.querySelectorAll('.p-tab')[idx].classList.add('active');
-}
-
-async function loadPortal(user) {
-  currentUser=user;
-  document.getElementById('auth-screen').style.display='none';
-  document.getElementById('portal-screen').style.display='block';
-  document.getElementById('p-email-disp').textContent=user.email.replace('nathan@churchofgladtidings.com','techBros4yeshua.web.design@gmail.com');
-  await Promise.all([loadOverview(), loadSites(), loadSubscription(), loadRequests()]);
-  setupRealtime();
-}
-
-async function loadOverview() {
-  if(document.getElementById('ov-loading'))document.getElementById('ov-loading').style.display='block';
-  document.getElementById('ov-content').style.display='none';
-  document.getElementById('ov-loading').style.opacity='1';
-  const [pr,sr,subr,rr]=await Promise.all([
-    sb.from('profiles').select('*').eq('id',currentUser.id).single(),
-    sb.from('sites').select('*').eq('user_id',currentUser.id),
-    sb.from('subscriptions').select('*').eq('user_id',currentUser.id).eq('status','active').single(),
-    sb.from('edit_requests').select('*').eq('user_id',currentUser.id)
-  ]);
-  const sites=sr.data||[], reqs=rr.data||[], sub=subr.data, profile=pr.data;
-  document.getElementById('ov-sites').textContent=sites.length;
-  document.getElementById('ov-plan').textContent=sub?PLANS[sub.plan]?.name||sub.plan:'None';
-  document.getElementById('ov-reqs').textContent=reqs.length;
-  document.getElementById('ov-billing').textContent=sub?.billing_date?new Date(sub.billing_date).toLocaleDateString('en-US',{month:'short',day:'numeric'}):'—';
-  document.getElementById('ov-name').textContent=profile?.full_name||currentUser.user_metadata?.full_name||'—';
-  document.getElementById('ov-email').textContent=currentUser.email;
-  document.getElementById('ov-status').innerHTML='<span class="badge active"><span class="badge-dot"></span>Active</span>';
-  document.getElementById('ov-loading').style.display='none';
-  document.getElementById('ov-content').style.display='block';
-}
-
-async function loadSites() {
-  const {data}=await sb.from('sites').select('*').eq('user_id',currentUser.id).order('created_at',{ascending:false});
-  const c=document.getElementById('sites-list');
-  if(!data||!data.length){c.innerHTML='<div class="empty"><div class="empty-icon">🌐</div><p>No sites yet — Nathan will add your site once it\'s live.</p></div>';return;}
-  c.innerHTML=data.map(s=>`
-    <div class="site-card">
-      <div>
-        <div class="site-name">${s.site_name}</div>
-        <div class="site-url">${s.site_url?`<a href="${s.site_url}" target="_blank">${s.site_url}</a>`:'URL pending'}</div>
-        <div class="site-meta">${s.pages||1} page${(s.pages||1)!==1?'s':''} · Added ${new Date(s.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</div>
-      </div>
-      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-        <span class="badge ${s.status==='active'?'active':s.status==='demo'?'pending':'pending'}"><span class="badge-dot"></span>${s.status==='active'?'🟢 Live':s.status==='demo'?'🔧 Demo in Progress':'⏸ Paused'}</span>
-        ${s.site_url?`<a href="${s.site_url}" target="_blank" class="ghost-btn lime-outline">Visit →</a>`:''}
-        <button class="ghost-btn" onclick="showTab('new-request')">Request Edit</button>
-      </div>
-    </div>`).join('');
-}
-
-async function loadSubscription() {
-  document.getElementById('sub-loading').style.display='block';
-  document.getElementById('sub-content').style.display='none';
-  const {data}=await sb.from('subscriptions').select('*').eq('user_id',currentUser.id).eq('status','active').single();
-  document.getElementById('sub-loading').style.display='none';
-  document.getElementById('sub-content').style.display='block';
-  if(!data){document.getElementById('sub-none').style.display='block';return;}
-  const plan=PLANS[data.plan]||{name:data.plan,price:`$${data.amount}/month`,features:[]};
-  document.getElementById('sub-active').style.display='block';
-  document.getElementById('sub-plan-name').textContent=plan.name;
-  document.getElementById('sub-plan-price').textContent=plan.price;
-  document.getElementById('sub-features').innerHTML=plan.features.map(f=>`<li>${f}</li>`).join('');
-  document.getElementById('sub-billing-info').innerHTML=`Next billing: <strong>${data.billing_date?new Date(data.billing_date).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}):'—'}</strong>`;
-  if(data.stripe_link) document.getElementById('sub-billing-btn').onclick=()=>window.open(data.stripe_link,'_blank');
-}
-
-async function loadRequests() {
-  const {data}=await sb.from('edit_requests').select('*').eq('user_id',currentUser.id).order('created_at',{ascending:false});
-  const c=document.getElementById('req-list');
-  if(!data||!data.length){c.innerHTML='<div class="empty"><div class="empty-icon">✏️</div><p>No edit requests yet.</p></div>';return;}
-  const sc={pending:'pending',done:'done',active:'active'};
-  c.innerHTML=data.map(r=>`
-    <div class="req-card">
-      <div class="req-top"><div class="req-type">${r.edit_type||'Edit Request'}</div><span class="badge ${sc[r.status]||'pending'}"><span class="badge-dot"></span>${r.status||'pending'}</span></div>
-      <div class="req-page">📄 ${r.page||'—'}</div>
-      <div class="req-msg">${r.message||''}</div>
-      <div class="req-date">${new Date(r.created_at).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}</div>
-    </div>`).join('');
-}
-
-function setReqMode(mode) {
-  document.getElementById('form-edit').style.display = mode==='edit' ? 'block' : 'none';
-  document.getElementById('form-new').style.display = mode==='new' ? 'block' : 'none';
-  document.getElementById('req-mode-edit').style.background = mode==='edit' ? 'rgba(200,241,53,0.1)' : 'rgba(200,241,53,0.04)';
-  document.getElementById('req-mode-edit').style.borderColor = mode==='edit' ? 'rgba(200,241,53,0.35)' : 'rgba(200,241,53,0.15)';
-  document.getElementById('req-mode-new').style.background = mode==='new' ? 'rgba(200,241,53,0.1)' : 'rgba(200,241,53,0.04)';
-  document.getElementById('req-mode-new').style.borderColor = mode==='new' ? 'rgba(200,241,53,0.35)' : 'rgba(200,241,53,0.15)';
-}
-
-async function submitRequest(mode) {
-  if (mode === 'new') {
-    const siteType = document.getElementById('site-type').value;
-    const sitePlan = document.getElementById('site-plan').value;
-    const siteName = document.getElementById('site-name-input').value.trim();
-    const siteDesc = document.getElementById('site-desc').value.trim();
-    const siteDomain = document.getElementById('site-domain').value.trim();
-    const m = document.getElementById('new-site-msg');
-    if(!siteType||!sitePlan||!siteName||!siteDesc){m.textContent='Please fill in all required fields.';m.className='msg error';return;}
-    const btn=document.getElementById('new-site-btn');btn.textContent='Submitting...';btn.disabled=true;
-    const {error}=await sb.from('edit_requests').insert({
-      user_id:currentUser.id,
-      page:'NEW WEBSITE',
-      edit_type:'New Website Request — ' + siteType,
-      message: 'Plan: ' + sitePlan + '\nSite Name: ' + siteName + '\nDomain: ' + (siteDomain||'Not provided') + '\n\nVision:\n' + siteDesc,
-      status:'pending'
-    });
-    if(error){m.textContent='Error submitting. Try again.';m.className='msg error';btn.textContent='Submit New Site Request →';btn.disabled=false;}
-    else{
-      // Saved to Supabase — Nathan can view in dashboard
-      m.textContent='✓ Request submitted! Nathan will reach out within 24 hours.';m.className='msg success';
-      btn.textContent='Submit New Site Request →';btn.disabled=false;
-      document.getElementById('site-type').value='';document.getElementById('site-plan').value='';
-      document.getElementById('site-name-input').value='';document.getElementById('site-desc').value='';document.getElementById('site-domain').value='';
-      await loadRequests();setTimeout(()=>showTab('requests'),1800);
-    }
-  } else {
-    const page=document.getElementById('req-page').value.trim();
-    const type=document.getElementById('req-type').value;
-    const msg=document.getElementById('req-text').value.trim();
-    const m=document.getElementById('new-req-msg');
-    if(!page||!type||!msg){m.textContent='Please fill in all fields.';m.className='msg error';return;}
-    const btn=document.getElementById('req-btn');btn.textContent='Submitting...';btn.disabled=true;
-    const {error}=await sb.from('edit_requests').insert({user_id:currentUser.id,page,edit_type:type,message:msg,status:'pending'});
-    if(error){m.textContent='Error submitting. Try again.';m.className='msg error';btn.textContent='Submit Edit Request →';btn.disabled=false;}
-    else{
-      // Saved to Supabase — Nathan can view in dashboard
-      m.textContent='✓ Request submitted! Nathan will review within 24 hours.';m.className='msg success';
-      btn.textContent='Submit Edit Request →';btn.disabled=false;
-      document.getElementById('req-page').value='';document.getElementById('req-type').value='';document.getElementById('req-text').value='';
-      await loadRequests();setTimeout(()=>showTab('requests'),1500);
-    }
-  }
-}
-
-// ── INIT ──
-sb.auth.getSession().then(({data:{session}})=>{if(session)loadPortal(session.user);});
-sb.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_IN'&&session&&!currentUser)loadPortal(session.user);});
-
-// ── REAL-TIME UPDATES ──
-function setupRealtime() {
-  // Watch own edit requests — auto-update when Nathan marks done
-  sb.channel('my-requests')
-    .on('postgres_changes', {
-      event: 'UPDATE',
-      schema: 'public',
-      table: 'edit_requests',
-      filter: 'user_id=eq.' + currentUser.id
-    }, (payload) => {
-      // Show toast notification
-      const req = payload.new;
-      if (req.status === 'done') {
-        showToast('✅ Your edit request has been completed!');
-      }
-      loadRequests();
-    })
-    .on('postgres_changes', {
-      event: 'INSERT',
-      schema: 'public',
-      table: 'edit_requests',
-      filter: 'user_id=eq.' + currentUser.id
-    }, () => {
-      loadRequests();
-    })
-    .subscribe();
-
-  // Watch own sites — auto-update when Nathan adds a site
-  sb.channel('my-sites')
-    .on('postgres_changes', {
-      event: '*',
-      schema: 'public',
-      table: 'sites',
-      filter: 'user_id=eq.' + currentUser.id
-    }, () => {
-      showToast('🌐 Your site has been updated!');
-      loadSites();
-      loadOverview();
-    })
-    .subscribe();
-
-  // Watch own subscription
-  sb.channel('my-subscription')
-    .on('postgres_changes', {
-      event: '*',
-      schema: 'public',
-      table: 'subscriptions',
-      filter: 'user_id=eq.' + currentUser.id
-    }, () => {
-      loadSubscription();
-      loadOverview();
-    })
-    .subscribe();
-}
-
-function showToast(msg) {
-  const toast = document.createElement('div');
-  toast.textContent = msg;
-  toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1a3a1a;color:#c8f135;font-family:Syne,sans-serif;font-weight:700;font-size:14px;padding:12px 24px;border-radius:100px;z-index:999;box-shadow:0 4px 20px rgba(0,0,0,0.4);white-space:nowrap;animation:fadeUp 0.3s ease;';
-  document.body.appendChild(toast);
-  setTimeout(() => toast.remove(), 4000);
-}
-
-// ── PARTICLES ──
-(function(){
-  const canvas=document.getElementById('bg-canvas');
-  const ctx=canvas.getContext('2d');
-  let W,H,particles=[],mouse={x:null,y:null};
-  const isMobile=window.innerWidth<480;
-  function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;}
-  function mkP(){
-    const d=Math.random()*0.9+0.1,isLime=Math.random()>0.45;
-    return{x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-0.5)*0.3*d,vy:(Math.random()-0.5)*0.3*d,depth:d,size:d*(Math.random()*4+2),baseOp:d*(Math.random()*0.6+0.5),isLime,pulse:Math.random()*Math.PI*2,ps:Math.random()*0.02+0.008,glowR:d*(Math.random()*25+10)};
-  }
-  function init(){resize();const cnt=isMobile?80:160;particles=Array.from({length:cnt},mkP).sort((a,b)=>a.depth-b.depth);}
-  function drawGlow(p,op){
-    if(p.isLime){const layers=p.depth>0.6?3:p.depth>0.3?2:1;for(let l=layers;l>=1;l--){const r=p.size+p.glowR*l*0.7,g=ctx.createRadialGradient(p.x,p.y,p.size*0.5,p.x,p.y,r);g.addColorStop(0,`rgba(200,241,53,${op*0.6/l})`);g.addColorStop(0.4,`rgba(180,230,20,${op*0.2/l})`);g.addColorStop(1,'rgba(200,241,53,0)');ctx.beginPath();ctx.arc(p.x,p.y,r,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();}}
-    else if(p.depth>0.6){const g=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.size+p.glowR*0.5);g.addColorStop(0,`rgba(255,255,255,${op*0.35})`);g.addColorStop(1,'rgba(255,255,255,0)');ctx.beginPath();ctx.arc(p.x,p.y,p.size+p.glowR*0.5,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();}
-  }
-  function draw(){
-    ctx.clearRect(0,0,W,H);
-    if(!isMobile){for(let i=0;i<particles.length;i++){const pi=particles[i];for(let j=i+1;j<particles.length;j++){const pj=particles[j];if(Math.abs(pi.depth-pj.depth)>0.3)continue;const dx=pi.x-pj.x,dy=pi.y-pj.y,d=Math.sqrt(dx*dx+dy*dy),maxD=90+pi.depth*50;if(d<maxD){ctx.beginPath();ctx.strokeStyle=(pi.isLime||pj.isLime)?`rgba(200,241,53,${pi.depth*0.25*(1-d/maxD)})`:`rgba(255,255,255,${pi.depth*0.08*(1-d/maxD)})`;ctx.lineWidth=pi.depth*0.7;ctx.moveTo(pi.x,pi.y);ctx.lineTo(pj.x,pj.y);ctx.stroke();}}if(mouse.x!==null){const dx=pi.x-mouse.x,dy=pi.y-mouse.y,d=Math.sqrt(dx*dx+dy*dy),reach=200+pi.depth*100;if(d<reach){ctx.beginPath();ctx.strokeStyle=`rgba(200,241,53,${pi.depth*0.9*(1-d/reach)})`;ctx.lineWidth=pi.depth*1.8;ctx.moveTo(pi.x,pi.y);ctx.lineTo(mouse.x,mouse.y);ctx.stroke();}}}}
-    particles.forEach(p=>{p.pulse+=p.ps;const op=p.baseOp*(0.65+0.35*Math.sin(p.pulse));drawGlow(p,op);ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);if(p.isLime){const g=ctx.createRadialGradient(p.x-p.size*0.3,p.y-p.size*0.3,0,p.x,p.y,p.size);g.addColorStop(0,`rgba(240,255,180,${op})`);g.addColorStop(0.5,`rgba(200,241,53,${op})`);g.addColorStop(1,`rgba(140,200,10,${op*0.8})`);ctx.fillStyle=g;}else{const g=ctx.createRadialGradient(p.x-p.size*0.3,p.y-p.size*0.3,0,p.x,p.y,p.size);g.addColorStop(0,`rgba(255,255,255,${op})`);g.addColorStop(1,`rgba(200,220,255,${op*0.7})`);ctx.fillStyle=g;}ctx.fill();p.x+=p.vx;p.y+=p.vy;if(p.x<-50)p.x=W+50;if(p.x>W+50)p.x=-50;if(p.y<-50)p.y=H+50;if(p.y>H+50)p.y=-50;});
-    requestAnimationFrame(draw);
-  }
-  window.addEventListener('resize',resize);
-  window.addEventListener('mousemove',e=>{mouse.x=e.clientX;mouse.y=e.clientY;});
-  window.addEventListener('mouseleave',()=>{mouse.x=null;mouse.y=null;});
-  init();draw();
-})();
-</script>
 
 <!-- Tawk.to Live Chat -->
 <script type="text/javascript">
@@ -1104,161 +796,7 @@ var Tawk_API=Tawk_API||{},Tawk_LoadStart=new Date();
 </script>
 
 
-<script>
-// ── AURORA BACKGROUND ──
-(function(){
-  const canvas = document.createElement('canvas');
-  canvas.id = 'aurora-canvas';
-  document.body.insertBefore(canvas, document.body.firstChild);
-  const ctx = canvas.getContext('2d');
-  let W, H, t = 0;
-  function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;}
-  window.addEventListener('resize', resize); resize();
-  function drawAurora(){
-    ctx.clearRect(0,0,W,H); t+=0.003;
-    const waves=[
-      {y:0.3,amp:0.12,freq:0.8,color:[200,241,53]},
-      {y:0.5,amp:0.10,freq:1.2,color:[79,159,255]},
-      {y:0.7,amp:0.08,freq:0.6,color:[200,241,53]},
-    ];
-    waves.forEach(wave=>{
-      const gradient=ctx.createLinearGradient(0,0,0,H);
-      gradient.addColorStop(0,`rgba(${wave.color.join(',')},0)`);
-      gradient.addColorStop(0.5,`rgba(${wave.color.join(',')},0.06)`);
-      gradient.addColorStop(1,`rgba(${wave.color.join(',')},0)`);
-      ctx.beginPath(); ctx.moveTo(0,H*wave.y);
-      for(let x=0;x<=W;x+=4){
-        const y=H*wave.y+Math.sin(x*wave.freq*0.005+t)*H*wave.amp+Math.sin(x*wave.freq*0.003-t*1.3)*H*wave.amp*0.5;
-        ctx.lineTo(x,y);
-      }
-      ctx.lineTo(W,H);ctx.lineTo(0,H);ctx.closePath();
-      ctx.fillStyle=gradient;ctx.fill();
-    });
-    requestAnimationFrame(drawAurora);
-  }
-  drawAurora();
-})();
 
-// ── SCROLL BAR ──
-const scrollBar = document.createElement('div');
-scrollBar.id = 'scroll-bar';
-document.body.appendChild(scrollBar);
-window.addEventListener('scroll',()=>{
-  const pct=(window.scrollY/(document.documentElement.scrollHeight-window.innerHeight))*100;
-  scrollBar.style.width=pct+'%';
-});
-
-// ── CURSOR GLOW ──
-const cg=document.createElement('div');cg.id='cursor-glow';document.body.appendChild(cg);
-window.addEventListener('mousemove',e=>{cg.style.left=e.clientX+'px';cg.style.top=e.clientY+'px';});
-
-// ── CURSOR TRAIL ──
-const trail=[];const TLEN=10;
-for(let i=0;i<TLEN;i++){
-  const d=document.createElement('div');
-  d.className='trail-dot';
-  d.style.cssText=`width:${3+i*0.4}px;height:${3+i*0.4}px;background:rgba(200,241,53,${0.5-i*0.04});`;
-  document.body.appendChild(d);
-  trail.push({el:d,x:0,y:0});
-}
-let mx=0,my=0;
-window.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
-if(window.innerWidth>=768){
-  (function updateTrail(){
-    trail[0].x=mx;trail[0].y=my;
-    for(let i=1;i<TLEN;i++){trail[i].x+=(trail[i-1].x-trail[i].x)*0.4;trail[i].y+=(trail[i-1].y-trail[i].y)*0.4;}
-    trail.forEach((d,i)=>{d.el.style.left=d.x+'px';d.el.style.top=d.y+'px';d.el.style.opacity=(1-i/TLEN)*0.6;});
-    requestAnimationFrame(updateTrail);
-  })();
-}
-
-// ── PARTICLE BURST ──
-function createBurst(e){
-  const colors=['#c8f135','#ffffff','#9dbf10','#4f9fff'];
-  for(let i=0;i<10;i++){
-    const p=document.createElement('div');p.className='burst-particle';
-    const angle=(i/10)*Math.PI*2,dist=50+Math.random()*50;
-    p.style.setProperty('--tx',Math.cos(angle)*dist+'px');
-    p.style.setProperty('--ty',Math.sin(angle)*dist+'px');
-    p.style.left=e.clientX+'px';p.style.top=e.clientY+'px';
-    p.style.background=colors[Math.floor(Math.random()*colors.length)];
-    p.style.width=(4+Math.random()*5)+'px';p.style.height=p.style.width;
-    document.body.appendChild(p);setTimeout(()=>p.remove(),800);
-  }
-}
-document.querySelectorAll('.lime-btn,.lime-solid,.auth-btn,.mark-done').forEach(b=>b.addEventListener('click',createBurst));
-
-// ── 3D TILT ON CARDS ──
-document.querySelectorAll('.card,.req-card,.auth-box,.stat-box').forEach(card=>{
-  card.addEventListener('mousemove',e=>{
-    const r=card.getBoundingClientRect();
-    const x=(e.clientX-r.left)/r.width-0.5;
-    const y=(e.clientY-r.top)/r.height-0.5;
-    card.style.transform=`perspective(800px) rotateX(${-y*5}deg) rotateY(${x*5}deg) translateY(-2px)`;
-  });
-  card.addEventListener('mouseleave',()=>{card.style.transform='';});
-});
-
-// ── SCANLINE ELEMENT ──
-const sl=document.createElement('div');sl.className='scanline';document.body.appendChild(sl);
-
-// ── MATRIX RAIN ──
-(function(){
-  const canvas=document.createElement('canvas');
-  canvas.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;z-index:1;pointer-events:none;opacity:0.04;';
-  document.body.insertBefore(canvas,document.body.firstChild);
-  const ctx=canvas.getContext('2d');
-  let W,H,drops=[];
-  const chars='アイウエオ01アカサタナハマヤラワ';
-  function init(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;const cols=Math.floor(W/18);drops=Array.from({length:cols},()=>Math.random()*-H);}
-  function draw(){
-    ctx.fillStyle='rgba(8,10,4,0.05)';ctx.fillRect(0,0,W,H);
-    ctx.font='11px monospace';
-    drops.forEach((y,i)=>{
-      const char=chars[Math.floor(Math.random()*chars.length)];
-      ctx.fillStyle=`rgba(200,241,53,${Math.random()*0.4+0.1})`;
-      ctx.fillText(char,i*18,y);
-      if(y>H&&Math.random()>0.975)drops[i]=0;
-      drops[i]+=14;
-    });
-    requestAnimationFrame(draw);
-  }
-  window.addEventListener('resize',init);init();draw();
-})();
-
-// ── LABEL GLITCH ──
-const labelObs=new IntersectionObserver(entries=>{
-  entries.forEach(entry=>{
-    if(entry.isIntersecting){
-      const el=entry.target,orig=el.textContent;
-      const chars='ABCDEFGHIJKLMNOPQRSTUVWXYZ#@!$%';
-      let iter=0;
-      const interval=setInterval(()=>{
-        el.textContent=orig.split('').map((c,i)=>i<iter?orig[i]:c===' '?' ':chars[Math.floor(Math.random()*chars.length)]).join('');
-        iter+=0.5;
-        if(iter>=orig.length){el.textContent=orig;clearInterval(interval);}
-      },40);
-      labelObs.unobserve(el);
-    }
-  });
-},{threshold:0.5});
-document.querySelectorAll('.card-label,.label,.sec-label').forEach(el=>labelObs.observe(el));
-
-// ── SECTION SWEEP ──
-const secObs=new IntersectionObserver(entries=>{
-  entries.forEach(entry=>{
-    if(entry.isIntersecting){
-      const sweep=document.createElement('div');
-      sweep.style.cssText='position:fixed;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(200,241,53,0.03),transparent);pointer-events:none;z-index:50;animation:sweepAcross 0.8s ease both;';
-      document.body.appendChild(sweep);setTimeout(()=>sweep.remove(),800);
-    }
-  });
-},{threshold:0.3});
-document.querySelectorAll('.card,.auth-box').forEach(s=>secObs.observe(s));
-const ss=document.createElement('style');
-ss.textContent='@keyframes sweepAcross{0%{left:-100%;}100%{left:100%;}}';
-document.head.appendChild(ss);
-</script>
 
 
 <script>
@@ -1360,6 +898,103 @@ document.querySelectorAll('.stat-num').forEach(el=>{
   el.addEventListener('mouseenter',()=>{el.style.transform='scale(1.08)';el.style.transition='all 0.3s';});
   el.addEventListener('mouseleave',()=>{el.style.transform='';});
 });
+</script>
+
+
+<script>
+// ══ UNIFIED BACKGROUND: Aurora + Particles + Mouse Lines ══
+(function(){
+  // Aurora
+  const ac=document.createElement('canvas');
+  ac.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:0.2;mix-blend-mode:screen;';
+  document.body.insertBefore(ac,document.body.firstChild);
+  const ax=ac.getContext('2d');let AW,AH,at=0;
+  function rA(){AW=ac.width=window.innerWidth;AH=ac.height=window.innerHeight;}rA();
+  function dA(){
+    ax.clearRect(0,0,AW,AH);at+=0.003;
+    [{y:0.3,amp:0.12,freq:0.8,c:[200,241,53]},{y:0.5,amp:0.1,freq:1.2,c:[79,159,255]},{y:0.7,amp:0.08,freq:0.6,c:[200,241,53]}].forEach(w=>{
+      const g=ax.createLinearGradient(0,0,0,AH);
+      g.addColorStop(0,`rgba(${w.c},0)`);g.addColorStop(0.5,`rgba(${w.c},0.03)`);g.addColorStop(1,`rgba(${w.c},0)`);
+      ax.beginPath();ax.moveTo(0,AH*w.y);
+      for(let x=0;x<=AW;x+=4){const y=AH*w.y+Math.sin(x*w.freq*0.005+at)*AH*w.amp+Math.sin(x*w.freq*0.003-at*1.3)*AH*w.amp*0.5;ax.lineTo(x,y);}
+      ax.lineTo(AW,AH);ax.lineTo(0,AH);ax.closePath();ax.fillStyle=g;ax.fill();
+    });requestAnimationFrame(dA);
+  }dA();
+
+  // Particles
+  const canvas=document.getElementById('bg-canvas');if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  let W,H,particles=[],mouse={x:null,y:null};
+  const isMobile=window.innerWidth<480;
+  function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;}resize();
+  function rand(a,b){return Math.random()*(b-a)+a;}
+  function mkP(){
+    const d=rand(0.1,1.0),isLime=Math.random()>0.45;
+    return{x:rand(0,W),y:rand(0,H),vx:(Math.random()-0.5)*0.4*d,vy:(Math.random()-0.5)*0.4*d,
+      depth:d,size:d*rand(2,5),baseOp:d*rand(0.2,0.5),isLime,
+      pulse:rand(0,Math.PI*2),ps:rand(0.01,0.03),glowR:d*rand(15,40)};
+  }
+  function init(){resize();const cnt=isMobile?80:180;particles=Array.from({length:cnt},mkP).sort((a,b)=>a.depth-b.depth);}
+  function drawGlow(p,op){
+    if(p.isLime){
+      const layers=p.depth>0.6?3:p.depth>0.3?2:1;
+      for(let l=layers;l>=1;l--){
+        const r=p.size+p.glowR*l*0.7;
+        const g=ctx.createRadialGradient(p.x,p.y,p.size*0.5,p.x,p.y,r);
+        g.addColorStop(0,`rgba(200,241,53,${op*0.35/l})`);g.addColorStop(0.4,`rgba(180,230,20,${op*0.3/l})`);g.addColorStop(1,'rgba(200,241,53,0)');
+        ctx.beginPath();ctx.arc(p.x,p.y,r,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();
+      }
+    } else if(p.depth>0.5){
+      const g=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.size+p.glowR*0.5);
+      g.addColorStop(0,`rgba(255,255,255,${op*0.4})`);g.addColorStop(1,'rgba(255,255,255,0)');
+      ctx.beginPath();ctx.arc(p.x,p.y,p.size+p.glowR*0.5,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();
+    }
+  }
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    for(let i=0;i<particles.length;i++){
+      const pi=particles[i];
+      for(let j=i+1;j<particles.length;j++){
+        const pj=particles[j];
+        if(Math.abs(pi.depth-pj.depth)>0.35)continue;
+        const dx=pi.x-pj.x,dy=pi.y-pj.y,d=Math.sqrt(dx*dx+dy*dy),maxD=100+pi.depth*60;
+        if(d<maxD){
+          ctx.beginPath();
+          ctx.strokeStyle=(pi.isLime||pj.isLime)?`rgba(200,241,53,${pi.depth*0.2*(1-d/maxD)})`:`rgba(255,255,255,${pi.depth*0.06*(1-d/maxD)})`;
+          ctx.lineWidth=pi.depth*1.2;ctx.moveTo(pi.x,pi.y);ctx.lineTo(pj.x,pj.y);ctx.stroke();
+        }
+      }
+      if(mouse.x!==null){
+        const dx=pi.x-mouse.x,dy=pi.y-mouse.y,d=Math.sqrt(dx*dx+dy*dy),reach=220+pi.depth*100;
+        if(d<reach){
+          ctx.beginPath();ctx.strokeStyle=`rgba(200,241,53,${pi.depth*0.5*(1-d/reach)})`;
+          ctx.lineWidth=pi.depth*1;ctx.moveTo(pi.x,pi.y);ctx.lineTo(mouse.x,mouse.y);ctx.stroke();
+        }
+      }
+    }
+    particles.forEach(p=>{
+      p.pulse+=p.ps;const op=p.baseOp*(0.65+0.35*Math.sin(p.pulse));
+      drawGlow(p,op);
+      ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
+      if(p.isLime){
+        const g=ctx.createRadialGradient(p.x-p.size*0.3,p.y-p.size*0.3,0,p.x,p.y,p.size);
+        g.addColorStop(0,`rgba(240,255,180,${op})`);g.addColorStop(0.5,`rgba(200,241,53,${op})`);g.addColorStop(1,`rgba(140,200,10,${op*0.8})`);ctx.fillStyle=g;
+      } else {
+        const g=ctx.createRadialGradient(p.x-p.size*0.3,p.y-p.size*0.3,0,p.x,p.y,p.size);
+        g.addColorStop(0,`rgba(255,255,255,${op})`);g.addColorStop(1,`rgba(200,220,255,${op*0.7})`);ctx.fillStyle=g;
+      }
+      ctx.fill();
+      p.x+=p.vx;p.y+=p.vy;
+      if(p.x<-50)p.x=W+50;if(p.x>W+50)p.x=-50;
+      if(p.y<-50)p.y=H+50;if(p.y>H+50)p.y=-50;
+    });
+    requestAnimationFrame(draw);
+  }
+  window.addEventListener('resize',()=>{resize();rA();});
+  window.addEventListener('mousemove',e=>{mouse.x=e.clientX;mouse.y=e.clientY;});
+  window.addEventListener('mouseleave',()=>{mouse.x=null;mouse.y=null;});
+  init();draw();
+})();
 </script>
 
 </body>
