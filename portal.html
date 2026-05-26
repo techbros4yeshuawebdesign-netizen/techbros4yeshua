@@ -1073,20 +1073,20 @@ function showToast(msg) {
   const canvas=document.getElementById('bg-canvas');
   const ctx=canvas.getContext('2d');
   let W,H,particles=[],mouse={x:null,y:null};
-  const isMobile=window.innerWidth<768;
+  const isMobile=window.innerWidth<480;
   function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;}
   function mkP(){
     const d=Math.random()*0.9+0.1,isLime=Math.random()>0.45;
-    return{x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-0.5)*0.3*d,vy:(Math.random()-0.5)*0.3*d,depth:d,size:d*(Math.random()*3+1.5),baseOp:d*(Math.random()*0.5+0.4),isLime,pulse:Math.random()*Math.PI*2,ps:Math.random()*0.02+0.008,glowR:d*(Math.random()*25+10)};
+    return{x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-0.5)*0.3*d,vy:(Math.random()-0.5)*0.3*d,depth:d,size:d*(Math.random()*4+2),baseOp:d*(Math.random()*0.6+0.5),isLime,pulse:Math.random()*Math.PI*2,ps:Math.random()*0.02+0.008,glowR:d*(Math.random()*25+10)};
   }
-  function init(){resize();const cnt=isMobile?60:140;particles=Array.from({length:cnt},mkP).sort((a,b)=>a.depth-b.depth);}
+  function init(){resize();const cnt=isMobile?80:160;particles=Array.from({length:cnt},mkP).sort((a,b)=>a.depth-b.depth);}
   function drawGlow(p,op){
     if(p.isLime){const layers=p.depth>0.6?3:p.depth>0.3?2:1;for(let l=layers;l>=1;l--){const r=p.size+p.glowR*l*0.7,g=ctx.createRadialGradient(p.x,p.y,p.size*0.5,p.x,p.y,r);g.addColorStop(0,`rgba(200,241,53,${op*0.6/l})`);g.addColorStop(0.4,`rgba(180,230,20,${op*0.2/l})`);g.addColorStop(1,'rgba(200,241,53,0)');ctx.beginPath();ctx.arc(p.x,p.y,r,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();}}
     else if(p.depth>0.6){const g=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.size+p.glowR*0.5);g.addColorStop(0,`rgba(255,255,255,${op*0.35})`);g.addColorStop(1,'rgba(255,255,255,0)');ctx.beginPath();ctx.arc(p.x,p.y,p.size+p.glowR*0.5,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();}
   }
   function draw(){
     ctx.clearRect(0,0,W,H);
-    if(!isMobile){for(let i=0;i<particles.length;i++){const pi=particles[i];for(let j=i+1;j<particles.length;j++){const pj=particles[j];if(Math.abs(pi.depth-pj.depth)>0.3)continue;const dx=pi.x-pj.x,dy=pi.y-pj.y,d=Math.sqrt(dx*dx+dy*dy),maxD=90+pi.depth*50;if(d<maxD){ctx.beginPath();ctx.strokeStyle=(pi.isLime||pj.isLime)?`rgba(200,241,53,${pi.depth*0.25*(1-d/maxD)})`:`rgba(255,255,255,${pi.depth*0.08*(1-d/maxD)})`;ctx.lineWidth=pi.depth*0.7;ctx.moveTo(pi.x,pi.y);ctx.lineTo(pj.x,pj.y);ctx.stroke();}}if(mouse.x!==null){const dx=pi.x-mouse.x,dy=pi.y-mouse.y,d=Math.sqrt(dx*dx+dy*dy),reach=160+pi.depth*80;if(d<reach){ctx.beginPath();ctx.strokeStyle=`rgba(200,241,53,${pi.depth*0.5*(1-d/reach)})`;ctx.lineWidth=pi.depth*1.1;ctx.moveTo(pi.x,pi.y);ctx.lineTo(mouse.x,mouse.y);ctx.stroke();}}}}
+    if(!isMobile){for(let i=0;i<particles.length;i++){const pi=particles[i];for(let j=i+1;j<particles.length;j++){const pj=particles[j];if(Math.abs(pi.depth-pj.depth)>0.3)continue;const dx=pi.x-pj.x,dy=pi.y-pj.y,d=Math.sqrt(dx*dx+dy*dy),maxD=90+pi.depth*50;if(d<maxD){ctx.beginPath();ctx.strokeStyle=(pi.isLime||pj.isLime)?`rgba(200,241,53,${pi.depth*0.25*(1-d/maxD)})`:`rgba(255,255,255,${pi.depth*0.08*(1-d/maxD)})`;ctx.lineWidth=pi.depth*0.7;ctx.moveTo(pi.x,pi.y);ctx.lineTo(pj.x,pj.y);ctx.stroke();}}if(mouse.x!==null){const dx=pi.x-mouse.x,dy=pi.y-mouse.y,d=Math.sqrt(dx*dx+dy*dy),reach=200+pi.depth*100;if(d<reach){ctx.beginPath();ctx.strokeStyle=`rgba(200,241,53,${pi.depth*0.9*(1-d/reach)})`;ctx.lineWidth=pi.depth*1.8;ctx.moveTo(pi.x,pi.y);ctx.lineTo(mouse.x,mouse.y);ctx.stroke();}}}}
     particles.forEach(p=>{p.pulse+=p.ps;const op=p.baseOp*(0.65+0.35*Math.sin(p.pulse));drawGlow(p,op);ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);if(p.isLime){const g=ctx.createRadialGradient(p.x-p.size*0.3,p.y-p.size*0.3,0,p.x,p.y,p.size);g.addColorStop(0,`rgba(240,255,180,${op})`);g.addColorStop(0.5,`rgba(200,241,53,${op})`);g.addColorStop(1,`rgba(140,200,10,${op*0.8})`);ctx.fillStyle=g;}else{const g=ctx.createRadialGradient(p.x-p.size*0.3,p.y-p.size*0.3,0,p.x,p.y,p.size);g.addColorStop(0,`rgba(255,255,255,${op})`);g.addColorStop(1,`rgba(200,220,255,${op*0.7})`);ctx.fillStyle=g;}ctx.fill();p.x+=p.vx;p.y+=p.vy;if(p.x<-50)p.x=W+50;if(p.x>W+50)p.x=-50;if(p.y<-50)p.y=H+50;if(p.y>H+50)p.y=-50;});
     requestAnimationFrame(draw);
   }
