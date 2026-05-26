@@ -293,15 +293,15 @@ html { scroll-behavior: auto; } /* We handle scroll manually */
   transform: translateY(0) scale(1);
 }
 .step:nth-child(1) { transition-delay: 0s; }
-.step:nth-child(2) { transition-delay: 0.12s; }
-.step:nth-child(3) { transition-delay: 0.24s; }
-.step:nth-child(4) { transition-delay: 0.36s; }
+.step:nth-child(2) { transition-delay: 0.2s; }
+.step:nth-child(3) { transition-delay: 0.4s; }
+.step:nth-child(4) { transition-delay: 0.6s; }
 
 /* Pricing cards — flip in */
 .plan {
   opacity: 0;
-  transform: translateY(50px) rotateX(8deg);
-  transition: opacity 0.8s ease, transform 0.8s ease, border-color 0.25s, box-shadow 0.25s;
+  transform: translateY(60px) rotateX(10deg);
+  transition: opacity 1.4s cubic-bezier(0.16,1,0.3,1), transform 1.4s cubic-bezier(0.16,1,0.3,1), border-color 0.25s, box-shadow 0.25s;
   transform-origin: top center;
   perspective: 1000px;
 }
@@ -310,9 +310,9 @@ html { scroll-behavior: auto; } /* We handle scroll manually */
   transform: translateY(0) rotateX(0deg);
 }
 .plan:nth-child(1) { transition-delay: 0s; }
-.plan:nth-child(2) { transition-delay: 0.15s; }
-.plan:nth-child(3) { transition-delay: 0.3s; }
-.plan:nth-child(4) { transition-delay: 0.45s; }
+.plan:nth-child(2) { transition-delay: 0.2s; }
+.plan:nth-child(3) { transition-delay: 0.4s; }
+.plan:nth-child(4) { transition-delay: 0.6s; }
 
 /* Plan hover glow */
 .plan:hover {
@@ -325,8 +325,8 @@ html { scroll-behavior: auto; } /* We handle scroll manually */
 /* Reveal elements */
 .reveal {
   opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.7s ease, transform 0.7s ease;
+  transform: translateY(40px);
+  transition: opacity 1.2s cubic-bezier(0.16,1,0.3,1), transform 1.2s cubic-bezier(0.16,1,0.3,1);
 }
 .reveal.visible { opacity: 1; transform: translateY(0); }
 
@@ -334,8 +334,8 @@ html { scroll-behavior: auto; } /* We handle scroll manually */
 .sec-title .char {
   display: inline-block;
   opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.4s ease, transform 0.4s ease;
+  transform: translateY(24px);
+  transition: opacity 0.9s cubic-bezier(0.16,1,0.3,1), transform 0.9s cubic-bezier(0.16,1,0.3,1);
 }
 .sec-title.visible .char { opacity: 1; transform: translateY(0); }
 
@@ -1304,12 +1304,90 @@ body::before {
   z-index: 0;
 }
 
+
+
+  .fp-section { padding: 70px 16px 30px; }
+}
+
+
+
+}
+
+
+
+}
+
+
+
+}
+
+
+ }
+
+
+ .hero-logo-wrap{ width:160px; } }
+
+
+/* ── HERO WORDMARK ── */
+.hero-wordmark {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  letter-spacing: -3px;
+  line-height: 0.9;
+  text-align: center;
+  opacity: 0;
+  animation: fadeUp 0.7s 0.05s forwards;
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0;
+  margin-bottom: 20px;
+}
+.hero-wordmark .line1 {
+  display: block;
+  font-size: clamp(60px, 23vw, 200px);
+  color: #ffffff;
+  text-shadow: 0 0 40px rgba(255,255,255,0.1);
+}
+.hero-wordmark .line2 {
+  display: block;
+  font-size: clamp(18px, 5vw, 50px);
+  font-weight: 400;
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  line-height: 1.6;
+}
+.hero-wordmark .line3 {
+  display: block;
+  font-size: clamp(60px, 23vw, 200px);
+  color: var(--lime);
+  text-shadow: 0 0 40px rgba(200,241,53,0.6), 0 0 80px rgba(200,241,53,0.3);
+  animation: yeshuaGlow 3s ease-in-out infinite;
+}
+@keyframes yeshuaGlow {
+  0%,100% { text-shadow: 0 0 30px rgba(200,241,53,0.5), 0 0 60px rgba(200,241,53,0.2); }
+  50%      { text-shadow: 0 0 60px rgba(200,241,53,0.9), 0 0 120px rgba(200,241,53,0.4); }
+}
+.hero-wordmark::after {
+  content: '';
+  display: block;
+  width: 40%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(200,241,53,0.5), transparent);
+  margin: 12px auto 0;
+  box-shadow: 0 0 10px rgba(200,241,53,0.3);
+}
+
 </style>
 </head>
 <body>
 
 <!-- BG -->
 <div id="scroll-bar"></div>
+<div id="fp-dots"></div>
+<div id="section-label">Home</div>
 <canvas id="matrix-canvas"></canvas>
 <div class="morph-shape"></div>
 <div class="morph-shape"></div>
@@ -1343,6 +1421,11 @@ body::before {
   <div class="tech-float" style="bottom:35%;right:6%;animation-delay:-6s;">npm deploy</div>
   <div class="tech-float" style="top:60%;left:3%;animation-delay:-1s;">SSL: active</div>
   <div class="tech-float" style="top:15%;right:15%;animation-delay:-3s;">200 OK ✓</div>
+  <div class="hero-wordmark">
+  <span class="line1">Tech Bros</span>
+  <span class="line2">for</span>
+  <span class="line3">Yeshua</span>
+</div>
   <div class="hero-badge"><div class="badge-dot"></div>Free prototype — no card required</div>
   <h1><span class="glitch" data-text="Your business">Your business</span><br><em>deserves a real</em><br><span class="glitch" data-text="website.">website.</span></h1>
   <p>We build fast, modern websites for small businesses — starting at $25/month. No upfront cost. See your site before you pay a dime.</p>
@@ -1807,7 +1890,7 @@ const revealObserver = new IntersectionObserver((entries) => {
   entries.forEach((e, i) => {
     if (e.isIntersecting) { setTimeout(() => e.target.classList.add('visible'), i * 70); revealObserver.unobserve(e.target); }
   });
-}, { threshold: 0.1 });
+}, { threshold: 0.06 });
 document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
 // ── PARTICLES ──
@@ -1951,7 +2034,7 @@ const animObserver = new IntersectionObserver((entries) => {
       animObserver.unobserve(el);
     }
   });
-}, { threshold: 0.15 });
+}, { threshold: 0.08 });
 
 document.querySelectorAll('.step, .plan, .reveal').forEach(el => animObserver.observe(el));
 
@@ -1968,7 +2051,7 @@ const titleObserver = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) { entry.target.classList.add('visible'); titleObserver.unobserve(entry.target); }
   });
-}, { threshold: 0.2 });
+}, { threshold: 0.08 });
 document.querySelectorAll('.sec-title').forEach(el => titleObserver.observe(el));
 
 // ── TEXT SCRAMBLE ON HERO ──
@@ -2287,7 +2370,7 @@ const wipeObserver = new IntersectionObserver(entries => {
       wipeObserver.unobserve(entry.target);
     }
   });
-}, { threshold: 0.2 });
+}, { threshold: 0.08 });
 document.querySelectorAll('.trust-badge').forEach(el => wipeObserver.observe(el));
 
 // ── SECTION LABEL GLITCH ON ENTER ──
@@ -2322,7 +2405,7 @@ const sectionGlowObs = new IntersectionObserver(entries => {
     if (e.isIntersecting) e.target.classList.add('in-view');
     else e.target.classList.remove('in-view');
   });
-}, { threshold: 0.2 });
+}, { threshold: 0.08 });
 document.querySelectorAll('.login-section, .contact-section').forEach(s => sectionGlowObs.observe(s));
 
 // 3D tilt on login and contact boxes
@@ -2435,6 +2518,26 @@ document.querySelectorAll('.plan-price-num').forEach(el => {
   drawAurora();
 })();
 </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 </body>
 </html>

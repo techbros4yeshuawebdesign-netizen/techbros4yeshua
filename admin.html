@@ -329,6 +329,161 @@ input:focus, select:focus, textarea:focus {
 .sub-plan { text-shadow: 0 0 20px rgba(200,241,53,0.3); }
 .sub-billing { background: rgba(200,241,53,0.03) !important; border: 1px solid rgba(200,241,53,0.08) !important; }
 
+
+/* ══════════════════════════════════════
+   EXTRA STUNNING EFFECTS
+══════════════════════════════════════ */
+
+/* AURORA */
+#aurora-canvas {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  z-index: 0; pointer-events: none; opacity: 0.5; mix-blend-mode: screen;
+}
+
+/* 3D TILT ON CARDS */
+.card, .req-card, .auth-box, .stat, .site-card {
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+/* HOLOGRAPHIC SHIMMER on auth box */
+.auth-box {
+  position: relative; overflow: hidden;
+}
+.auth-box::before {
+  content: '';
+  position: absolute; top: -50%; left: -60%;
+  width: 40%; height: 200%;
+  background: linear-gradient(105deg, transparent 40%, rgba(200,241,53,0.05) 50%, transparent 60%);
+  animation: authShimmer 4s ease-in-out infinite;
+  pointer-events: none; z-index: 0;
+}
+@keyframes authShimmer { 0%{left:-60%;} 100%{left:120%;} }
+
+/* CARD HOVER SHIMMER */
+.card, .req-card {
+  position: relative; overflow: hidden;
+}
+.card::before, .req-card::before {
+  content: '';
+  position: absolute; top: -50%; left: -100%;
+  width: 60%; height: 200%;
+  background: linear-gradient(105deg, transparent, rgba(200,241,53,0.03), transparent);
+  transition: left 0.6s ease; pointer-events: none; z-index: 0;
+}
+.card:hover::before, .req-card:hover::before { left: 150%; }
+
+/* GLOWING LABELS */
+.card-label, .label, .sec-label {
+  text-shadow: 0 0 8px rgba(200,241,53,0.4);
+  letter-spacing: 0.15em;
+}
+
+/* LIME BUTTON CHARGE */
+.lime-btn, .lime-solid, .auth-btn, .auth-tab.active {
+  background: linear-gradient(135deg, #c8f135 0%, #d8ff45 50%, #c8f135 100%) !important;
+  background-size: 200% 200% !important;
+  animation: btnCharge 3s ease infinite !important;
+  box-shadow: 0 0 20px rgba(200,241,53,0.3), 0 4px 20px rgba(0,0,0,0.3) !important;
+}
+@keyframes btnCharge {
+  0%,100%{background-position:0% 50%;box-shadow:0 0 20px rgba(200,241,53,0.3);}
+  50%{background-position:100% 50%;box-shadow:0 0 40px rgba(200,241,53,0.6),0 0 80px rgba(200,241,53,0.2);}
+}
+.lime-btn:hover, .lime-solid:hover {
+  transform: translateY(-2px) scale(1.02) !important;
+  box-shadow: 0 0 50px rgba(200,241,53,0.7), 0 8px 30px rgba(0,0,0,0.4) !important;
+}
+
+/* BURST PARTICLE */
+.burst-particle {
+  position: fixed; border-radius: 50%; pointer-events: none; z-index: 9999;
+  animation: burstFly 0.8s ease-out forwards;
+}
+@keyframes burstFly {
+  0%{transform:translate(0,0) scale(1);opacity:1;}
+  100%{transform:translate(var(--tx),var(--ty)) scale(0);opacity:0;}
+}
+
+/* TRAIL DOT */
+.trail-dot {
+  position: fixed; border-radius: 50%; pointer-events: none; z-index: 9999;
+  transform: translate(-50%,-50%);
+}
+
+/* SECTION SWEEP */
+@keyframes sweepAcross { 0%{left:-100%;} 100%{left:100%;} }
+
+/* LOGO GLOW */
+.p-logo span, .auth-logo span, .top-logo span {
+  text-shadow: 0 0 15px rgba(200,241,53,0.6), 0 0 30px rgba(200,241,53,0.2);
+}
+
+/* BADGE PULSE */
+.badge.active { animation: badgeGlowPulse 2s ease-in-out infinite; }
+@keyframes badgeGlowPulse {
+  0%,100%{box-shadow:0 0 5px rgba(200,241,53,0.1);}
+  50%{box-shadow:0 0 15px rgba(200,241,53,0.35);}
+}
+
+/* ACTION BUTTONS hover lift */
+.action-btn:hover {
+  box-shadow: 0 0 20px rgba(200,241,53,0.15) !important;
+  transform: translateY(-3px) scale(1.02) !important;
+}
+
+/* STAT numbers glow */
+.stat-num { text-shadow: 0 0 20px rgba(200,241,53,0.5), 0 0 40px rgba(200,241,53,0.2); }
+
+/* MARK DONE glow */
+.mark-done:hover {
+  box-shadow: 0 0 15px rgba(200,241,53,0.3) !important;
+  transform: scale(1.05) !important;
+}
+
+/* NOISE TEXTURE */
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 5; opacity: 0.4;
+}
+
+/* PAGE VIGNETTE */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(200,241,53,0.04) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(79,159,255,0.04) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 80%, rgba(200,241,53,0.03) 0%, transparent 50%);
+  pointer-events: none; z-index: 0;
+}
+
+/* SCANLINES */
+.scanline {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none; z-index: 2;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+  animation: scanMove 8s linear infinite;
+}
+@keyframes scanMove { 0%{background-position:0 0;} 100%{background-position:0 100px;} }
+
+/* SCROLL BAR */
+#scroll-bar {
+  position: fixed; top: 0; left: 0; height: 3px;
+  background: linear-gradient(90deg, var(--lime), #4f9fff);
+  z-index: 300; width: 0%;
+  box-shadow: 0 0 10px rgba(200,241,53,0.8), 0 0 20px rgba(200,241,53,0.4);
+}
+
+/* CURSOR GLOW */
+#cursor-glow {
+  position: fixed; width: 300px; height: 300px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(200,241,53,0.06) 0%, transparent 70%);
+  pointer-events: none; z-index: 1; transform: translate(-50%,-50%);
+}
+
 </style>
 </head>
 <body>
@@ -815,6 +970,108 @@ document.querySelectorAll('.card,.auth-box').forEach(s=>secObs.observe(s));
 const ss=document.createElement('style');
 ss.textContent='@keyframes sweepAcross{0%{left:-100%;}100%{left:100%;}}';
 document.head.appendChild(ss);
+</script>
+
+
+<script>
+// ══ SHARED EFFECTS ══
+
+// Scroll bar
+const _sb2 = document.createElement('div'); _sb2.id='scroll-bar'; document.body.appendChild(_sb2);
+window.addEventListener('scroll',()=>{
+  const pct=(window.scrollY/(document.documentElement.scrollHeight-window.innerHeight))*100;
+  _sb2.style.width=pct+'%';
+},{passive:true});
+
+// Cursor glow
+const _cg=document.createElement('div');_cg.id='cursor-glow';document.body.appendChild(_cg);
+window.addEventListener('mousemove',e=>{_cg.style.left=e.clientX+'px';_cg.style.top=e.clientY+'px';});
+
+// Cursor trail
+if(window.innerWidth>=768){
+  const trail=[];
+  for(let i=0;i<10;i++){
+    const d=document.createElement('div');d.className='trail-dot';
+    d.style.cssText=`width:${3+i*0.4}px;height:${3+i*0.4}px;background:rgba(200,241,53,${0.5-i*0.04});z-index:9999;`;
+    document.body.appendChild(d);trail.push({el:d,x:0,y:0});
+  }
+  let mx=0,my=0;
+  window.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;},{passive:true});
+  (function tick(){
+    trail[0].x=mx;trail[0].y=my;
+    for(let i=1;i<trail.length;i++){trail[i].x+=(trail[i-1].x-trail[i].x)*0.4;trail[i].y+=(trail[i-1].y-trail[i].y)*0.4;}
+    trail.forEach((d,i)=>{d.el.style.left=d.x+'px';d.el.style.top=d.y+'px';d.el.style.opacity=(1-i/trail.length)*0.6;});
+    requestAnimationFrame(tick);
+  })();
+}
+
+// Scanline
+const _sl=document.createElement('div');_sl.className='scanline';document.body.appendChild(_sl);
+
+// Particle burst
+function createBurst(e){
+  const colors=['#c8f135','#ffffff','#9dbf10','#4f9fff'];
+  for(let i=0;i<10;i++){
+    const p=document.createElement('div');p.className='burst-particle';
+    const angle=(i/10)*Math.PI*2,dist=50+Math.random()*50;
+    p.style.setProperty('--tx',Math.cos(angle)*dist+'px');
+    p.style.setProperty('--ty',Math.sin(angle)*dist+'px');
+    p.style.left=e.clientX+'px';p.style.top=e.clientY+'px';
+    p.style.background=colors[Math.floor(Math.random()*colors.length)];
+    p.style.width=(4+Math.random()*5)+'px';p.style.height=p.style.width;
+    document.body.appendChild(p);setTimeout(()=>p.remove(),800);
+  }
+}
+document.addEventListener('click',e=>{
+  if(e.target.closest('.lime-btn,.lime-solid,.auth-btn,.mark-done,.action-btn')) createBurst(e);
+});
+
+// 3D tilt on cards
+document.querySelectorAll('.card,.req-card,.auth-box').forEach(card=>{
+  card.addEventListener('mousemove',e=>{
+    const r=card.getBoundingClientRect();
+    const x=(e.clientX-r.left)/r.width-0.5;
+    const y=(e.clientY-r.top)/r.height-0.5;
+    card.style.transform=`perspective(800px) rotateX(${-y*5}deg) rotateY(${x*5}deg) translateY(-2px)`;
+  });
+  card.addEventListener('mouseleave',()=>{card.style.transform='';});
+});
+
+// Label glitch on scroll
+const _lobs=new IntersectionObserver(entries=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      const el=entry.target,orig=el.textContent;
+      const chars='ABCDEFGHIJKLMNOPQRSTUVWXYZ#@!$%';
+      let iter=0;
+      const interval=setInterval(()=>{
+        el.textContent=orig.split('').map((c,i)=>i<iter?orig[i]:c===' '?' ':chars[Math.floor(Math.random()*chars.length)]).join('');
+        iter+=0.5;
+        if(iter>=orig.length){el.textContent=orig;clearInterval(interval);}
+      },40);
+      _lobs.unobserve(el);
+    }
+  });
+},{threshold:0.5});
+document.querySelectorAll('.card-label,.label,.sec-label').forEach(el=>_lobs.observe(el));
+
+// Section sweep flash
+const _sobs=new IntersectionObserver(entries=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      const sweep=document.createElement('div');
+      sweep.style.cssText='position:fixed;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(200,241,53,0.03),transparent);pointer-events:none;z-index:50;animation:sweepAcross 0.8s ease forwards;';
+      document.body.appendChild(sweep);setTimeout(()=>sweep.remove(),800);
+    }
+  });
+},{threshold:0.3});
+document.querySelectorAll('.card').forEach(s=>_sobs.observe(s));
+
+// Price/stat number glow on hover
+document.querySelectorAll('.stat-num').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{el.style.transform='scale(1.08)';el.style.transition='all 0.3s';});
+  el.addEventListener('mouseleave',()=>{el.style.transform='';});
+});
 </script>
 
 </body>
