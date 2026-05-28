@@ -2216,5 +2216,112 @@ document.querySelectorAll('.plan-price-num').forEach(el => {
 })();
 </script>
 
+
+<script>
+// ── INDEX PAGE AUTH ──
+const _sb = supabase.createClient(
+  'https://xwnndxatiddupkxcklbz.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh3bm5keGF0aWRkdXBreGNrbGJ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyMTIwNTAsImV4cCI6MjA5NDc4ODA1MH0.jFh--OnV9_ihfkm0bVs9gb1GJP2vn5iqV1_5McTbHPs'
+);
+
+function switchLoginTab(tab) {
+  document.getElementById('lf-login').style.display = tab === 'login' ? 'block' : 'none';
+  document.getElementById('lf-signup').style.display = tab === 'signup' ? 'block' : 'none';
+  document.querySelectorAll('.login-tab').forEach((t, i) => {
+    t.classList.toggle('active', (tab==='login'&&i===0)||(tab==='signup'&&i===1));
+  });
+  document.getElementById('login-msg').className = 'msg';
+}
+
+function showLoginMsg(txt, type) {
+  const el = document.getElementById('login-msg');
+  el.textContent = txt; el.className = 'msg ' + type;
+}
+
+async function doLogin() {
+  const email = document.getElementById('ll-email').value.trim();
+  const pass = document.getElementById('ll-pass').value;
+  if (!email || !pass) { showLoginMsg('Enter your email and password.', 'error'); return; }
+  const btn = document.getElementById('ll-btn');
+  btn.textContent = 'Signing in...'; btn.disabled = true;
+  const { data, error } = await _sb.auth.signInWithPassword({ email, password: pass });
+  if (error) {
+    if (error.message.includes('Email not confirmed')) {
+      showLoginMsg('Please check your email and click the verification link first.', 'error');
+    } else if (error.message.includes('Invalid login')) {
+      showLoginMsg('Wrong email or password. Please try again.', 'error');
+    } else {
+      showLoginMsg(error.message, 'error');
+    }
+    btn.textContent = 'Sign In →'; btn.disabled = false;
+  } else {
+    window.location.href = 'portal.html';
+  }
+}
+
+async function doSignup() {
+  const name = document.getElementById('ls-name').value.trim();
+  const email = document.getElementById('ls-email').value.trim();
+  const pass = document.getElementById('ls-pass').value;
+  if (!name || !email || !pass) { showLoginMsg('Please fill in all fields.', 'error'); return; }
+  if (pass.length < 8) { showLoginMsg('Password must be at least 8 characters.', 'error'); return; }
+  const btn = document.getElementById('ls-btn');
+  btn.textContent = 'Creating...'; btn.disabled = true;
+  const { error } = await _sb.auth.signUp({
+    email, password: pass,
+    options: { data: { full_name: name } }
+  });
+  if (error) {
+    showLoginMsg(error.message, 'error');
+    btn.textContent = 'Create Account →'; btn.disabled = false;
+  } else {
+    // Show email verification message
+    const loginSection = document.getElementById('login');
+    loginSection.innerHTML = `
+      <div style="max-width:480px;margin:0 auto;text-align:center;padding:40px 20px;">
+        <div style="font-size:52px;margin-bottom:16px;">📧</div>
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:24px;color:#fff;margin-bottom:10px;">Check Your Email!</div>
+        <div style="font-size:15px;color:rgba(255,255,255,0.55);line-height:1.7;margin-bottom:24px;">
+          We sent a verification link to<br>
+          <strong style="color:var(--lime);">${email}</strong><br><br>
+          Click the link in that email to verify your account, then come back here to sign in.
+        </div>
+        <div style="background:rgba(200,241,53,0.08);border:1px solid rgba(200,241,53,0.15);border-radius:14px;padding:16px 20px;font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:24px;line-height:1.6;">
+          📌 Don't see it? Check your <strong style="color:#fff;">spam or junk folder</strong>.<br>
+          The email comes from Tech Bros for Yeshua.
+        </div>
+        <a href="portal.html" style="background:linear-gradient(135deg,#c8f135,#d8ff45);color:#080a04;font-family:'Syne',sans-serif;font-weight:700;font-size:15px;padding:14px 32px;border-radius:100px;text-decoration:none;display:inline-block;">
+          Go to Sign In →
+        </a>
+      </div>`;
+  }
+}
+
+async function doForgot() {
+  const email = document.getElementById('ll-email').value.trim();
+  if (!email) { showLoginMsg('Enter your email above first.', 'error'); return; }
+  await _sb.auth.resetPasswordForEmail(email, {
+    redirectTo: 'https://techbros4yeshua.netlify.app/reset.html'
+  });
+  showLoginMsg('Password reset email sent — check your inbox!', 'success');
+}
+
+// Check if already logged in — show portal button instead
+_sb.auth.getSession().then(({ data: { session } }) => {
+  if (session) {
+    const loginSection = document.getElementById('login');
+    if (loginSection) {
+      loginSection.innerHTML = `
+        <div style="text-align:center;padding:60px 20px;">
+          <div style="font-size:48px;margin-bottom:16px;">👋</div>
+          <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:24px;color:#fff;margin-bottom:8px;">Welcome back!</div>
+          <div style="font-size:15px;color:rgba(255,255,255,0.5);margin-bottom:28px;">You're already signed in.</div>
+          <a href="portal.html" style="background:linear-gradient(135deg,#c8f135,#d8ff45);color:#080a04;font-family:'Syne',sans-serif;font-weight:700;font-size:15px;padding:14px 32px;border-radius:100px;text-decoration:none;display:inline-block;">Go to My Portal →</a>
+        </div>`;
+    }
+  }
+});
+</script>
+
 </body>
 </html>

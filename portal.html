@@ -450,7 +450,7 @@ async function doSignup() {
 async function doForgot() {
   const email = document.getElementById('al-email').value.trim();
   if (!email) { showAuthMsg('Enter your email first.','error'); return; }
-  await sb.auth.resetPasswordForEmail(email, {redirectTo:'https://techbros4yeshua.netlify.app/portal.html'});
+  await sb.auth.resetPasswordForEmail(email, {redirectTo:'https://techbros4yeshua.netlify.app/reset.html'});
   showAuthMsg('Password reset email sent!','success');
 }
 
