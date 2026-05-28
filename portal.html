@@ -402,7 +402,16 @@ async function doLogin() {
   if (!email||!pass) { showAuthMsg('Enter your email and password.','error'); return; }
   const btn = document.getElementById('al-btn'); btn.textContent='Signing in...'; btn.disabled=true;
   const {data, error} = await sb.auth.signInWithPassword({email, password:pass});
-  if (error) { showAuthMsg(error.message,'error'); btn.textContent='Sign In →'; btn.disabled=false; }
+  if (error) {
+    if(error.message.includes('Email not confirmed')){
+      showAuthMsg('Please verify your email first — check your inbox for the verification link.','error');
+    } else if(error.message.includes('Invalid login')){
+      showAuthMsg('Wrong email or password. Please try again.','error');
+    } else {
+      showAuthMsg(error.message,'error');
+    }
+    btn.textContent='Sign In →'; btn.disabled=false;
+  }
   else loadPortal(data.user);
 }
 
@@ -415,7 +424,27 @@ async function doSignup() {
   const btn = document.getElementById('as-btn'); btn.textContent='Creating...'; btn.disabled=true;
   const {error} = await sb.auth.signUp({email, password:pass, options:{data:{full_name:name}}});
   if (error) { showAuthMsg(error.message,'error'); btn.textContent='Create Account →'; btn.disabled=false; }
-  else { showAuthMsg('Check your email to confirm your account, then sign in.','success'); btn.textContent='Create Account →'; btn.disabled=false; switchTab('login'); }
+  else {
+    document.getElementById('auth-msg').className = 'msg';
+    // Show email verification screen
+    document.querySelector('.auth-box').innerHTML = `
+      <div style="text-align:center;padding:10px 0;">
+        <div style="font-size:48px;margin-bottom:16px;">📧</div>
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:20px;color:#fff;margin-bottom:8px;">Check Your Email!</div>
+        <div style="font-size:14px;color:var(--mid);line-height:1.7;margin-bottom:20px;">
+          We sent a verification link to<br>
+          <strong style="color:var(--lime);">${document.getElementById('as-email').value.trim()}</strong><br><br>
+          Click the link in that email to verify your account,<br>then come back here to sign in.
+        </div>
+        <div style="background:rgba(200,241,53,0.08);border:1px solid rgba(200,241,53,0.2);border-radius:12px;padding:14px;font-size:13px;color:rgba(255,255,255,0.6);margin-bottom:20px;">
+          📌 Check your spam/junk folder if you don't see it within a minute.
+        </div>
+        <button onclick="location.reload()" style="background:linear-gradient(135deg,#c8f135,#d8ff45);color:#080a04;font-family:'Syne',sans-serif;font-weight:700;font-size:14px;padding:12px 28px;border-radius:100px;border:none;cursor:pointer;">
+          Back to Sign In
+        </button>
+      </div>
+    `;
+  }
 }
 
 async function doForgot() {
@@ -447,7 +476,12 @@ async function loadPortal(user) {
   document.getElementById('auth-screen').style.display='none';
   document.getElementById('portal-screen').style.display='block';
   document.getElementById('p-email-disp').textContent = user.email;
-  await Promise.all([loadOverview(), loadSites(), loadSubscription(), loadRequests()]);
+  // Load overview first for fast display, then rest in background
+  loadOverview();
+  loadSites();
+  loadSubscription();
+  loadRequests();
+  await new Promise(r => setTimeout(r, 100)); // small delay to let UI render
   // Handle URL action
   if (inAction === 'inquiry') setTimeout(()=>showTab('inquiry'), 300);
   else if (inPlan) setTimeout(()=>showTab('inquiry'), 300);
@@ -456,12 +490,28 @@ async function loadPortal(user) {
 async function loadOverview() {
   document.getElementById('ov-loading').style.display='block';
   document.getElementById('ov-content').style.display='none';
+
+  // Timeout after 8 seconds
+  const timeout = setTimeout(() => {
+    document.getElementById('ov-loading').style.display='none';
+    document.getElementById('ov-content').style.display='block';
+    document.getElementById('ov-name').textContent = currentUser.user_metadata?.full_name || '—';
+    document.getElementById('ov-email').textContent = currentUser.email;
+    document.getElementById('ov-status').innerHTML = '<span class="badge active"><span class="badge-dot"></span>Active</span>';
+    document.getElementById('ov-sites').textContent = '0';
+    document.getElementById('ov-plan').textContent = 'None';
+    document.getElementById('ov-reqs').textContent = '0';
+    document.getElementById('ov-billing').textContent = '—';
+  }, 8000);
+
+  try {
   const [pr,sr,subr,rr] = await Promise.all([
     sb.from('profiles').select('*').eq('id',currentUser.id).single(),
     sb.from('sites').select('*').eq('user_id',currentUser.id),
     sb.from('subscriptions').select('*').eq('user_id',currentUser.id).eq('status','active').single(),
     sb.from('edit_requests').select('*').eq('user_id',currentUser.id)
   ]);
+  clearTimeout(timeout);
   const sites=sr.data||[], reqs=rr.data||[], sub=subr.data, profile=pr.data;
   document.getElementById('ov-sites').textContent = sites.length;
   document.getElementById('ov-plan').textContent = sub ? PLANS[sub.plan]?.name||sub.plan : 'None';
@@ -472,6 +522,14 @@ async function loadOverview() {
   document.getElementById('ov-status').innerHTML = '<span class="badge active"><span class="badge-dot"></span>Active</span>';
   document.getElementById('ov-loading').style.display='none';
   document.getElementById('ov-content').style.display='block';
+  } catch(err) {
+    clearTimeout(timeout);
+    document.getElementById('ov-loading').style.display='none';
+    document.getElementById('ov-content').style.display='block';
+    document.getElementById('ov-name').textContent = currentUser.user_metadata?.full_name || '—';
+    document.getElementById('ov-email').textContent = currentUser.email;
+    document.getElementById('ov-status').innerHTML = '<span class="badge active"><span class="badge-dot"></span>Active</span>';
+  }
 }
 
 async function loadSites() {
