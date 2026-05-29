@@ -2301,7 +2301,7 @@ async function doForgot() {
   const email = document.getElementById('ll-email').value.trim();
   if (!email) { showLoginMsg('Enter your email above first.', 'error'); return; }
   await _sb.auth.resetPasswordForEmail(email, {
-    redirectTo: 'https://techbros4yeshua.netlify.app/reset.html'
+    redirectTo: 'https://techbros4yeshua-web-design.netlify.app/reset.html'
   });
   showLoginMsg('Password reset email sent — check your inbox!', 'success');
 }
