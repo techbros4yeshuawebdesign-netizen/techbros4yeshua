@@ -80,17 +80,44 @@ const sb = supabase.createClient(
 
 // Supabase puts the token in the URL hash
 async function init() {
-  // Handle the auth callback from the reset email
-  const { data, error } = await sb.auth.getSession();
+  // Parse token from URL — can be in hash or query string
+  const hash = window.location.hash.substring(1);
+  const query = window.location.search.substring(1);
+  const params = new URLSearchParams(hash || query);
 
-  if (data?.session) {
-    // Valid session from reset link
-    document.getElementById('loading').style.display = 'none';
-    document.getElementById('form').style.display = 'block';
+  const accessToken = params.get('access_token');
+  const refreshToken = params.get('refresh_token');
+  const type = params.get('type');
+  const token = params.get('token') || accessToken;
+
+  if (token && type === 'recovery') {
+    // Set the session using the token
+    try {
+      if (accessToken && refreshToken) {
+        await sb.auth.setSession({ access_token: accessToken, refresh_token: refreshToken });
+      } else if (token) {
+        // Try verifying the OTP token
+        await sb.auth.verifyOtp({ token_hash: token, type: 'recovery' });
+      }
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('form').style.display = 'block';
+    } catch(e) {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('form').style.display = 'block'; // Show form anyway
+    }
+  } else if (accessToken) {
+    try {
+      await sb.auth.setSession({ access_token: accessToken, refresh_token: refreshToken || '' });
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('form').style.display = 'block';
+    } catch(e) {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('form').style.display = 'block';
+    }
   } else {
-    // Check URL hash for tokens
-    const hash = window.location.hash;
-    if (hash && (hash.includes('access_token') || hash.includes('type=recovery'))) {
+    // Check existing session
+    const { data } = await sb.auth.getSession();
+    if (data?.session) {
       document.getElementById('loading').style.display = 'none';
       document.getElementById('form').style.display = 'block';
     } else {
@@ -123,10 +150,11 @@ async function doReset() {
   }
 }
 
-// Listen for auth state change (Supabase fires this when reset link is clicked)
+// Listen for auth state change
 sb.auth.onAuthStateChange((event, session) => {
-  if (event === 'PASSWORD_RECOVERY') {
+  if (event === 'PASSWORD_RECOVERY' || event === 'SIGNED_IN') {
     document.getElementById('loading').style.display = 'none';
+    document.getElementById('invalid').style.display = 'none';
     document.getElementById('form').style.display = 'block';
   }
 });
