@@ -142,6 +142,116 @@ body{font-family:'DM Sans',sans-serif;background:#080a04;color:#fff;min-height:1
 
 @media(max-width:600px){.admin-body{padding:20px;}.top-bar{padding:12px 18px;}.add-site-grid{grid-template-columns:1fr;}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(-10px);}to{opacity:1;transform:translateY(0);}}
+
+/* ── PRICING MANAGEMENT ── */
+.pricing-card {
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  padding: 24px 28px;
+  margin-bottom: 14px;
+  transition: all 0.2s;
+}
+.pricing-card:hover { border-color: rgba(200,241,53,0.2); }
+.pricing-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.pricing-plan-name {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--lime);
+}
+.pricing-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+.price-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.price-field label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+}
+.price-input-wrap {
+  display: flex;
+  align-items: center;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+.price-input-wrap:focus-within { border-color: var(--lime); }
+.price-symbol {
+  padding: 10px 12px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--lime);
+  background: rgba(200,241,53,0.06);
+  border-right: 1px solid rgba(255,255,255,0.08);
+}
+.price-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  padding: 10px 14px;
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+  color: #fff;
+  outline: none;
+  width: 100%;
+}
+.price-input::placeholder { color: rgba(255,255,255,0.2); font-size: 16px; }
+.price-suffix {
+  padding: 10px 12px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.3);
+  white-space: nowrap;
+}
+.save-price-btn {
+  background: var(--lime);
+  color: #080a04;
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  padding: 9px 22px;
+  border-radius: 100px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.save-price-btn:hover { box-shadow: 0 0 20px rgba(200,241,53,0.5); transform: scale(1.03); }
+.price-saved-msg {
+  font-size: 12px;
+  color: var(--lime);
+  margin-left: 10px;
+  display: none;
+}
+.pricing-preview {
+  background: rgba(200,241,53,0.04);
+  border: 1px solid rgba(200,241,53,0.1);
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 13px;
+  color: rgba(255,255,255,0.5);
+  margin-top: 4px;
+}
+.pricing-preview strong { color: #fff; }
+
 </style>
 </head>
 <body>
@@ -183,6 +293,7 @@ body{font-family:'DM Sans',sans-serif;background:#080a04;color:#fff;min-height:1
       <button class="tab" onclick="showTab('clients')">👥 Clients</button>
       <button class="tab" onclick="showTab('sites-mgmt')">🌐 Manage Sites</button>
       <button class="tab" onclick="showTab('stripe-settings')">⚙️ Stripe Links</button>
+      <button class="tab" onclick="showTab('pricing-mgmt')">💰 Pricing</button>
     </div>
 
     <!-- INQUIRIES -->
@@ -243,6 +354,101 @@ body{font-family:'DM Sans',sans-serif;background:#080a04;color:#fff;min-height:1
       </div>
     </div>
 
+  <!-- PRICING MANAGEMENT -->
+    <div id="tab-pricing-mgmt" class="tab-panel">
+      <div class="label">Manage Plan Pricing</div>
+      <p style="font-size:13px;color:var(--mid);margin-bottom:20px;">Update setup fees and monthly rates. Changes apply to new clients — existing subscriptions are not affected.</p>
+
+      <!-- STARTER -->
+      <div class="pricing-card">
+        <div class="pricing-card-header">
+          <div class="pricing-plan-name">Starter</div>
+          <div class="pricing-preview" id="preview-starter">Loading...</div>
+        </div>
+        <div class="pricing-grid">
+          <div class="price-field">
+            <label>One-Time Setup Fee</label>
+            <div class="price-input-wrap">
+              <span class="price-symbol">$</span>
+              <input type="number" class="price-input" id="setup-starter" placeholder="299" min="0">
+              <span class="price-suffix">one-time</span>
+            </div>
+          </div>
+          <div class="price-field">
+            <label>Monthly Subscription</label>
+            <div class="price-input-wrap">
+              <span class="price-symbol">$</span>
+              <input type="number" class="price-input" id="monthly-starter" placeholder="55" min="0">
+              <span class="price-suffix">/month</span>
+            </div>
+          </div>
+        </div>
+        <button class="save-price-btn" onclick="savePricing('starter')">Save Starter Pricing</button>
+        <span class="price-saved-msg" id="saved-starter">✓ Saved!</span>
+      </div>
+
+      <!-- PROFESSIONAL -->
+      <div class="pricing-card">
+        <div class="pricing-card-header">
+          <div class="pricing-plan-name">Professional</div>
+          <div class="pricing-preview" id="preview-professional">Loading...</div>
+        </div>
+        <div class="pricing-grid">
+          <div class="price-field">
+            <label>One-Time Setup Fee</label>
+            <div class="price-input-wrap">
+              <span class="price-symbol">$</span>
+              <input type="number" class="price-input" id="setup-professional" placeholder="599" min="0">
+              <span class="price-suffix">one-time</span>
+            </div>
+          </div>
+          <div class="price-field">
+            <label>Monthly Subscription</label>
+            <div class="price-input-wrap">
+              <span class="price-symbol">$</span>
+              <input type="number" class="price-input" id="monthly-professional" placeholder="85" min="0">
+              <span class="price-suffix">/month</span>
+            </div>
+          </div>
+        </div>
+        <button class="save-price-btn" onclick="savePricing('professional')">Save Professional Pricing</button>
+        <span class="price-saved-msg" id="saved-professional">✓ Saved!</span>
+      </div>
+
+      <!-- PREMIUM -->
+      <div class="pricing-card">
+        <div class="pricing-card-header">
+          <div class="pricing-plan-name">Premium</div>
+          <div class="pricing-preview" id="preview-premium">Loading...</div>
+        </div>
+        <div class="pricing-grid">
+          <div class="price-field">
+            <label>One-Time Setup Fee</label>
+            <div class="price-input-wrap">
+              <span class="price-symbol">$</span>
+              <input type="number" class="price-input" id="setup-premium" placeholder="1200" min="0">
+              <span class="price-suffix">one-time</span>
+            </div>
+          </div>
+          <div class="price-field">
+            <label>Monthly Subscription</label>
+            <div class="price-input-wrap">
+              <span class="price-symbol">$</span>
+              <input type="number" class="price-input" id="monthly-premium" placeholder="150" min="0">
+              <span class="price-suffix">/month</span>
+            </div>
+          </div>
+        </div>
+        <button class="save-price-btn" onclick="savePricing('premium')">Save Premium Pricing</button>
+        <span class="price-saved-msg" id="saved-premium">✓ Saved!</span>
+      </div>
+
+      <div class="req-card" style="margin-top:8px;">
+        <div class="label">Note</div>
+        <p style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.6;">Pricing is saved locally and synced to the landing page automatically. When you update Stripe, create new payment links and paste them in the <strong style="color:#fff;">⚙️ Stripe Links</strong> tab.</p>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -275,7 +481,7 @@ function showTab(name){
   document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('tab-'+name).classList.add('active');
-  const tabs=['inquiries','edit-requests','clients','sites-mgmt','stripe-settings'];
+  const tabs=['inquiries','edit-requests','clients','sites-mgmt','stripe-settings','pricing-mgmt'];
   const idx=tabs.indexOf(name);
   if(idx>-1)document.querySelectorAll('.tab')[idx].classList.add('active');
   if(name==='sites-mgmt')loadSitesMgmt();
@@ -567,6 +773,59 @@ function showAdminToast(msg, color) {
   t.style.cssText = `position:fixed;top:70px;right:20px;background:${c.bg};color:${c.text};font-family:'Syne',sans-serif;font-weight:700;font-size:13px;padding:12px 20px;border-radius:12px;z-index:999;box-shadow:0 4px 20px rgba(0,0,0,0.5);border:1px solid ${c.text}33;max-width:300px;animation:fadeUp 0.3s both;`;
   document.body.appendChild(t);
   setTimeout(()=>t.remove(), 5000);
+}
+
+
+// ── PRICING MANAGEMENT ──
+const DEFAULT_PRICING = {
+  starter:      { setup: 299,  monthly: 55  },
+  professional: { setup: 599,  monthly: 85  },
+  premium:      { setup: 1200, monthly: 150 }
+};
+
+function getPricing() {
+  try { return JSON.parse(localStorage.getItem('tb4y_pricing')) || DEFAULT_PRICING; }
+  catch { return DEFAULT_PRICING; }
+}
+
+function savePricing(plan) {
+  const setup   = parseInt(document.getElementById('setup-'+plan).value)   || DEFAULT_PRICING[plan].setup;
+  const monthly = parseInt(document.getElementById('monthly-'+plan).value) || DEFAULT_PRICING[plan].monthly;
+  const pricing = getPricing();
+  pricing[plan] = { setup, monthly };
+  localStorage.setItem('tb4y_pricing', JSON.stringify(pricing));
+  updatePreview(plan);
+  const msg = document.getElementById('saved-'+plan);
+  msg.style.display = 'inline';
+  setTimeout(() => msg.style.display = 'none', 2500);
+}
+
+function updatePreview(plan) {
+  const pricing = getPricing();
+  const p = pricing[plan];
+  const names = { starter:'Starter', professional:'Professional', premium:'Premium' };
+  const el = document.getElementById('preview-'+plan);
+  if (el) el.innerHTML = `<strong>$${p.setup}</strong> setup + <strong>$${p.monthly}/mo</strong>`;
+}
+
+function loadPricingInputs() {
+  const pricing = getPricing();
+  ['starter','professional','premium'].forEach(plan => {
+    const p = pricing[plan];
+    const setupEl   = document.getElementById('setup-'+plan);
+    const monthlyEl = document.getElementById('monthly-'+plan);
+    if (setupEl)   setupEl.value   = p.setup;
+    if (monthlyEl) monthlyEl.value = p.monthly;
+    updatePreview(plan);
+  });
+}
+
+// Override showTab to load pricing
+const _origShowTab = showTab;
+function showTab(name) {
+  _origShowTab(name);
+  if (name === 'pricing-mgmt') loadPricingInputs();
+  if (name === 'stripe-settings') loadStripeInputs();
 }
 
 // ── INIT ──

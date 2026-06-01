@@ -2323,5 +2323,54 @@ _sb.auth.getSession().then(({ data: { session } }) => {
 });
 </script>
 
+
+<script>
+// ── DYNAMIC PRICING FROM ADMIN ──
+(function() {
+  const DEFAULT = {
+    starter:      { setup: 299,  monthly: 55  },
+    professional: { setup: 599,  monthly: 85  },
+    premium:      { setup: 1200, monthly: 150 }
+  };
+
+  function getPricing() {
+    try { return JSON.parse(localStorage.getItem('tb4y_pricing')) || DEFAULT; }
+    catch { return DEFAULT; }
+  }
+
+  const pricing = getPricing();
+
+  // Update plan price displays
+  const maps = {
+    starter: { numEl: '.plan:nth-of-type(1) .plan-price-num', btnEl: '.plan:nth-of-type(1) .plan-btn' },
+    professional: { numEl: '.plan:nth-of-type(2) .plan-price-num', btnEl: '.plan:nth-of-type(2) .plan-btn' },
+    premium: { numEl: '.plan:nth-of-type(3) .plan-price-num', btnEl: '.plan:nth-of-type(3) .plan-btn' },
+  };
+
+  ['starter','professional','premium'].forEach(plan => {
+    const p = pricing[plan];
+
+    // Update monthly price number
+    document.querySelectorAll('.plan').forEach((card, i) => {
+      const planNames = ['starter','professional','premium'];
+      if (planNames[i] === plan) {
+        const numEl = card.querySelector('.plan-price-num');
+        if (numEl) numEl.textContent = '$' + p.monthly;
+
+        const descEl = card.querySelector('.plan-desc');
+        if (descEl) {
+          descEl.textContent = descEl.textContent.replace(/\$\d+ one-time setup/, '$' + p.setup + ' one-time setup');
+        }
+
+        const btn = card.querySelector('.lime-solid, .lime-btn, [onclick*="openPlanModal"]');
+        if (btn) {
+          btn.textContent = '$' + p.setup + ' Setup + $' + p.monthly + '/mo →';
+        }
+      }
+    });
+  });
+})();
+</script>
+
 </body>
 </html>
