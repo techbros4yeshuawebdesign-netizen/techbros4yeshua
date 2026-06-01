@@ -141,6 +141,7 @@ body{font-family:'DM Sans',sans-serif;background:#080a04;color:#fff;min-height:1
 .step-text strong{color:#fff;}
 
 @media(max-width:600px){.admin-body{padding:20px;}.top-bar{padding:12px 18px;}.add-site-grid{grid-template-columns:1fr;}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(-10px);}to{opacity:1;transform:translateY(0);}}
 </style>
 </head>
 <body>
@@ -290,49 +291,53 @@ async function loadAdmin(){
 
 // ── INQUIRIES ──
 async function loadInquiries(){
-  const {data}=await sb.from('contact_requests').select('*, profiles(full_name,email)').order('created_at',{ascending:false});
-  document.getElementById('s-inquiries').textContent=data?.length||0;
-  const c=document.getElementById('inquiries-list');
+  const {data} = await sb.from('edit_requests')
+    .select('*, profiles(full_name,email)')
+    .eq('status','inquiry')
+    .order('created_at',{ascending:false});
+  
+  document.getElementById('s-inquiries').textContent = data?.length||0;
+  const c = document.getElementById('inquiries-list');
   if(!data||!data.length){c.innerHTML='<div class="empty">No inquiries yet.</div>';return;}
 
-  c.innerHTML=data.map(r=>{
-    const name=r.profiles?.full_name||r.first_name+' '+r.last_name||'Unknown';
-    const email=r.profiles?.email||r.email||'—';
-    const initials=(name.trim().split(' ').map(w=>w[0]||'').join('').substring(0,2)||'?').toUpperCase();
+  c.innerHTML = data.map(r=>{
+    const name = r.profiles?.full_name||'Unknown';
+    const email = r.profiles?.email||'—';
+    const initials = (name.trim().split(' ').map(w=>w[0]||'').join('').substring(0,2)||'?').toUpperCase();
     return `
     <div class="account-card" id="inq-${r.id}">
       <div class="account-header">
         <div class="account-avatar">${initials}</div>
         <div style="flex:1;min-width:0;">
           <div class="account-name">${name}</div>
-          <div class="account-email">📧 <a href="mailto:${email}" style="color:var(--lime);text-decoration:none;">${email}</a>${r.phone?` &nbsp;·&nbsp; 📞 ${r.phone}`:''}</div>
-          <div class="account-meta">Submitted ${fmtShort(r.created_at)} &nbsp;·&nbsp; ${r.plan||'Plan not specified'}</div>
+          <div class="account-email">📧 <a href="mailto:${email}" style="color:var(--lime);text-decoration:none;">${email}</a></div>
+          <div class="account-meta">Submitted ${fmtShort(r.created_at)}</div>
         </div>
-        <span class="badge ${r.payment_sent?'payment-sent':r.status==='pending'?'pending':'new'}">
-          <span class="badge-dot"></span>
-          ${r.payment_sent?'Payment Sent':r.status||'Pending'}
-        </span>
+        <span class="badge pending"><span class="badge-dot"></span>New Inquiry</span>
       </div>
       <div class="inquiry-box">
-        <div class="inquiry-field"><span class="inquiry-label">Business</span><span class="inquiry-value">${r.business||'—'}</span></div>
-        <div class="inquiry-field"><span class="inquiry-label">Plan</span><span class="inquiry-value">${r.plan||'Not sure yet'}</span></div>
-        <div class="inquiry-field"><span class="inquiry-label">Message</span><span class="inquiry-value" style="white-space:pre-wrap;">${r.message||'—'}</span></div>
+        <div class="inquiry-field"><span class="inquiry-label">Details</span><span class="inquiry-value" style="white-space:pre-wrap;">${r.message||'—'}</span></div>
       </div>
       <div class="action-row">
         <select class="plan-select" id="plan-sel-${r.id}">
           <option value="">Select plan to offer...</option>
-          <option value="starter" ${r.plan_key==='starter'?'selected':''}>Starter — $55/mo</option>
-          <option value="professional" ${r.plan_key==='professional'?'selected':''}>Professional — $85/mo</option>
-          <option value="premium" ${r.plan_key==='premium'?'selected':''}>Premium — $150/mo</option>
+          <option value="starter">Starter — $55/mo</option>
+          <option value="professional">Professional — $85/mo</option>
+          <option value="premium">Premium — $150/mo</option>
         </select>
-        <button class="pay-btn ${r.payment_sent?'sent':''}" id="pay-btn-${r.id}"
-          onclick="sendPaymentLink('${r.id}','${email}','${name.split(' ')[0]}')"
-          ${r.payment_sent?'disabled':''}>
-          ${r.payment_sent?'✓ Link Sent':'Send Payment Link →'}
+        <button class="pay-btn" id="pay-btn-${r.id}"
+          onclick="sendPaymentLink('${r.id}','${email}','${name.split(' ')[0]}')">
+          Send Payment Link →
         </button>
-        <button onclick="updateInquiryStatus('${r.id}','declined')" style="padding:6px 14px;border-radius:100px;font-size:11px;font-family:'Syne',sans-serif;font-weight:600;cursor:pointer;border:1px solid rgba(220,50,50,0.2);background:rgba(220,50,50,0.05);color:#ff8080;">Decline</button>
+        <button onclick="markInquiryDone('${r.id}')" style="padding:6px 14px;border-radius:100px;font-size:11px;font-family:'Syne',sans-serif;font-weight:600;cursor:pointer;border:1px solid rgba(80,200,80,0.2);background:rgba(80,200,80,0.05);color:#6dc86d;">Mark Done</button>
       </div>
     </div>`}).join('');
+}
+
+async function markInquiryDone(id){
+  await sb.from('edit_requests').update({status:'done'}).eq('id',id);
+  loadInquiries();
+  loadEditRequests();
 }
 
 async function sendPaymentLink(inquiryId,email,firstName){
@@ -342,7 +347,7 @@ async function sendPaymentLink(inquiryId,email,firstName){
   const stripeLink=links[planKey];
   if(!stripeLink||!stripeLink.startsWith('http')){alert('No Stripe link saved for this plan. Go to ⚙️ Stripe Links tab first.');return;}
   const planNames={starter:'Starter ($299 setup + $55/mo)',professional:'Professional ($599 setup + $85/mo)',premium:'Premium ($1,200 setup + $150/mo)'};
-  await sb.from('contact_requests').update({plan_key:planKey,payment_sent:true,status:'payment-sent'}).eq('id',inquiryId);
+  await sb.from('edit_requests').update({status:'payment-sent'}).eq('id',inquiryId);
   const subject=encodeURIComponent('Your Tech Bros for Yeshua Website Payment Link');
   const body=encodeURIComponent(`Hi ${firstName},\n\nThank you for your interest! Here is your payment link for the ${planNames[planKey]} plan:\n\n${stripeLink}\n\nOnce payment is complete, you'll have full access to your client portal.\n\nGod bless,\nNathan\nTech Bros for Yeshua`);
   window.open(`mailto:${email}?subject=${subject}&body=${body}`);
@@ -521,10 +526,47 @@ function loadStripeInputs(){const links=getStripeLinks();if(links.starter)docume
 
 // ── REALTIME ──
 function setupRealtime(){
-  sb.channel('admin-inquiries').on('postgres_changes',{event:'INSERT',schema:'public',table:'contact_requests'},()=>{loadInquiries();}).subscribe();
-  sb.channel('admin-requests').on('postgres_changes',{event:'*',schema:'public',table:'edit_requests'},()=>{loadEditRequests();}).subscribe();
-  sb.channel('admin-profiles').on('postgres_changes',{event:'*',schema:'public',table:'profiles'},()=>{loadClients();}).subscribe();
-  sb.channel('admin-sites').on('postgres_changes',{event:'*',schema:'public',table:'sites'},()=>{if(document.getElementById('tab-sites-mgmt').classList.contains('active'))loadSitesMgmt();loadClients();}).subscribe();
+  // New inquiry submitted
+  sb.channel('admin-inquiries').on('postgres_changes',{event:'INSERT',schema:'public',table:'edit_requests',filter:'status=eq.inquiry'},(payload)=>{
+    showAdminToast('📋 New inquiry from ' + (payload.new.business||payload.new.email||'a client') + '!', 'lime');
+    loadInquiries();
+  }).subscribe();
+
+  // Edit request submitted
+  sb.channel('admin-requests').on('postgres_changes',{event:'*',schema:'public',table:'edit_requests'},(payload)=>{
+    if(payload.eventType==='INSERT') showAdminToast('✏️ New edit request from a client!', 'lime');
+    loadEditRequests();
+  }).subscribe();
+
+  // New client signed up
+  sb.channel('admin-profiles').on('postgres_changes',{event:'INSERT',schema:'public',table:'profiles'},(payload)=>{
+    showAdminToast('👤 New client account: ' + (payload.new.full_name||payload.new.email||'Unknown'), 'blue');
+    loadClients();
+    // Update stats
+    document.getElementById('s-clients').textContent = parseInt(document.getElementById('s-clients').textContent||'0') + 1;
+  }).subscribe();
+
+  // Profile updated
+  sb.channel('admin-profiles-update').on('postgres_changes',{event:'UPDATE',schema:'public',table:'profiles'},()=>{loadClients();}).subscribe();
+
+  // Sites updated
+  sb.channel('admin-sites').on('postgres_changes',{event:'*',schema:'public',table:'sites'},()=>{
+    if(document.getElementById('tab-sites-mgmt').classList.contains('active'))loadSitesMgmt();
+    loadClients();
+  }).subscribe();
+}
+
+function showAdminToast(msg, color) {
+  const colors = {
+    lime: { bg:'#1a3a1a', text:'#c8f135' },
+    blue: { bg:'#0d1a2e', text:'#4f9fff' },
+  };
+  const c = colors[color] || colors.lime;
+  const t = document.createElement('div');
+  t.textContent = msg;
+  t.style.cssText = `position:fixed;top:70px;right:20px;background:${c.bg};color:${c.text};font-family:'Syne',sans-serif;font-weight:700;font-size:13px;padding:12px 20px;border-radius:12px;z-index:999;box-shadow:0 4px 20px rgba(0,0,0,0.5);border:1px solid ${c.text}33;max-width:300px;animation:fadeUp 0.3s both;`;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(), 5000);
 }
 
 // ── INIT ──
