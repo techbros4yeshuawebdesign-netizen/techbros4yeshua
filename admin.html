@@ -480,12 +480,14 @@ async function doSignout(){
 function showTab(name){
   document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.getElementById('tab-'+name).classList.add('active');
+  const panel = document.getElementById('tab-'+name);
+  if(panel) panel.classList.add('active');
   const tabs=['inquiries','edit-requests','clients','sites-mgmt','stripe-settings','pricing-mgmt'];
   const idx=tabs.indexOf(name);
-  if(idx>-1)document.querySelectorAll('.tab')[idx].classList.add('active');
-  if(name==='sites-mgmt')loadSitesMgmt();
-  if(name==='stripe-settings')loadStripeInputs();
+  if(idx>-1)document.querySelectorAll('.tab')[idx]?.classList.add('active');
+  if(name==='sites-mgmt') loadSitesMgmt();
+  if(name==='stripe-settings') loadStripeInputs();
+  if(name==='pricing-mgmt') loadPricingInputs();
 }
 
 async function loadAdmin(){
@@ -820,13 +822,6 @@ function loadPricingInputs() {
   });
 }
 
-// Override showTab to load pricing
-const _origShowTab = showTab;
-function showTab(name) {
-  _origShowTab(name);
-  if (name === 'pricing-mgmt') loadPricingInputs();
-  if (name === 'stripe-settings') loadStripeInputs();
-}
 
 // ── INIT ──
 sb.auth.getSession().then(({data:{session}})=>{if(session)loadAdmin();});
