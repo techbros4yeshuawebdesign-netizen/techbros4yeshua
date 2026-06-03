@@ -2372,5 +2372,67 @@ _sb.auth.getSession().then(({ data: { session } }) => {
 })();
 </script>
 
+
+<script>
+// ── PLAN SELECTION & SUBSCRIPTION FLOW ──
+const STRIPE_LINKS = JSON.parse(localStorage.getItem('stripe_links') || '{}');
+
+const PLAN_DETAILS = {
+  starter: {
+    name: 'Starter',
+    setup: 299, monthly: 55,
+    features: ['Up to 5 pages','Mobile responsive','Contact form','Basic SEO','Hosting + SSL','2 edits/month','1 month free edits']
+  },
+  professional: {
+    name: 'Professional',
+    setup: 599, monthly: 85,
+    features: ['Up to 10 pages','Mobile responsive','Live chat + contact form','Advanced SEO','Hosting + SSL','4 edits/month','1 year free edits','Payment processing']
+  },
+  premium: {
+    name: 'Premium',
+    setup: 1200, monthly: 150,
+    features: ['Unlimited pages','Mobile responsive','Full feature set','Advanced SEO + analytics','Hosting + SSL','Unlimited edits','Payments + subscriptions']
+  }
+};
+
+function openPlanModal(planKey, planLabel) {
+  const plan = PLAN_DETAILS[planKey];
+  if (!plan) { window.location.href = 'portal.html?plan=' + planKey; return; }
+
+  // Get saved pricing from admin if available
+  try {
+    const saved = JSON.parse(localStorage.getItem('tb4y_pricing') || '{}');
+    if (saved[planKey]) { plan.setup = saved[planKey].setup; plan.monthly = saved[planKey].monthly; }
+  } catch(e) {}
+
+  const stripeLink = STRIPE_LINKS[planKey];
+
+  const modal = document.createElement('div');
+  modal.id = 'plan-modal-overlay';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(8px);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;';
+  modal.innerHTML = `
+    <div style="background:#0e100a;border:1.5px solid rgba(200,241,53,0.25);border-radius:24px;padding:36px 32px;max-width:460px;width:100%;position:relative;max-height:90vh;overflow-y:auto;">
+      <button onclick="document.getElementById('plan-modal-overlay').remove()" style="position:absolute;top:14px;right:16px;background:none;border:none;color:rgba(255,255,255,0.4);font-size:22px;cursor:pointer;">✕</button>
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--lime);margin-bottom:8px;">${plan.name} Plan</div>
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:28px;color:#fff;margin-bottom:4px;">$${plan.setup} <span style="font-size:15px;color:rgba(255,255,255,0.4);font-weight:400;">one-time setup</span></div>
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:20px;color:var(--lime);margin-bottom:20px;">+ $${plan.monthly}<span style="font-size:14px;color:rgba(255,255,255,0.4);font-weight:400;">/month</span></div>
+      <ul style="list-style:none;display:flex;flex-direction:column;gap:8px;margin-bottom:24px;">
+        ${plan.features.map(f => `<li style="font-size:13px;color:rgba(255,255,255,0.65);display:flex;align-items:center;gap:8px;"><span style="color:var(--lime);font-weight:700;">✓</span>${f}</li>`).join('')}
+      </ul>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        ${stripeLink
+          ? `<a href="${stripeLink}" target="_blank" style="display:block;text-align:center;background:linear-gradient(135deg,#c8f135,#d8ff45);color:#080a04;font-family:'Syne',sans-serif;font-weight:700;font-size:15px;padding:15px;border-radius:100px;text-decoration:none;">Pay Now — Subscribe →</a>`
+          : `<a href="portal.html?action=inquiry&plan=${planKey}" style="display:block;text-align:center;background:linear-gradient(135deg,#c8f135,#d8ff45);color:#080a04;font-family:'Syne',sans-serif;font-weight:700;font-size:15px;padding:15px;border-radius:100px;text-decoration:none;">Get Started — Request Prototype →</a>`
+        }
+        <a href="portal.html?action=inquiry&plan=${planKey}" style="display:block;text-align:center;background:rgba(200,241,53,0.08);color:var(--lime);font-family:'Syne',sans-serif;font-weight:600;font-size:13px;padding:12px;border-radius:100px;text-decoration:none;border:1px solid rgba(200,241,53,0.2);">Get a Free Prototype First</a>
+      </div>
+      <p style="font-size:11px;color:rgba(255,255,255,0.2);text-align:center;margin-top:14px;">Secure payment via Stripe · Cancel anytime · No hidden fees</p>
+    </div>`;
+
+  document.body.appendChild(modal);
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+}
+</script>
+
 </body>
 </html>
