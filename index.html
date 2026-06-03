@@ -1634,7 +1634,7 @@ input:focus, select:focus, textarea:focus {
           <li class="feature-item feature-no">Payment processing</li>
           <li class="feature-item feature-no">Unlimited edits</li>
         </ul>
-        <button class="plan-btn" onclick="openPlanModal('starter','Starter — $299 setup + $55/mo')">$299 Setup + $55/mo →</button>
+        <button class="plan-btn" onclick="window.location.href='portal.html?action=inquiry&plan=starter'">$299 Setup + $55/mo →</button>
         <p class="plan-secure">One-time setup fee · Secured by Stripe</p>
       </div>
 
@@ -1653,7 +1653,7 @@ input:focus, select:focus, textarea:focus {
           <li class="feature-item">Payment processing</li>
           <li class="feature-item feature-no">Unlimited edits</li>
         </ul>
-        <button class="plan-btn" onclick="openPlanModal('professional','Professional — $599 setup + $85/mo')">$599 Setup + $85/mo →</button>
+        <button class="plan-btn" onclick="window.location.href='portal.html?action=inquiry&plan=professional'">$599 Setup + $85/mo →</button>
         <p class="plan-secure">Secured by Stripe · Cancel anytime</p>
       </div>
 
@@ -1672,7 +1672,7 @@ input:focus, select:focus, textarea:focus {
           <li class="feature-item">Payment processing</li>
           <li class="feature-item">Subscription billing management</li>
         </ul>
-        <button class="plan-btn" onclick="openPlanModal('premium','Premium — $1,200 setup + $150/mo')">$1,200 Setup + $150/mo →</button>
+        <button class="plan-btn" onclick="window.location.href='portal.html?action=inquiry&plan=premium'">$1,200 Setup + $150/mo →</button>
         <p class="plan-secure">Secured by Stripe · Cancel anytime</p>
       </div>
 
@@ -2324,53 +2324,7 @@ _sb.auth.getSession().then(({ data: { session } }) => {
 </script>
 
 
-<script>
-// ── DYNAMIC PRICING FROM ADMIN ──
-(function() {
-  const DEFAULT = {
-    starter:      { setup: 299,  monthly: 55  },
-    professional: { setup: 599,  monthly: 85  },
-    premium:      { setup: 1200, monthly: 150 }
-  };
 
-  function getPricing() {
-    try { return JSON.parse(localStorage.getItem('tb4y_pricing')) || DEFAULT; }
-    catch { return DEFAULT; }
-  }
-
-  const pricing = getPricing();
-
-  // Update plan price displays
-  const maps = {
-    starter: { numEl: '.plan:nth-of-type(1) .plan-price-num', btnEl: '.plan:nth-of-type(1) .plan-btn' },
-    professional: { numEl: '.plan:nth-of-type(2) .plan-price-num', btnEl: '.plan:nth-of-type(2) .plan-btn' },
-    premium: { numEl: '.plan:nth-of-type(3) .plan-price-num', btnEl: '.plan:nth-of-type(3) .plan-btn' },
-  };
-
-  ['starter','professional','premium'].forEach(plan => {
-    const p = pricing[plan];
-
-    // Update monthly price number
-    document.querySelectorAll('.plan').forEach((card, i) => {
-      const planNames = ['starter','professional','premium'];
-      if (planNames[i] === plan) {
-        const numEl = card.querySelector('.plan-price-num');
-        if (numEl) numEl.textContent = '$' + p.monthly;
-
-        const descEl = card.querySelector('.plan-desc');
-        if (descEl) {
-          descEl.textContent = descEl.textContent.replace(/\$\d+ one-time setup/, '$' + p.setup + ' one-time setup');
-        }
-
-        const btn = card.querySelector('.lime-solid, .lime-btn, [onclick*="openPlanModal"]');
-        if (btn) {
-          btn.textContent = '$' + p.setup + ' Setup + $' + p.monthly + '/mo →';
-        }
-      }
-    });
-  });
-})();
-</script>
 
 
 <script>
