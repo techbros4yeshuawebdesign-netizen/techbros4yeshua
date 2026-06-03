@@ -680,7 +680,7 @@ async function loadSitesMgmt(){
         <div>
           <div class="site-name">${s.site_name} <span id="lbl-${s.id}" style="font-size:10px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:2px 10px;border-radius:100px;background:${s.status==='active'?'rgba(200,241,53,0.12)':s.status==='demo'?'rgba(255,180,0,0.12)':'rgba(220,50,50,0.12)'};color:${s.status==='active'?'var(--lime)':s.status==='demo'?'#ffb400':'#ff8080'};">${s.status==='active'?'🟢 Live':s.status==='demo'?'🔧 Demo':'⏸ Paused'}</span></div>
           <div class="site-url">${s.site_url?`<a href="${s.site_url}" target="_blank">${s.site_url}</a>`:'URL pending'}</div>
-          <div style="font-size:12px;color:var(--mid);margin-top:3px;">👤 ${s.profiles?.full_name||s.profiles?.email||'—'} &nbsp;·&nbsp; ${s.pages||1} pages &nbsp;·&nbsp; Added ${fmtShort(s.created_at)}</div>
+          <div style="font-size:12px;color:var(--mid);margin-top:3px;">👤 ${s.profiles?.full_name||s.profiles?.email||'—'} &nbsp;·&nbsp; ${s.pages||1} pages &nbsp;·&nbsp; Added ${fmtShort(s.created_at)}${s.approval_deadline&&s.status==='demo'?` &nbsp;·&nbsp; ⏰ Approval deadline: <strong style="color:#ffb400;">${fmtShort(s.approval_deadline)}</strong>`:''}</div>
         </div>
         <div style="display:flex;gap:6px;flex-wrap:wrap;flex-shrink:0;">
           <button onclick="updateSiteStatus('${s.id}','demo')" class="status-btn demo ${s.status==='demo'?'active':''}">🔧 Demo</button>
@@ -699,7 +699,10 @@ async function addSite(){
   const url=document.getElementById('site-url-add').value.trim();
   const pages=parseInt(document.getElementById('site-pages-add').value)||1;
   if(!userId||!name){alert('Please select a client and enter a site name.');return;}
-  await sb.from('sites').insert({user_id:userId,site_name:name,site_url:url||null,pages,status:'demo'});
+  // Set 7-day approval deadline from today
+  const deadline = new Date();
+  deadline.setDate(deadline.getDate() + 7);
+  await sb.from('sites').insert({user_id:userId,site_name:name,site_url:url||null,pages,status:'demo',approval_deadline:deadline.toISOString()});
   document.getElementById('site-name-add').value='';document.getElementById('site-url-add').value='';document.getElementById('site-pages-add').value='';document.getElementById('site-client-id').value='';
   const msg=document.getElementById('add-site-msg');msg.style.display='inline';setTimeout(()=>msg.style.display='none',3000);
   loadSitesMgmt();
