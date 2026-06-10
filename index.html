@@ -1484,6 +1484,74 @@ input:focus, select:focus, textarea:focus {
 
 /* Scroll reveal observer */
 
+
+/* ── BUYOUT / MONTHLY TOGGLE ── */
+.pricing-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 100px;
+  padding: 4px;
+  margin: 0 auto 36px;
+  width: fit-content;
+}
+.toggle-btn {
+  padding: 9px 22px;
+  border-radius: 100px;
+  font-family: 'Syne', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: rgba(255,255,255,0.4);
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+.toggle-btn.active {
+  background: var(--lime);
+  color: #080a04;
+  box-shadow: 0 0 20px rgba(200,241,53,0.4);
+}
+.buyout-badge {
+  display: inline-block;
+  background: rgba(200,241,53,0.15);
+  color: var(--lime);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 100px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+.plan-price-original {
+  font-size: 13px;
+  color: rgba(255,255,255,0.3);
+  text-decoration: line-through;
+  margin-bottom: 2px;
+}
+.plan-buyout-note {
+  font-size: 12px;
+  color: rgba(255,255,255,0.4);
+  margin-top: 4px;
+  line-height: 1.4;
+}
+.plan-savings {
+  display: inline-block;
+  background: rgba(200,241,53,0.1);
+  color: var(--lime);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 100px;
+  margin-top: 6px;
+}
+
 </style>
 </head>
 <body>
@@ -1634,14 +1702,18 @@ input:focus, select:focus, textarea:focus {
           <li class="feature-item feature-no">Payment processing</li>
           <li class="feature-item feature-no">Unlimited edits</li>
         </ul>
-        <button class="plan-btn" onclick="window.location.href='portal.html?action=inquiry&plan=starter'">$299 Setup + $55/mo →</button>
+        <button class="plan-btn" onclick="window.location.href=getPlanUrl('starter')">$299 Setup + $55/mo →</button>
         <p class="plan-secure">One-time setup fee · Secured by Stripe</p>
       </div>
 
       <div class="plan featured reveal"><div class="scan-line" style="animation-delay:-1s;"></div>
         <div class="plan-badge">Most Popular</div>
         <div class="plan-name">Professional</div>
-        <div class="plan-price"><div class="plan-price-num">$85</div><div class="plan-price-mo">/mo</div></div>
+        <div class="plan-price" id="price-professional">
+          <div class="plan-price-num" id="price-num-professional">$85</div>
+          <div class="plan-price-mo" id="price-mo-professional">/mo</div>
+        </div>
+        <div id="price-note-professional" class="plan-buyout-note" style="display:none;"></div>
         <div class="plan-desc">$599 one-time setup. For growing businesses that need more pages, more features, and payment ability.</div>
         <ul class="features-list">
           <li class="feature-item">Up to 10 pages</li>
@@ -1653,7 +1725,7 @@ input:focus, select:focus, textarea:focus {
           <li class="feature-item">Payment processing</li>
           <li class="feature-item feature-no">Unlimited edits</li>
         </ul>
-        <button class="plan-btn" onclick="window.location.href='portal.html?action=inquiry&plan=professional'">$599 Setup + $85/mo →</button>
+        <button class="plan-btn" onclick="window.location.href=getPlanUrl('professional')">$599 Setup + $85/mo →</button>
         <p class="plan-secure">Secured by Stripe · Cancel anytime</p>
       </div>
 
@@ -1672,7 +1744,7 @@ input:focus, select:focus, textarea:focus {
           <li class="feature-item">Payment processing</li>
           <li class="feature-item">Subscription billing management</li>
         </ul>
-        <button class="plan-btn" onclick="window.location.href='portal.html?action=inquiry&plan=premium'">$1,200 Setup + $150/mo →</button>
+        <button class="plan-btn" onclick="window.location.href=getPlanUrl('premium')">$1,200 Setup + $150/mo →</button>
         <p class="plan-secure">Secured by Stripe · Cancel anytime</p>
       </div>
 
@@ -2386,6 +2458,77 @@ function openPlanModal(planKey, planLabel) {
   document.body.appendChild(modal);
   modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
 }
+</script>
+
+
+<script>
+// ── PRICING MODE TOGGLE ──
+const PRICING_DATA = {
+  starter:      { setup: 299,  monthly: 55,  buyout: 1320 },
+  professional: { setup: 599,  monthly: 85,  buyout: 2040 },
+  premium:      { setup: 1200, monthly: 150, buyout: 3600 }
+};
+
+// Load saved pricing from admin
+try {
+  const saved = JSON.parse(localStorage.getItem('tb4y_pricing') || '{}');
+  Object.keys(saved).forEach(plan => {
+    if (PRICING_DATA[plan]) {
+      PRICING_DATA[plan].setup   = saved[plan].setup;
+      PRICING_DATA[plan].monthly = saved[plan].monthly;
+      PRICING_DATA[plan].buyout  = saved[plan].monthly * 24;
+    }
+  });
+} catch(e) {}
+
+let currentMode = 'monthly';
+
+function setPricingMode(mode) {
+  currentMode = mode;
+
+  // Update toggle buttons
+  document.getElementById('toggle-monthly').classList.toggle('active', mode === 'monthly');
+  document.getElementById('toggle-buyout').classList.toggle('active', mode === 'buyout');
+
+  ['starter','professional','premium'].forEach(plan => {
+    const p = PRICING_DATA[plan];
+    const numEl  = document.getElementById('price-num-' + plan);
+    const moEl   = document.getElementById('price-mo-' + plan);
+    const noteEl = document.getElementById('price-note-' + plan);
+    const btnEl  = document.querySelector(`[onclick*="${plan}"]`);
+
+    if (!numEl) return;
+
+    if (mode === 'monthly') {
+      numEl.textContent = '$' + p.monthly;
+      moEl.style.display = 'block';
+      moEl.textContent = '/mo';
+      if (noteEl) { noteEl.style.display = 'block'; noteEl.innerHTML = `+ $${p.setup} one-time setup fee`; }
+      if (btnEl) btnEl.textContent = '$' + p.setup + ' Setup + $' + p.monthly + '/mo →';
+    } else {
+      numEl.textContent = '$' + p.buyout.toLocaleString();
+      moEl.style.display = 'none';
+      if (noteEl) {
+        noteEl.style.display = 'block';
+        const monthlySaved = p.monthly * 24;
+        const savings = monthlySaved - p.buyout + p.setup;
+        noteEl.innerHTML = `One-time payment · Own your site forever<br><span class="plan-savings">Save $${savings.toLocaleString()} vs monthly</span>`;
+      }
+      if (btnEl) btnEl.textContent = 'Buy Outright — $' + p.buyout.toLocaleString() + ' →';
+    }
+  });
+}
+
+// Update plan button clicks to pass mode
+function getPlanUrl(plan) {
+  return 'portal.html?action=inquiry&plan=' + plan + '&mode=' + currentMode;
+}
+
+// Override plan button redirects
+document.addEventListener('DOMContentLoaded', () => {
+  setPricingMode('monthly');
+});
+window.addEventListener('load', () => setPricingMode('monthly'));
 </script>
 
 </body>

@@ -336,9 +336,14 @@ body{font-family:'DM Sans',sans-serif;background:#080a04;color:#fff;min-height:1
       <div class="stripe-notice">⚠️ Add billing info at <a href="https://dashboard.stripe.com/settings/billing" target="_blank" style="color:#ffb400;">dashboard.stripe.com</a> first, then create payment links for each plan.</div>
       <div class="req-card">
         <div class="label">Stripe Payment Links</div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:10px;">Monthly Subscription Links</div>
         <div class="stripe-row"><label>Starter</label><input type="text" id="sl-starter" placeholder="https://buy.stripe.com/..."></div>
         <div class="stripe-row"><label>Professional</label><input type="text" id="sl-professional" placeholder="https://buy.stripe.com/..."></div>
         <div class="stripe-row"><label>Premium</label><input type="text" id="sl-premium" placeholder="https://buy.stripe.com/..."></div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin:16px 0 10px;">Buyout (One-Time) Links</div>
+        <div class="stripe-row"><label>Starter Buyout</label><input type="text" id="sl-starter-buyout" placeholder="https://buy.stripe.com/..."></div>
+        <div class="stripe-row"><label>Pro Buyout</label><input type="text" id="sl-professional-buyout" placeholder="https://buy.stripe.com/..."></div>
+        <div class="stripe-row"><label>Premium Buyout</label><input type="text" id="sl-premium-buyout" placeholder="https://buy.stripe.com/..."></div>
         <button class="save-btn" onclick="saveStripeLinks()">Save Links</button>
         <span id="stripe-save-msg" style="font-size:12px;color:var(--lime);margin-left:12px;display:none;">✓ Saved!</span>
       </div>
@@ -445,7 +450,7 @@ body{font-family:'DM Sans',sans-serif;background:#080a04;color:#fff;min-height:1
 
       <div class="req-card" style="margin-top:8px;">
         <div class="label">Note</div>
-        <p style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.6;">Pricing is saved locally and synced to the landing page automatically. When you update Stripe, create new payment links and paste them in the <strong style="color:#fff;">⚙️ Stripe Links</strong> tab.</p>
+        <p style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.6;">Pricing is saved locally and synced to the landing page automatically. Buyout price is automatically calculated as 24x monthly. When you update Stripe, create both monthly subscription and one-time payment links, then paste them in <strong style="color:#fff;">⚙️ Stripe Links</strong>.</p>
       </div>
     </div>
 
@@ -728,12 +733,27 @@ async function deleteSite(id){
 
 // ── STRIPE ──
 function saveStripeLinks(){
-  const links={starter:document.getElementById('sl-starter').value.trim(),professional:document.getElementById('sl-professional').value.trim(),premium:document.getElementById('sl-premium').value.trim()};
+  const links={
+    starter:document.getElementById('sl-starter').value.trim(),
+    professional:document.getElementById('sl-professional').value.trim(),
+    premium:document.getElementById('sl-premium').value.trim(),
+    'starter-buyout':document.getElementById('sl-starter-buyout').value.trim(),
+    'professional-buyout':document.getElementById('sl-professional-buyout').value.trim(),
+    'premium-buyout':document.getElementById('sl-premium-buyout').value.trim()
+  };
   localStorage.setItem('stripe_links',JSON.stringify(links));
   const msg=document.getElementById('stripe-save-msg');msg.style.display='inline';setTimeout(()=>msg.style.display='none',2000);
 }
 function getStripeLinks(){try{return JSON.parse(localStorage.getItem('stripe_links'))||{};}catch{return{};}}
-function loadStripeInputs(){const links=getStripeLinks();if(links.starter)document.getElementById('sl-starter').value=links.starter;if(links.professional)document.getElementById('sl-professional').value=links.professional;if(links.premium)document.getElementById('sl-premium').value=links.premium;}
+function loadStripeInputs(){
+  const links=getStripeLinks();
+  if(links.starter)document.getElementById('sl-starter').value=links.starter;
+  if(links.professional)document.getElementById('sl-professional').value=links.professional;
+  if(links.premium)document.getElementById('sl-premium').value=links.premium;
+  if(links['starter-buyout'])document.getElementById('sl-starter-buyout').value=links['starter-buyout'];
+  if(links['professional-buyout'])document.getElementById('sl-professional-buyout').value=links['professional-buyout'];
+  if(links['premium-buyout'])document.getElementById('sl-premium-buyout').value=links['premium-buyout'];
+}
 
 // ── REALTIME ──
 function setupRealtime(){
