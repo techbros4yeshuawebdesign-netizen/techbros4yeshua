@@ -460,6 +460,8 @@ body{font-family:'DM Sans',sans-serif;background:transparent;color:#fff;min-heig
 </div>
 
 <script>
+window.onerror = (msg, src, line) => console.error('JS Error:', msg, 'line:', line);
+window.onunhandledrejection = (e) => console.error('Promise Error:', e.reason);
 const SURL = 'https://xwnndxatiddupkxcklbz.supabase.co';
 const SKEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh3bm5keGF0aWRkdXBreGNrbGJ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyMTIwNTAsImV4cCI6MjA5NDc4ODA1MH0.jFh--OnV9_ihfkm0bVs9gb1GJP2vn5iqV1_5McTbHPs';
 const sb = supabase.createClient(SURL, SKEY);
@@ -766,7 +768,7 @@ const OVERAGE_RATE = 10;
 
 async function loadEditLimit() {
   const el = document.getElementById('edit-limit-display');
-  if (!el) return;
+  if (!el || !currentUser) return;
 
   // Get current subscription
   const { data: sub } = await sb.from('subscriptions').select('plan').eq('user_id', currentUser.id).eq('status','active').single();
@@ -833,15 +835,10 @@ function toggleFaq(el) {
   if (!isOpen) { answer.classList.add('open'); icon.textContent = '−'; }
 }
 
-// Hook into showTab to load edit limits and pre-fill inquiry
-const _portalOrigShowTab = showTab;
-function showTab(name) {
-  _portalOrigShowTab(name);
-  if (name === 'new-request') loadEditLimit();
-  if (name === 'inquiry') prefillInquiry();
-}
+
 
 function prefillInquiry() {
+  try {
   const plan     = params.get('plan')    || sessionStorage.getItem('chosen_plan');
   const monthly  = params.get('monthly') || sessionStorage.getItem('chosen_monthly');
   const mode     = params.get('mode')    || sessionStorage.getItem('chosen_mode');
@@ -897,6 +894,7 @@ function prefillInquiry() {
     // Focus at end
     msgEl.setSelectionRange(msgEl.value.length, msgEl.value.length);
   }
+  } catch(e) { console.warn('prefillInquiry error:', e); }
 }
 
 // ── INIT ──
