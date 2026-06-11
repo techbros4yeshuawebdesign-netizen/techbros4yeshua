@@ -882,10 +882,12 @@ function prefillInquiry() {
   summary.innerHTML = summaryHTML;
   banner.style.display = 'block';
 
-  // Pre-fill plan dropdown
-  if (planSel && planSelectNames[plan]) {
-    planSel.value = planSelectNames[plan];
-  }
+  // Set read-only plan display
+  const planDisplay = document.getElementById('inq-plan-display');
+  const planHidden  = document.getElementById('inq-plan');
+  const planLabel   = websiteNames[plan] || plan;
+  if (planDisplay) planDisplay.textContent = planLabel;
+  if (planHidden)  planHidden.value = plan;
 
   // Pre-fill message with plan details
   const msgEl = document.getElementById('inq-desc');
