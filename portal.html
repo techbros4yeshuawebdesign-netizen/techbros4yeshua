@@ -154,6 +154,68 @@ body{font-family:'DM Sans',sans-serif;background:transparent;color:#fff;min-heig
   .auth-box{padding:30px 22px;}.form-row2{grid-template-columns:1fr;}
   .site-card{flex-direction:column;align-items:flex-start;}
 }
+
+/* ── EDIT LIMITS & APPROVAL ── */
+.edit-limit-bar {
+  background: rgba(255,255,255,0.06);
+  border-radius: 100px;
+  height: 8px;
+  overflow: hidden;
+  margin: 8px 0 4px;
+}
+.edit-limit-fill {
+  height: 100%;
+  border-radius: 100px;
+  background: linear-gradient(90deg, var(--lime), #9dbf10);
+  transition: width 0.6s ease;
+}
+.edit-limit-fill.warning { background: linear-gradient(90deg, #ffb400, #ff6600); }
+.edit-limit-fill.full    { background: linear-gradient(90deg, #ff4444, #cc0000); }
+.edit-limit-info {
+  display: flex; justify-content: space-between;
+  font-size: 11px; color: var(--mid); margin-top: 4px;
+}
+.approval-countdown {
+  background: rgba(255,180,0,0.08);
+  border: 1px solid rgba(255,180,0,0.25);
+  border-radius: 14px;
+  padding: 16px 20px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.countdown-icon { font-size: 28px; flex-shrink: 0; }
+.countdown-title { font-family:'Syne',sans-serif; font-weight:700; font-size:15px; color:#ffb400; }
+.countdown-sub { font-size:12px; color:var(--mid); margin-top:2px; }
+.countdown-timer { font-family:'Syne',sans-serif; font-weight:700; font-size:22px; color:#fff; margin-left:auto; }
+.overage-notice {
+  background: rgba(220,50,50,0.08);
+  border: 1px solid rgba(220,50,50,0.2);
+  border-radius: 12px;
+  padding: 14px 18px;
+  font-size: 13px;
+  color: #ff8080;
+  margin-bottom: 14px;
+}
+.faq-item {
+  border-bottom: 1px solid var(--border);
+  padding: 14px 0;
+}
+.faq-item:last-child { border-bottom: none; }
+.faq-q {
+  font-family:'Syne',sans-serif; font-weight:600; font-size:14px;
+  cursor: pointer; display:flex; justify-content:space-between; align-items:center;
+  color:#fff;
+}
+.faq-q:hover { color:var(--lime); }
+.faq-a {
+  font-size:13px; color:var(--mid); line-height:1.6;
+  margin-top:8px; display:none;
+}
+.faq-a.open { display:block; }
+
 </style>
 </head>
 <body>
@@ -206,6 +268,7 @@ body{font-family:'DM Sans',sans-serif;background:transparent;color:#fff;min-heig
     <button class="p-tab" onclick="showTab('requests')">Edit Requests</button>
     <button class="p-tab" onclick="showTab('new-request')">+ New Request</button>
     <button class="p-tab" id="inquiry-tab-btn" onclick="showTab('inquiry')">📋 Free Prototype</button>
+      <button class="p-tab" onclick="showTab('faq')">❓ FAQ</button>
   </div>
   <div class="p-body">
 
@@ -287,6 +350,20 @@ body{font-family:'DM Sans',sans-serif;background:transparent;color:#fff;min-heig
 
     <!-- NEW REQUEST -->
     <div id="tab-new-request" class="tab-panel">
+      <div id="edit-limit-card" class="card" style="margin-bottom:14px;">
+        <div class="card-label">Edit Requests This Month</div>
+        <div id="edit-limit-display">Loading...</div>
+      </div>
+      <div id="approval-countdown-wrap" style="display:none;">
+        <div class="approval-countdown">
+          <div class="countdown-icon">⏰</div>
+          <div>
+            <div class="countdown-title">Prototype Approval Window</div>
+            <div class="countdown-sub">Please review and approve your prototype before the deadline.</div>
+          </div>
+          <div class="countdown-timer" id="countdown-timer">—</div>
+        </div>
+      </div>
       <div class="card">
         <div class="card-label">What would you like to do?</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
@@ -322,10 +399,30 @@ body{font-family:'DM Sans',sans-serif;background:transparent;color:#fff;min-heig
       </div>
     </div>
 
+    <!-- FAQ -->
+    <div id="tab-faq" class="tab-panel">
+      <div class="card">
+        <div class="card-label">Frequently Asked Questions</div>
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>What counts as an edit request?</span><span>+</span></div><div class="faq-a">An edit is any change to your existing site — text updates, image swaps, color changes, moving sections around, or adding a small new element. New pages or major redesigns are separate requests.</div></div>
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>How many edits do I get per month?</span><span>+</span></div><div class="faq-a">Starter: 2 edits/month. Professional: 4 edits/month. Premium: Unlimited edits. Extra edits on Starter/Pro are $10 each.</div></div>
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>How long does an edit take?</span><span>+</span></div><div class="faq-a">Most edits are completed within 3–5 business days. Complex changes may take longer. You'll see your request status update in the Edit Requests tab.</div></div>
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>What does maintenance include?</span><span>+</span></div><div class="faq-a">Maintenance covers: security updates, hosting uptime monitoring, SSL certificate renewal, and regular backups. It does NOT include new features, integrations, or redesigns.</div></div>
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>How do I approve my prototype?</span><span>+</span></div><div class="faq-a">You have 7 days from when your prototype is ready to review and request changes. On day 7 we proceed with the current version and begin your subscription. Use the Edit Requests tab for any remaining changes.</div></div>
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Can I upgrade my plan?</span><span>+</span></div><div class="faq-a">Yes! Contact Nathan or email techBros4yeshua.web.design@gmail.com to upgrade. Your old plan cancels and the new one starts — no double billing.</div></div>
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>What if my site goes down?</span><span>+</span></div><div class="faq-a">Email Nathan immediately at techBros4yeshua.web.design@gmail.com. Hosting issues are treated as urgent and addressed as soon as possible, usually within a few hours.</div></div>
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Can I cancel my subscription?</span><span>+</span></div><div class="faq-a">Yes, you can cancel anytime. Your site stays live until the end of your billing period. After cancellation, hosting ends and the site goes offline.</div></div>
+      </div>
+    </div>
+
     <!-- FREE PROTOTYPE INQUIRY -->
     <div id="tab-inquiry" class="tab-panel">
       <div class="card">
         <div class="card-label">Request Your Free Prototype</div>
+        <div id="inq-plan-banner" style="display:none;background:rgba(200,241,53,0.08);border:1.5px solid rgba(200,241,53,0.25);border-radius:14px;padding:16px 20px;margin-bottom:20px;">
+          <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:var(--lime);margin-bottom:10px;">✅ Your Selected Plan</div>
+          <div id="inq-plan-summary" style="font-size:13px;color:rgba(255,255,255,0.7);line-height:1.8;"></div>
+          <button onclick="document.getElementById('inq-plan-banner').style.display='none'" style="margin-top:10px;background:none;border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.3);font-size:11px;padding:5px 12px;border-radius:100px;cursor:pointer;">Change selection</button>
+        </div>
         <p style="font-size:14px;color:var(--mid);margin-bottom:24px;line-height:1.65;">Tell us about your business. Nathan will review your inquiry and reach out within 24 hours to start building your free prototype — no payment required.</p>
         <div id="inq-success" style="display:none;text-align:center;padding:40px 20px;">
           <div style="font-size:48px;margin-bottom:16px;">✅</div>
@@ -379,8 +476,12 @@ let currentUser = null;
 const params = new URLSearchParams(window.location.search);
 const inPlan = params.get('plan');
 const inAction = params.get('action');
+const inMonthly = params.get('monthly');
+const inMode = params.get('mode');
 
 if (inPlan) sessionStorage.setItem('chosen_plan', inPlan);
+if (inMonthly) sessionStorage.setItem('chosen_monthly', inMonthly);
+if (inMode) sessionStorage.setItem('chosen_mode', inMode);
 
 // ── AUTH ──
 function switchTab(t) {
@@ -483,8 +584,7 @@ async function loadPortal(user) {
   loadRequests();
   await new Promise(r => setTimeout(r, 100)); // small delay to let UI render
   // Handle URL action
-  if (inAction === 'inquiry') setTimeout(()=>showTab('inquiry'), 300);
-  else if (inPlan) setTimeout(()=>showTab('inquiry'), 300);
+  if (inAction === 'inquiry' || inPlan) setTimeout(()=>{ showTab('inquiry'); prefillInquiry(); }, 300);
 }
 
 async function loadOverview() {
@@ -657,6 +757,146 @@ function showToast(msg) {
   t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1a3a1a;color:var(--lime);font-family:Syne,sans-serif;font-weight:700;font-size:14px;padding:12px 24px;border-radius:100px;z-index:999;box-shadow:0 4px 20px rgba(0,0,0,0.4);white-space:nowrap;animation:fadeUp 0.3s both;';
   document.body.appendChild(t);
   setTimeout(()=>t.remove(),4000);
+}
+
+
+// ── EDIT LIMITS ──
+const EDIT_LIMITS = { starter: 5, professional: 10, premium: Infinity };
+const OVERAGE_RATE = 10;
+
+async function loadEditLimit() {
+  const el = document.getElementById('edit-limit-display');
+  if (!el) return;
+
+  // Get current subscription
+  const { data: sub } = await sb.from('subscriptions').select('plan').eq('user_id', currentUser.id).eq('status','active').single();
+  const plan = sub?.plan || 'starter';
+  const limit = EDIT_LIMITS[plan];
+
+  // Count edits submitted this month
+  const now = new Date();
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+  const { data: reqs } = await sb.from('edit_requests')
+    .select('id')
+    .eq('user_id', currentUser.id)
+    .neq('status','inquiry')
+    .gte('created_at', monthStart);
+
+  const used = reqs?.length || 0;
+  const remaining = limit === Infinity ? Infinity : Math.max(0, limit - used);
+  const pct = limit === Infinity ? 20 : Math.min(100, (used / limit) * 100);
+  const fillClass = pct >= 100 ? 'full' : pct >= 75 ? 'warning' : '';
+
+  if (limit === Infinity) {
+    el.innerHTML = `<div style="font-family:'Syne',sans-serif;font-weight:700;font-size:20px;color:var(--lime);">Unlimited</div><div style="font-size:13px;color:var(--mid);margin-top:4px;">Premium plan — no edit limits ever</div>`;
+  } else {
+    el.innerHTML = `
+      <div class="edit-limit-bar"><div class="edit-limit-fill ${fillClass}" style="width:${pct}%"></div></div>
+      <div class="edit-limit-info"><span>${used} used</span><span>${remaining} remaining</span></div>
+      <div style="font-size:13px;color:var(--mid);margin-top:8px;">Plan: <strong style="color:#fff;">${plan.charAt(0).toUpperCase()+plan.slice(1)}</strong> — ${limit} edits/month · Extra edits: <strong style="color:#fff;">$${OVERAGE_RATE} each</strong></div>
+      ${remaining === 0 ? `<div class="overage-notice" style="margin-top:10px;">⚠️ You've used all ${limit} edits this month. Additional edits are $${OVERAGE_RATE} each — Nathan will invoice you separately.</div>` : ''}
+    `;
+  }
+}
+
+// ── APPROVAL COUNTDOWN ──
+function startApprovalCountdown(deadlineDate) {
+  const wrap = document.getElementById('approval-countdown-wrap');
+  const timer = document.getElementById('countdown-timer');
+  if (!wrap || !timer) return;
+
+  const deadline = new Date(deadlineDate);
+  const now = new Date();
+  if (now > deadline) return; // expired
+
+  wrap.style.display = 'flex';
+
+  function update() {
+    const diff = deadline - new Date();
+    if (diff <= 0) { timer.textContent = 'Expired'; wrap.style.display='none'; return; }
+    const days = Math.floor(diff / 86400000);
+    const hrs  = Math.floor((diff % 86400000) / 3600000);
+    const mins = Math.floor((diff % 3600000) / 60000);
+    timer.textContent = `${days}d ${hrs}h ${mins}m`;
+  }
+  update();
+  setInterval(update, 60000);
+}
+
+// ── FAQ TOGGLE ──
+function toggleFaq(el) {
+  const answer = el.nextElementSibling;
+  const icon = el.querySelector('span:last-child');
+  const isOpen = answer.classList.contains('open');
+  document.querySelectorAll('.faq-a').forEach(a => a.classList.remove('open'));
+  document.querySelectorAll('.faq-q span:last-child').forEach(i => i.textContent = '+');
+  if (!isOpen) { answer.classList.add('open'); icon.textContent = '−'; }
+}
+
+// Hook into showTab to load edit limits and pre-fill inquiry
+const _portalOrigShowTab = showTab;
+function showTab(name) {
+  _portalOrigShowTab(name);
+  if (name === 'new-request') loadEditLimit();
+  if (name === 'inquiry') prefillInquiry();
+}
+
+function prefillInquiry() {
+  const plan     = params.get('plan')    || sessionStorage.getItem('chosen_plan');
+  const monthly  = params.get('monthly') || sessionStorage.getItem('chosen_monthly');
+  const mode     = params.get('mode')    || sessionStorage.getItem('chosen_mode');
+
+  if (!plan) return;
+
+  const websiteNames  = { starter:'Starter Site ($500)', professional:'Professional Site ($800)', premium:'Premium Site ($1,200)' };
+  const monthlyNames  = { starter:'Basic Maintenance ($55/mo)', professional:'Standard Maintenance ($85/mo)', premium:'Full Coverage ($150/mo)', none:'No monthly maintenance' };
+  const planSelectNames = { starter:'starter', professional:'professional', premium:'premium' };
+
+  const banner  = document.getElementById('inq-plan-banner');
+  const summary = document.getElementById('inq-plan-summary');
+  const planSel = document.getElementById('inq-plan');
+
+  if (!banner || !summary) return;
+
+  let summaryHTML = '';
+  let summaryText = '';
+
+  if (mode === 'onetime' || mode === 'both' || mode) {
+    summaryHTML += `<div>🏠 <strong style="color:#fff;">Website:</strong> ${websiteNames[plan] || plan}</div>`;
+    summaryText += 'Website: ' + (websiteNames[plan] || plan) + '\n';
+  }
+
+  if (monthly && monthly !== 'none') {
+    summaryHTML += `<div>📅 <strong style="color:#fff;">Monthly Plan:</strong> ${monthlyNames[monthly] || monthly}</div>`;
+    summaryText += 'Monthly Plan: ' + (monthlyNames[monthly] || monthly) + '\n';
+  } else if (monthly === 'none') {
+    summaryHTML += `<div>📅 <strong style="color:#fff;">Monthly Plan:</strong> None — self-hosted</div>`;
+    summaryText += 'Monthly Plan: None (self-hosted)\n';
+  }
+
+  if (mode === 'both') {
+    const prices = { starter: 500, professional: 800, premium: 1200 };
+    const mPrices = { starter: 55, professional: 85, premium: 150 };
+    const sitePrice = prices[plan] || 0;
+    const mPrice = monthly && monthly !== 'none' ? (mPrices[monthly] || 0) : 0;
+    summaryHTML += `<div style="margin-top:6px;padding-top:6px;border-top:1px solid rgba(200,241,53,0.15);">💰 <strong style="color:var(--lime);">Total: $${sitePrice.toLocaleString()} one-time${mPrice ? ' + $' + mPrice + '/mo' : ''}</strong></div>`;
+  }
+
+  summary.innerHTML = summaryHTML;
+  banner.style.display = 'block';
+
+  // Pre-fill plan dropdown
+  if (planSel && planSelectNames[plan]) {
+    planSel.value = planSelectNames[plan];
+  }
+
+  // Pre-fill message with plan details
+  const msgEl = document.getElementById('inq-desc');
+  if (msgEl && !msgEl.value) {
+    msgEl.value = summaryText ? 'Selected Plan:\n' + summaryText + '\nAbout my business:\n' : '';
+    // Focus at end
+    msgEl.setSelectionRange(msgEl.value.length, msgEl.value.length);
+  }
 }
 
 // ── INIT ──
