@@ -362,7 +362,32 @@ body{font-family:'DM Sans',sans-serif;background:#080a04;color:#fff;min-height:1
   <!-- PRICING MANAGEMENT -->
     <div id="tab-pricing-mgmt" class="tab-panel">
       <div class="label">Manage Plan Pricing</div>
-      <p style="font-size:13px;color:var(--mid);margin-bottom:20px;">Update setup fees and monthly rates. Changes apply to new clients — existing subscriptions are not affected.</p>
+      <p style="font-size:13px;color:var(--mid);margin-bottom:20px;">Update pricing for both one-time purchases and monthly subscriptions.</p>
+
+      <!-- ONE TIME -->
+      <div style="font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--lime);margin-bottom:12px;">🏠 One-Time Purchase Prices</div>
+
+      <div class="pricing-card">
+        <div class="pricing-grid" style="grid-template-columns:1fr 1fr 1fr;">
+          <div class="price-field">
+            <label>Starter</label>
+            <div class="price-input-wrap"><span class="price-symbol">$</span><input type="number" class="price-input" id="onetime-starter" placeholder="500" min="0" style="font-size:16px;"></div>
+          </div>
+          <div class="price-field">
+            <label>Professional</label>
+            <div class="price-input-wrap"><span class="price-symbol">$</span><input type="number" class="price-input" id="onetime-professional" placeholder="800" min="0" style="font-size:16px;"></div>
+          </div>
+          <div class="price-field">
+            <label>Premium</label>
+            <div class="price-input-wrap"><span class="price-symbol">$</span><input type="number" class="price-input" id="onetime-premium" placeholder="1200" min="0" style="font-size:16px;"></div>
+          </div>
+        </div>
+        <button class="save-price-btn" onclick="saveOnetimePricing()" style="margin-top:12px;">Save One-Time Prices</button>
+        <span class="price-saved-msg" id="saved-onetime">✓ Saved!</span>
+      </div>
+
+      <!-- MONTHLY -->
+      <div style="font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--lime);margin:20px 0 12px;">📅 Monthly Subscription Prices</div>
 
       <!-- STARTER -->
       <div class="pricing-card">
@@ -372,23 +397,15 @@ body{font-family:'DM Sans',sans-serif;background:#080a04;color:#fff;min-height:1
         </div>
         <div class="pricing-grid">
           <div class="price-field">
-            <label>One-Time Setup Fee</label>
-            <div class="price-input-wrap">
-              <span class="price-symbol">$</span>
-              <input type="number" class="price-input" id="setup-starter" placeholder="299" min="0">
-              <span class="price-suffix">one-time</span>
-            </div>
+            <label>Setup Fee (one-time)</label>
+            <div class="price-input-wrap"><span class="price-symbol">$</span><input type="number" class="price-input" id="setup-starter" placeholder="299" min="0"><span class="price-suffix">one-time</span></div>
           </div>
           <div class="price-field">
-            <label>Monthly Subscription</label>
-            <div class="price-input-wrap">
-              <span class="price-symbol">$</span>
-              <input type="number" class="price-input" id="monthly-starter" placeholder="55" min="0">
-              <span class="price-suffix">/month</span>
-            </div>
+            <label>Monthly Rate</label>
+            <div class="price-input-wrap"><span class="price-symbol">$</span><input type="number" class="price-input" id="monthly-starter" placeholder="55" min="0"><span class="price-suffix">/month</span></div>
           </div>
         </div>
-        <button class="save-price-btn" onclick="savePricing('starter')">Save Starter Pricing</button>
+        <button class="save-price-btn" onclick="savePricing('starter')">Save</button>
         <span class="price-saved-msg" id="saved-starter">✓ Saved!</span>
       </div>
 
@@ -400,23 +417,15 @@ body{font-family:'DM Sans',sans-serif;background:#080a04;color:#fff;min-height:1
         </div>
         <div class="pricing-grid">
           <div class="price-field">
-            <label>One-Time Setup Fee</label>
-            <div class="price-input-wrap">
-              <span class="price-symbol">$</span>
-              <input type="number" class="price-input" id="setup-professional" placeholder="599" min="0">
-              <span class="price-suffix">one-time</span>
-            </div>
+            <label>Setup Fee (one-time)</label>
+            <div class="price-input-wrap"><span class="price-symbol">$</span><input type="number" class="price-input" id="setup-professional" placeholder="599" min="0"><span class="price-suffix">one-time</span></div>
           </div>
           <div class="price-field">
-            <label>Monthly Subscription</label>
-            <div class="price-input-wrap">
-              <span class="price-symbol">$</span>
-              <input type="number" class="price-input" id="monthly-professional" placeholder="85" min="0">
-              <span class="price-suffix">/month</span>
-            </div>
+            <label>Monthly Rate</label>
+            <div class="price-input-wrap"><span class="price-symbol">$</span><input type="number" class="price-input" id="monthly-professional" placeholder="85" min="0"><span class="price-suffix">/month</span></div>
           </div>
         </div>
-        <button class="save-price-btn" onclick="savePricing('professional')">Save Professional Pricing</button>
+        <button class="save-price-btn" onclick="savePricing('professional')">Save</button>
         <span class="price-saved-msg" id="saved-professional">✓ Saved!</span>
       </div>
 
@@ -428,23 +437,15 @@ body{font-family:'DM Sans',sans-serif;background:#080a04;color:#fff;min-height:1
         </div>
         <div class="pricing-grid">
           <div class="price-field">
-            <label>One-Time Setup Fee</label>
-            <div class="price-input-wrap">
-              <span class="price-symbol">$</span>
-              <input type="number" class="price-input" id="setup-premium" placeholder="1200" min="0">
-              <span class="price-suffix">one-time</span>
-            </div>
+            <label>Setup Fee (one-time)</label>
+            <div class="price-input-wrap"><span class="price-symbol">$</span><input type="number" class="price-input" id="setup-premium" placeholder="1200" min="0"><span class="price-suffix">one-time</span></div>
           </div>
           <div class="price-field">
-            <label>Monthly Subscription</label>
-            <div class="price-input-wrap">
-              <span class="price-symbol">$</span>
-              <input type="number" class="price-input" id="monthly-premium" placeholder="150" min="0">
-              <span class="price-suffix">/month</span>
-            </div>
+            <label>Monthly Rate</label>
+            <div class="price-input-wrap"><span class="price-symbol">$</span><input type="number" class="price-input" id="monthly-premium" placeholder="150" min="0"><span class="price-suffix">/month</span></div>
           </div>
         </div>
-        <button class="save-price-btn" onclick="savePricing('premium')">Save Premium Pricing</button>
+        <button class="save-price-btn" onclick="savePricing('premium')">Save</button>
         <span class="price-saved-msg" id="saved-premium">✓ Saved!</span>
       </div>
 
@@ -680,10 +681,10 @@ async function loadSitesMgmt(){
   const c=document.getElementById('all-sites-list');
   if(!sites||!sites.length){c.innerHTML='<div class="empty">No sites yet.</div>';return;}
   c.innerHTML=sites.map(s=>`
-    <div class="site-card" id="site-card-${s.id}" style="border-left:3px solid ${s.status==='active'?'var(--lime)':s.status==='demo'?'#ffb400':'rgba(220,50,50,0.5)'};">
+    <div class="site-card" id="site-card-${s.id}" style="border-left:3px solid ${s.status==='active'?'var(--lime)':s.status==='demo'?'#ffb400':s.status==='payment-pending'?'#4f9fff':'rgba(220,50,50,0.5)'};">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap;">
         <div>
-          <div class="site-name">${s.site_name} <span id="lbl-${s.id}" style="font-size:10px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:2px 10px;border-radius:100px;background:${s.status==='active'?'rgba(200,241,53,0.12)':s.status==='demo'?'rgba(255,180,0,0.12)':'rgba(220,50,50,0.12)'};color:${s.status==='active'?'var(--lime)':s.status==='demo'?'#ffb400':'#ff8080'};">${s.status==='active'?'🟢 Live':s.status==='demo'?'🔧 Demo':'⏸ Paused'}</span></div>
+          <div class="site-name">${s.site_name} <span id="lbl-${s.id}" style="font-size:10px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:2px 10px;border-radius:100px;background:${s.status==='active'?'rgba(200,241,53,0.12)':s.status==='demo'?'rgba(255,180,0,0.12)':'rgba(220,50,50,0.12)'};color:${s.status==='active'?'var(--lime)':s.status==='demo'?'#ffb400':'#ff8080'};">${s.status==='active'?'🟢 Live':s.status==='demo'?'🔧 Demo':s.status==='payment-pending'?'💳 Payment Pending':'⏸ Paused'}</span></div>
           <div class="site-url">${s.site_url?`<a href="${s.site_url}" target="_blank">${s.site_url}</a>`:'URL pending'}</div>
           <div style="font-size:12px;color:var(--mid);margin-top:3px;">👤 ${s.profiles?.full_name||s.profiles?.email||'—'} &nbsp;·&nbsp; ${s.pages||1} pages &nbsp;·&nbsp; Added ${fmtShort(s.created_at)}${s.approval_deadline&&s.status==='demo'?` &nbsp;·&nbsp; ⏰ Approval deadline: <strong style="color:#ffb400;">${fmtShort(s.approval_deadline)}</strong>`:''}</div>
         </div>
@@ -765,8 +766,15 @@ function setupRealtime(){
 
   // Edit request submitted
   sb.channel('admin-requests').on('postgres_changes',{event:'*',schema:'public',table:'edit_requests'},(payload)=>{
-    if(payload.eventType==='INSERT') showAdminToast('✏️ New edit request from a client!', 'lime');
+    if(payload.eventType==='INSERT') {
+      const t = payload.new.edit_type || '';
+      if(t.includes('Payment'))    showAdminToast('💳 Client initiated payment: '+payload.new.message?.split('\n')[0], 'lime');
+      else if(t.includes('Switch')) showAdminToast('🔄 Plan switch request from a client!', 'blue');
+      else if(t.includes('Prototype')) showAdminToast('📋 New inquiry received!', 'lime');
+      else showAdminToast('✏️ New edit request from a client!', 'lime');
+    }
     loadEditRequests();
+    loadInquiries();
   }).subscribe();
 
   // New client signed up
@@ -781,7 +789,8 @@ function setupRealtime(){
   sb.channel('admin-profiles-update').on('postgres_changes',{event:'UPDATE',schema:'public',table:'profiles'},()=>{loadClients();}).subscribe();
 
   // Sites updated
-  sb.channel('admin-sites').on('postgres_changes',{event:'*',schema:'public',table:'sites'},()=>{
+  sb.channel('admin-sites').on('postgres_changes',{event:'UPDATE',schema:'public',table:'sites'},(payload)=>{
+    if(payload.new.status==='payment-pending') showAdminToast('💳 '+payload.new.site_name+' — Client ready to pay! Set to Live after payment.', 'lime');
     if(document.getElementById('tab-sites-mgmt').classList.contains('active'))loadSitesMgmt();
     loadClients();
   }).subscribe();
@@ -802,6 +811,15 @@ function showAdminToast(msg, color) {
 
 
 // ── PRICING MANAGEMENT ──
+function saveOnetimePricing() {
+  const pricing = getPricing();
+  pricing['starter-onetime']      = parseInt(document.getElementById('onetime-starter').value) || 500;
+  pricing['professional-onetime'] = parseInt(document.getElementById('onetime-professional').value) || 800;
+  pricing['premium-onetime']      = parseInt(document.getElementById('onetime-premium').value) || 1200;
+  localStorage.setItem('tb4y_pricing', JSON.stringify(pricing));
+  const msg = document.getElementById('saved-onetime');
+  msg.style.display = 'inline'; setTimeout(() => msg.style.display = 'none', 2500);
+}
 const DEFAULT_PRICING = {
   starter:      { setup: 299,  monthly: 55  },
   professional: { setup: 599,  monthly: 85  },
@@ -842,6 +860,11 @@ function loadPricingInputs() {
     if (setupEl)   setupEl.value   = p.setup;
     if (monthlyEl) monthlyEl.value = p.monthly;
     updatePreview(plan);
+  });
+  const defaults = { starter: 500, professional: 800, premium: 1200 };
+  ['starter','professional','premium'].forEach(plan => {
+    const el = document.getElementById('onetime-'+plan);
+    if (el) el.value = pricing[plan+'-onetime'] || defaults[plan];
   });
 }
 
