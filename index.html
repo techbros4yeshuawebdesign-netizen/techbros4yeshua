@@ -1682,7 +1682,7 @@ input:focus, select:focus, textarea:focus {
 </div>
   <div class="hero-badge"><div class="badge-dot"></div>Free prototype — no card required</div>
   <h1><span class="glitch" data-text="Your business">Your business</span><br><em>deserves a real</em><br><span class="glitch" data-text="website.">website.</span></h1>
-  <p>We build fast, modern websites for small businesses — starting at $25/month. No upfront cost. See your site before you pay a dime.</p>
+  <p>We build fast, modern websites for small businesses — from $55/month plus a one-time build. See your finished prototype free before you pay a dime.</p>
   <div class="hero-btns">
     <a href="portal.html?action=inquiry" class="btn-primary">Get a Free Prototype →</a>
     <a href="#pricing" class="btn-ghost">See Pricing</a>
@@ -1695,13 +1695,13 @@ input:focus, select:focus, textarea:focus {
     <span class="ticker-item"><span class="ticker-dot"></span><strong>Free prototype</strong> — see your site before you commit</span>
     <span class="ticker-item"><span class="ticker-dot"></span><strong>5-7 day</strong> turnaround on prototypes</span>
     <span class="ticker-item"><span class="ticker-dot"></span><strong>Mobile-first</strong> design on every plan</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Starting at <strong>$25/month</strong> — no setup fee</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>From <strong>$55/month</strong> + one-time build</span>
     <span class="ticker-item"><span class="ticker-dot"></span><strong>SSL + hosting</strong> included on all plans</span>
     <span class="ticker-item"><span class="ticker-dot"></span><strong>Cancel anytime</strong> — no contracts</span>
     <span class="ticker-item"><span class="ticker-dot"></span><strong>Free prototype</strong> — see your site before you commit</span>
     <span class="ticker-item"><span class="ticker-dot"></span><strong>5-7 day</strong> turnaround on prototypes</span>
     <span class="ticker-item"><span class="ticker-dot"></span><strong>Mobile-first</strong> design on every plan</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Starting at <strong>$25/month</strong> — no setup fee</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>From <strong>$55/month</strong> + one-time build</span>
     <span class="ticker-item"><span class="ticker-dot"></span><strong>SSL + hosting</strong> included on all plans</span>
     <span class="ticker-item"><span class="ticker-dot"></span><strong>Cancel anytime</strong> — no contracts</span>
   </div>
@@ -1725,8 +1725,8 @@ input:focus, select:focus, textarea:focus {
       <div class="stat-label">Starting price</div>
     </div>
     <div class="stat-item">
-      <div class="stat-counter" data-target="0">0</div><div style="font-size:14px;color:var(--lime);font-weight:700;">upfront</div>
-      <div class="stat-label">No setup fees ever</div>
+      <div class="stat-counter" data-target="0">0</div><div style="font-size:14px;color:var(--lime);font-weight:700;">$ due today</div>
+      <div class="stat-label">Pay only after you approve your free prototype</div>
     </div>
   </div>
 </section>
@@ -1769,7 +1769,7 @@ input:focus, select:focus, textarea:focus {
   <div class="section-inner">
     <div class="sec-label reveal" style="text-align:center;">Pricing</div>
     <div class="sec-title reveal" style="text-align:center;">Build your perfect plan</div>
-    <p class="reveal" style="text-align:center;color:var(--mid);font-size:16px;max-width:560px;margin:0 auto 50px;">First pick your website, then choose your monthly hosting and maintenance level. Mix and match to fit your budget.</p>
+    <p class="reveal" style="text-align:center;color:var(--mid);font-size:16px;max-width:560px;margin:0 auto 50px;">Two quick choices: pick your website, then your monthly hosting &amp; maintenance level. <strong style="color:var(--lime);">Nothing is due today</strong> — we build your free prototype first, and you only pay if you approve it.</p>
 
     <!-- STEP 1 -->
     <div class="step-label reveal">
@@ -1907,7 +1907,7 @@ input:focus, select:focus, textarea:focus {
       </div>
       <div class="order-summary" id="order-summary"></div>
       <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:24px;">
-        <button class="btn-primary" id="get-started-btn" onclick="goToInquiry()" style="font-size:16px;padding:18px 40px;">Get Started →</button>
+        <button class="btn-primary" id="get-started-btn" onclick="goToInquiry()" style="font-size:16px;padding:18px 40px;">Get My Free Prototype →</button>
         <button onclick="resetPlans()" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.4);font-family:'DM Sans',sans-serif;font-size:14px;padding:16px 28px;border-radius:100px;cursor:pointer;">Start Over</button>
       </div>
     </div>
@@ -1949,41 +1949,11 @@ input:focus, select:focus, textarea:focus {
   <div class="footer-links">
     <a href="#how">How It Works</a>
     <a href="#pricing">Pricing</a>
-    <a href="#login">Client Login</a>
+    <a href="portal.html">Client Login</a>
     <a href="portal.html?action=inquiry">Get Started</a>
   </div>
   <p>© 2026 Tech Bros for Yeshua. Built for small businesses.</p>
 </footer>
-
-<!-- PLAN MODAL -->
-<div class="modal-overlay" id="plan-modal">
-  <div class="modal-box">
-    <button class="modal-close" onclick="closeModal()">×</button>
-    <div class="modal-plan-label">Selected Plan</div>
-    <div class="modal-plan-name" id="modal-plan-name">Starter — $25/mo</div>
-    <div class="modal-tabs">
-      <button class="modal-tab" id="mt-login" onclick="switchModalTab('login')">Sign In</button>
-      <button class="modal-tab active" id="mt-signup" onclick="switchModalTab('signup')">Create Account</button>
-    </div>
-    <div id="modal-msg" class="msg"></div>
-    <!-- Login -->
-    <div id="mf-login" style="display:none">
-      <div class="f-group"><label>Email</label><input type="email" id="ml-email" placeholder="you@example.com"></div>
-      <div class="f-group"><label>Password</label><input type="password" id="ml-pass" placeholder="••••••••"></div>
-      <button class="lime-btn" id="ml-btn" onclick="doModalLogin()">Sign In & Continue →</button>
-      <span class="forgot-link" onclick="doModalForgot()">Forgot password?</span>
-    </div>
-    <!-- Signup -->
-    <div id="mf-signup">
-      <div class="f-group"><label>Full Name</label><input type="text" id="ms-name" placeholder="John Smith"></div>
-      <div class="f-group"><label>Email</label><input type="email" id="ms-email" placeholder="you@example.com"></div>
-      <div class="f-group"><label>Password</label><input type="password" id="ms-pass" placeholder="Min. 8 characters"></div>
-      <button class="lime-btn" id="ms-btn" onclick="doModalSignup()">Create Account & Continue →</button>
-      <p style="font-size:12px;color:rgba(255,255,255,0.25);text-align:center;margin-top:10px;">Already have an account? <span onclick="switchModalTab('login')" style="color:var(--lime);cursor:pointer;">Sign in</span></p>
-    </div>
-  </div>
-</div>
-
 
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -2426,107 +2396,50 @@ document.querySelectorAll('.plan-price-num').forEach(el => {
 
 
 <script>
-// ── INDEX PAGE AUTH ──
-const _sb = supabase.createClient(
+// ── SITE CONFIG + SESSION ──
+// All auth lives in portal.html. This page only checks the session
+// and loads live pricing from Supabase (editable in the admin panel).
+
+// Change this one line if your domain ever changes:
+const SITE_URL = 'https://techbros4yeshuaweb.netlify.app';
+
+const sb = supabase.createClient(
   'https://ganpjzutbzygaxlcgejd.supabase.co',
   'sb_publishable_x9BC4b-yBIZAXz67WTVTkQ_v3wOCGhZ'
 );
 
-function switchLoginTab(tab) {
-  document.getElementById('lf-login').style.display = tab === 'login' ? 'block' : 'none';
-  document.getElementById('lf-signup').style.display = tab === 'signup' ? 'block' : 'none';
-  document.querySelectorAll('.login-tab').forEach((t, i) => {
-    t.classList.toggle('active', (tab==='login'&&i===0)||(tab==='signup'&&i===1));
-  });
-  document.getElementById('login-msg').className = 'msg';
-}
+// Fallback numbers if Supabase is unreachable — keep in sync with the cards.
+const PRICING = {
+  starter:      { setup: 500,  monthly: 55  },
+  professional: { setup: 800,  monthly: 85  },
+  premium:      { setup: 1200, monthly: 150 }
+};
 
-function showLoginMsg(txt, type) {
-  const el = document.getElementById('login-msg');
-  el.textContent = txt; el.className = 'msg ' + type;
-}
-
-async function doLogin() {
-  const email = document.getElementById('ll-email').value.trim();
-  const pass = document.getElementById('ll-pass').value;
-  if (!email || !pass) { showLoginMsg('Enter your email and password.', 'error'); return; }
-  const btn = document.getElementById('ll-btn');
-  btn.textContent = 'Signing in...'; btn.disabled = true;
-  const { data, error } = await _sb.auth.signInWithPassword({ email, password: pass });
-  if (error) {
-    if (error.message.includes('Email not confirmed')) {
-      showLoginMsg('Please check your email and click the verification link first.', 'error');
-    } else if (error.message.includes('Invalid login')) {
-      showLoginMsg('Wrong email or password. Please try again.', 'error');
-    } else {
-      showLoginMsg(error.message, 'error');
+(async () => {
+  try {
+    const { data } = await sb.from('site_config').select('value').eq('key', 'pricing').single();
+    if (data?.value) {
+      Object.keys(PRICING).forEach(k => {
+        if (data.value[k]) Object.assign(PRICING[k], data.value[k]);
+      });
+      document.querySelectorAll('#website-plans .selectable-plan').forEach(card => {
+        const key = card.id.replace('wp-', '');
+        const el = card.querySelector('.plan-price-num');
+        if (el && PRICING[key]) el.textContent = '$' + PRICING[key].setup.toLocaleString();
+      });
+      document.querySelectorAll('#monthly-plans .selectable-plan').forEach(card => {
+        const key = card.id.replace('mp-', '');
+        const el = card.querySelector('.plan-price-num');
+        if (el && PRICING[key]) el.textContent = '$' + PRICING[key].monthly;
+      });
     }
-    btn.textContent = 'Sign In →'; btn.disabled = false;
-  } else {
-    window.location.href = 'portal.html';
-  }
-}
+  } catch (e) { /* cards keep their hardcoded fallback prices */ }
+})();
 
-async function doSignup() {
-  const name = document.getElementById('ls-name').value.trim();
-  const email = document.getElementById('ls-email').value.trim();
-  const pass = document.getElementById('ls-pass').value;
-  if (!name || !email || !pass) { showLoginMsg('Please fill in all fields.', 'error'); return; }
-  if (pass.length < 8) { showLoginMsg('Password must be at least 8 characters.', 'error'); return; }
-  const btn = document.getElementById('ls-btn');
-  btn.textContent = 'Creating...'; btn.disabled = true;
-  const { error } = await _sb.auth.signUp({
-    email, password: pass,
-    options: { data: { full_name: name } }
-  });
-  if (error) {
-    showLoginMsg(error.message, 'error');
-    btn.textContent = 'Create Account →'; btn.disabled = false;
-  } else {
-    // Show email verification message
-    const loginSection = document.getElementById('login');
-    loginSection.innerHTML = `
-      <div style="max-width:480px;margin:0 auto;text-align:center;padding:40px 20px;">
-        <div style="font-size:52px;margin-bottom:16px;">📧</div>
-        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:24px;color:#fff;margin-bottom:10px;">Check Your Email!</div>
-        <div style="font-size:15px;color:rgba(255,255,255,0.55);line-height:1.7;margin-bottom:24px;">
-          We sent a verification link to<br>
-          <strong style="color:var(--lime);">${email}</strong><br><br>
-          Click the link in that email to verify your account, then come back here to sign in.
-        </div>
-        <div style="background:rgba(200,241,53,0.08);border:1px solid rgba(200,241,53,0.15);border-radius:14px;padding:16px 20px;font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:24px;line-height:1.6;">
-          📌 Don't see it? Check your <strong style="color:#fff;">spam or junk folder</strong>.<br>
-          The email comes from Tech Bros for Yeshua.
-        </div>
-        <a href="portal.html" style="background:linear-gradient(135deg,#c8f135,#d8ff45);color:#080a04;font-family:'Syne',sans-serif;font-weight:700;font-size:15px;padding:14px 32px;border-radius:100px;text-decoration:none;display:inline-block;">
-          Go to Sign In →
-        </a>
-      </div>`;
-  }
-}
-
-async function doForgot() {
-  const email = document.getElementById('ll-email').value.trim();
-  if (!email) { showLoginMsg('Enter your email above first.', 'error'); return; }
-  await _sb.auth.resetPasswordForEmail(email, {
-    redirectTo: 'https://techbros4yeshua-web-design.netlify.app/reset.html'
-  });
-  showLoginMsg('Password reset email sent — check your inbox!', 'success');
-}
-
-// Check if already logged in — show portal button instead
-_sb.auth.getSession().then(({ data: { session } }) => {
+// If already signed in, point the nav at the portal
+sb.auth.getSession().then(({ data: { session } }) => {
   if (session) {
-    const loginSection = document.getElementById('login');
-    if (loginSection) {
-      loginSection.innerHTML = `
-        <div style="text-align:center;padding:60px 20px;">
-          <div style="font-size:48px;margin-bottom:16px;">👋</div>
-          <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:24px;color:#fff;margin-bottom:8px;">Welcome back!</div>
-          <div style="font-size:15px;color:rgba(255,255,255,0.5);margin-bottom:28px;">You're already signed in.</div>
-          <a href="portal.html" style="background:linear-gradient(135deg,#c8f135,#d8ff45);color:#080a04;font-family:'Syne',sans-serif;font-weight:700;font-size:15px;padding:14px 32px;border-radius:100px;text-decoration:none;display:inline-block;">Go to My Portal →</a>
-        </div>`;
-    }
+    document.querySelectorAll('a.nav-btn.outline').forEach(a => { a.textContent = 'My Portal →'; });
   }
 });
 </script>
@@ -2535,66 +2448,6 @@ _sb.auth.getSession().then(({ data: { session } }) => {
 
 
 
-<script>
-// ── PLAN SELECTION & SUBSCRIPTION FLOW ──
-const STRIPE_LINKS = JSON.parse(localStorage.getItem('stripe_links') || '{}');
-
-const PLAN_DETAILS = {
-  starter: {
-    name: 'Starter',
-    setup: 299, monthly: 55,
-    features: ['Up to 5 pages','Mobile responsive','Contact form','Basic SEO','Hosting + SSL','2 edits/month','1 month free edits']
-  },
-  professional: {
-    name: 'Professional',
-    setup: 599, monthly: 85,
-    features: ['Up to 10 pages','Mobile responsive','Live chat + contact form','Advanced SEO','Hosting + SSL','4 edits/month','1 year free edits','Payment processing']
-  },
-  premium: {
-    name: 'Premium',
-    setup: 1200, monthly: 150,
-    features: ['Unlimited pages','Mobile responsive','Full feature set','Advanced SEO + analytics','Hosting + SSL','Unlimited edits','Payments + subscriptions']
-  }
-};
-
-function openPlanModal(planKey, planLabel) {
-  const plan = PLAN_DETAILS[planKey];
-  if (!plan) { window.location.href = 'portal.html?plan=' + planKey; return; }
-
-  // Get saved pricing from admin if available
-  try {
-    const saved = JSON.parse(localStorage.getItem('tb4y_pricing') || '{}');
-    if (saved[planKey]) { plan.setup = saved[planKey].setup; plan.monthly = saved[planKey].monthly; }
-  } catch(e) {}
-
-  const stripeLink = STRIPE_LINKS[planKey];
-
-  const modal = document.createElement('div');
-  modal.id = 'plan-modal-overlay';
-  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(8px);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;';
-  modal.innerHTML = `
-    <div style="background:#0e100a;border:1.5px solid rgba(200,241,53,0.25);border-radius:24px;padding:36px 32px;max-width:460px;width:100%;position:relative;max-height:90vh;overflow-y:auto;">
-      <button onclick="document.getElementById('plan-modal-overlay').remove()" style="position:absolute;top:14px;right:16px;background:none;border:none;color:rgba(255,255,255,0.4);font-size:22px;cursor:pointer;">✕</button>
-      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--lime);margin-bottom:8px;">${plan.name} Plan</div>
-      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:28px;color:#fff;margin-bottom:4px;">$${plan.setup} <span style="font-size:15px;color:rgba(255,255,255,0.4);font-weight:400;">one-time setup</span></div>
-      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:20px;color:var(--lime);margin-bottom:20px;">+ $${plan.monthly}<span style="font-size:14px;color:rgba(255,255,255,0.4);font-weight:400;">/month</span></div>
-      <ul style="list-style:none;display:flex;flex-direction:column;gap:8px;margin-bottom:24px;">
-        ${plan.features.map(f => `<li style="font-size:13px;color:rgba(255,255,255,0.65);display:flex;align-items:center;gap:8px;"><span style="color:var(--lime);font-weight:700;">✓</span>${f}</li>`).join('')}
-      </ul>
-      <div style="display:flex;flex-direction:column;gap:10px;">
-        ${stripeLink
-          ? `<a href="${stripeLink}" target="_blank" style="display:block;text-align:center;background:linear-gradient(135deg,#c8f135,#d8ff45);color:#080a04;font-family:'Syne',sans-serif;font-weight:700;font-size:15px;padding:15px;border-radius:100px;text-decoration:none;">Pay Now — Subscribe →</a>`
-          : `<a href="portal.html?action=inquiry&plan=${planKey}" style="display:block;text-align:center;background:linear-gradient(135deg,#c8f135,#d8ff45);color:#080a04;font-family:'Syne',sans-serif;font-weight:700;font-size:15px;padding:15px;border-radius:100px;text-decoration:none;">Get Started — Request Prototype →</a>`
-        }
-        <a href="portal.html?action=inquiry&plan=${planKey}" style="display:block;text-align:center;background:rgba(200,241,53,0.08);color:var(--lime);font-family:'Syne',sans-serif;font-weight:600;font-size:13px;padding:12px;border-radius:100px;text-decoration:none;border:1px solid rgba(200,241,53,0.2);">Get a Free Prototype First</a>
-      </div>
-      <p style="font-size:11px;color:rgba(255,255,255,0.2);text-align:center;margin-top:14px;">Secure payment via Stripe · Cancel anytime · No hidden fees</p>
-    </div>`;
-
-  document.body.appendChild(modal);
-  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
-}
-</script>
 
 
 
@@ -2606,6 +2459,8 @@ let selectedWebsite = null;
 let selectedMonthly = null;
 
 function selectWebsite(plan, price) {
+  // Prefer live pricing from Supabase over the hardcoded onclick value
+  price = (typeof PRICING !== 'undefined' && PRICING[plan]?.setup) || price;
   selectedWebsite = { plan, price };
 
   // Highlight selected
@@ -2633,6 +2488,7 @@ function selectWebsite(plan, price) {
 }
 
 function selectMonthly(plan, price) {
+  if (plan !== 'none') price = (typeof PRICING !== 'undefined' && PRICING[plan]?.monthly) || price;
   selectedMonthly = { plan, price };
 
   // Highlight selected
@@ -2658,6 +2514,9 @@ function selectMonthly(plan, price) {
       <span>Total</span>
       <span class="summary-total-value">$${selectedWebsite.price.toLocaleString()} ${totalMonthly}</span>
     </div>
+    <p style="font-size:13px;color:rgba(255,255,255,0.45);line-height:1.6;margin-top:16px;text-align:center;">
+      💡 <strong style="color:var(--lime);">You pay $0 today.</strong> Next step: tell us about your business and we'll build your free prototype in 5–7 days. This total is only due if you approve it and decide to go live.
+    </p>
   `;
 
   // Show step 3

@@ -252,6 +252,17 @@ body{font-family:'DM Sans',sans-serif;background:#080a04;color:#fff;min-height:1
 }
 .pricing-preview strong { color: #fff; }
 
+/* REQUEST FILTER CHIPS */
+.filter-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+.chip {
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.5); font-family: 'Syne', sans-serif; font-weight: 600;
+  font-size: 12px; padding: 7px 16px; border-radius: 100px; cursor: pointer;
+  transition: all 0.2s;
+}
+.chip:hover { border-color: rgba(200,241,53,0.3); color: #fff; }
+.chip.active { background: rgba(200,241,53,0.12); border-color: rgba(200,241,53,0.4); color: var(--lime); }
+
 </style>
 </head>
 <body>
@@ -288,24 +299,23 @@ body{font-family:'DM Sans',sans-serif;background:#080a04;color:#fff;min-height:1
     </div>
 
     <div class="tabs">
-      <button class="tab active" onclick="showTab('inquiries')">📋 Inquiries</button>
-      <button class="tab" onclick="showTab('edit-requests')">✏️ Edit Requests</button>
+      <button class="tab active" onclick="showTab('requests')">📥 Requests</button>
       <button class="tab" onclick="showTab('clients')">👥 Clients</button>
       <button class="tab" onclick="showTab('sites-mgmt')">🌐 Manage Sites</button>
-      <button class="tab" onclick="showTab('stripe-settings')">⚙️ Stripe Links</button>
-      <button class="tab" onclick="showTab('pricing-mgmt')">💰 Pricing</button>
+      <button class="tab" onclick="showTab('settings')">⚙️ Pricing & Stripe</button>
     </div>
 
-    <!-- INQUIRIES -->
-    <div id="tab-inquiries" class="tab-panel active">
-      <div class="label">Client Inquiries — Each Account</div>
-      <div id="inquiries-list"><div class="loading">Loading inquiries...</div></div>
-    </div>
-
-    <!-- EDIT REQUESTS -->
-    <div id="tab-edit-requests" class="tab-panel">
-      <div class="label">Edit & Website Requests</div>
-      <div id="edit-list"><div class="loading">Loading...</div></div>
+    <!-- REQUESTS (unified: inquiries + edits + payment notices) -->
+    <div id="tab-requests" class="tab-panel active">
+      <div class="label">All Client Requests</div>
+      <div class="filter-chips" id="req-filters">
+        <button class="chip active" data-filter="all" onclick="setReqFilter('all')">All Open</button>
+        <button class="chip" data-filter="inquiry" onclick="setReqFilter('inquiry')">📋 New Inquiries</button>
+        <button class="chip" data-filter="pending" onclick="setReqFilter('pending')">✏️ Pending Edits</button>
+        <button class="chip" data-filter="payment-sent" onclick="setReqFilter('payment-sent')">💳 Payment Sent</button>
+        <button class="chip" data-filter="done" onclick="setReqFilter('done')">✓ Done</button>
+      </div>
+      <div id="requests-list"><div class="loading">Loading...</div></div>
     </div>
 
     <!-- CLIENTS -->
@@ -331,8 +341,42 @@ body{font-family:'DM Sans',sans-serif;background:#080a04;color:#fff;min-height:1
       <div id="all-sites-list"><div class="loading">Loading sites...</div></div>
     </div>
 
-    <!-- STRIPE SETTINGS -->
-    <div id="tab-stripe-settings" class="tab-panel">
+    <!-- SETTINGS: PRICING + STRIPE LINKS (saved to Supabase, visible to all clients) -->
+    <div id="tab-settings" class="tab-panel">
+
+      <div class="req-card" style="margin-bottom:14px;">
+        <div class="label">Plan Pricing</div>
+        <p style="font-size:13px;color:var(--mid);margin-bottom:16px;">Saved to Supabase and shown live on the landing page and client portal — on every device.</p>
+        <div class="pricing-grid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;">
+          <div class="price-field">
+            <label>Starter — Website Build</label>
+            <div class="price-input-wrap"><span class="price-symbol">$</span><input type="number" class="price-input" id="build-starter" placeholder="500" min="0"><span class="price-suffix">one-time</span></div>
+          </div>
+          <div class="price-field">
+            <label>Starter — Monthly</label>
+            <div class="price-input-wrap"><span class="price-symbol">$</span><input type="number" class="price-input" id="monthly-starter" placeholder="55" min="0"><span class="price-suffix">/month</span></div>
+          </div>
+          <div class="price-field">
+            <label>Professional — Website Build</label>
+            <div class="price-input-wrap"><span class="price-symbol">$</span><input type="number" class="price-input" id="build-professional" placeholder="800" min="0"><span class="price-suffix">one-time</span></div>
+          </div>
+          <div class="price-field">
+            <label>Professional — Monthly</label>
+            <div class="price-input-wrap"><span class="price-symbol">$</span><input type="number" class="price-input" id="monthly-professional" placeholder="85" min="0"><span class="price-suffix">/month</span></div>
+          </div>
+          <div class="price-field">
+            <label>Premium — Website Build</label>
+            <div class="price-input-wrap"><span class="price-symbol">$</span><input type="number" class="price-input" id="build-premium" placeholder="1200" min="0"><span class="price-suffix">one-time</span></div>
+          </div>
+          <div class="price-field">
+            <label>Premium — Monthly</label>
+            <div class="price-input-wrap"><span class="price-symbol">$</span><input type="number" class="price-input" id="monthly-premium" placeholder="150" min="0"><span class="price-suffix">/month</span></div>
+          </div>
+        </div>
+        <button class="save-price-btn" onclick="savePricing()" style="margin-top:14px;">Save Pricing</button>
+        <span class="price-saved-msg" id="saved-pricing">✓ Saved!</span>
+      </div>
+
       <div class="stripe-notice">⚠️ Add billing info at <a href="https://dashboard.stripe.com/settings/billing" target="_blank" style="color:#ffb400;">dashboard.stripe.com</a> first, then create payment links for each plan.</div>
       <div class="req-card">
         <div class="label">Stripe Payment Links</div>
@@ -340,118 +384,22 @@ body{font-family:'DM Sans',sans-serif;background:#080a04;color:#fff;min-height:1
         <div class="stripe-row"><label>Starter</label><input type="text" id="sl-starter" placeholder="https://buy.stripe.com/..."></div>
         <div class="stripe-row"><label>Professional</label><input type="text" id="sl-professional" placeholder="https://buy.stripe.com/..."></div>
         <div class="stripe-row"><label>Premium</label><input type="text" id="sl-premium" placeholder="https://buy.stripe.com/..."></div>
-        <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin:16px 0 10px;">Buyout (One-Time) Links</div>
-        <div class="stripe-row"><label>Starter Buyout</label><input type="text" id="sl-starter-buyout" placeholder="https://buy.stripe.com/..."></div>
-        <div class="stripe-row"><label>Pro Buyout</label><input type="text" id="sl-professional-buyout" placeholder="https://buy.stripe.com/..."></div>
-        <div class="stripe-row"><label>Premium Buyout</label><input type="text" id="sl-premium-buyout" placeholder="https://buy.stripe.com/..."></div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin:16px 0 10px;">Website Build (One-Time) Links</div>
+        <div class="stripe-row"><label>Starter Build</label><input type="text" id="sl-starter-onetime" placeholder="https://buy.stripe.com/..."></div>
+        <div class="stripe-row"><label>Pro Build</label><input type="text" id="sl-professional-onetime" placeholder="https://buy.stripe.com/..."></div>
+        <div class="stripe-row"><label>Premium Build</label><input type="text" id="sl-premium-onetime" placeholder="https://buy.stripe.com/..."></div>
         <button class="save-btn" onclick="saveStripeLinks()">Save Links</button>
         <span id="stripe-save-msg" style="font-size:12px;color:var(--lime);margin-left:12px;display:none;">✓ Saved!</span>
       </div>
       <div class="req-card" style="margin-top:14px;">
         <div class="label">Client Workflow</div>
         <div class="workflow-steps">
-          <div class="workflow-step"><div class="step-num">1</div><div class="step-text">Client creates account & submits inquiry → appears in <strong>📋 Inquiries</strong></div></div>
+          <div class="workflow-step"><div class="step-num">1</div><div class="step-text">Client creates account & submits inquiry → appears in <strong>📥 Requests</strong></div></div>
           <div class="workflow-step"><div class="step-num">2</div><div class="step-text">You build their demo → <strong>🌐 Manage Sites</strong> → add site → set to <strong>🔧 Demo</strong></div></div>
           <div class="workflow-step"><div class="step-num">3</div><div class="step-text">Client approves → select plan → <strong>Send Payment Link</strong> → opens email with Stripe link</div></div>
           <div class="workflow-step"><div class="step-num">4</div><div class="step-text">Client pays → you add subscription → switch site to <strong>🟢 Live</strong></div></div>
           <div class="workflow-step"><div class="step-num">5</div><div class="step-text">Plan changes → <strong>👥 Clients</strong> → Change Plan → old sub cancelled, new one starts</div></div>
         </div>
-      </div>
-    </div>
-
-  <!-- PRICING MANAGEMENT -->
-    <div id="tab-pricing-mgmt" class="tab-panel">
-      <div class="label">Manage Plan Pricing</div>
-      <p style="font-size:13px;color:var(--mid);margin-bottom:20px;">Update pricing for both one-time purchases and monthly subscriptions.</p>
-
-      <!-- ONE TIME -->
-      <div style="font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--lime);margin-bottom:12px;">🏠 One-Time Purchase Prices</div>
-
-      <div class="pricing-card">
-        <div class="pricing-grid" style="grid-template-columns:1fr 1fr 1fr;">
-          <div class="price-field">
-            <label>Starter</label>
-            <div class="price-input-wrap"><span class="price-symbol">$</span><input type="number" class="price-input" id="onetime-starter" placeholder="500" min="0" style="font-size:16px;"></div>
-          </div>
-          <div class="price-field">
-            <label>Professional</label>
-            <div class="price-input-wrap"><span class="price-symbol">$</span><input type="number" class="price-input" id="onetime-professional" placeholder="800" min="0" style="font-size:16px;"></div>
-          </div>
-          <div class="price-field">
-            <label>Premium</label>
-            <div class="price-input-wrap"><span class="price-symbol">$</span><input type="number" class="price-input" id="onetime-premium" placeholder="1200" min="0" style="font-size:16px;"></div>
-          </div>
-        </div>
-        <button class="save-price-btn" onclick="saveOnetimePricing()" style="margin-top:12px;">Save One-Time Prices</button>
-        <span class="price-saved-msg" id="saved-onetime">✓ Saved!</span>
-      </div>
-
-      <!-- MONTHLY -->
-      <div style="font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--lime);margin:20px 0 12px;">📅 Monthly Subscription Prices</div>
-
-      <!-- STARTER -->
-      <div class="pricing-card">
-        <div class="pricing-card-header">
-          <div class="pricing-plan-name">Starter</div>
-          <div class="pricing-preview" id="preview-starter">Loading...</div>
-        </div>
-        <div class="pricing-grid">
-          <div class="price-field">
-            <label>Setup Fee (one-time)</label>
-            <div class="price-input-wrap"><span class="price-symbol">$</span><input type="number" class="price-input" id="setup-starter" placeholder="299" min="0"><span class="price-suffix">one-time</span></div>
-          </div>
-          <div class="price-field">
-            <label>Monthly Rate</label>
-            <div class="price-input-wrap"><span class="price-symbol">$</span><input type="number" class="price-input" id="monthly-starter" placeholder="55" min="0"><span class="price-suffix">/month</span></div>
-          </div>
-        </div>
-        <button class="save-price-btn" onclick="savePricing('starter')">Save</button>
-        <span class="price-saved-msg" id="saved-starter">✓ Saved!</span>
-      </div>
-
-      <!-- PROFESSIONAL -->
-      <div class="pricing-card">
-        <div class="pricing-card-header">
-          <div class="pricing-plan-name">Professional</div>
-          <div class="pricing-preview" id="preview-professional">Loading...</div>
-        </div>
-        <div class="pricing-grid">
-          <div class="price-field">
-            <label>Setup Fee (one-time)</label>
-            <div class="price-input-wrap"><span class="price-symbol">$</span><input type="number" class="price-input" id="setup-professional" placeholder="599" min="0"><span class="price-suffix">one-time</span></div>
-          </div>
-          <div class="price-field">
-            <label>Monthly Rate</label>
-            <div class="price-input-wrap"><span class="price-symbol">$</span><input type="number" class="price-input" id="monthly-professional" placeholder="85" min="0"><span class="price-suffix">/month</span></div>
-          </div>
-        </div>
-        <button class="save-price-btn" onclick="savePricing('professional')">Save</button>
-        <span class="price-saved-msg" id="saved-professional">✓ Saved!</span>
-      </div>
-
-      <!-- PREMIUM -->
-      <div class="pricing-card">
-        <div class="pricing-card-header">
-          <div class="pricing-plan-name">Premium</div>
-          <div class="pricing-preview" id="preview-premium">Loading...</div>
-        </div>
-        <div class="pricing-grid">
-          <div class="price-field">
-            <label>Setup Fee (one-time)</label>
-            <div class="price-input-wrap"><span class="price-symbol">$</span><input type="number" class="price-input" id="setup-premium" placeholder="1200" min="0"><span class="price-suffix">one-time</span></div>
-          </div>
-          <div class="price-field">
-            <label>Monthly Rate</label>
-            <div class="price-input-wrap"><span class="price-symbol">$</span><input type="number" class="price-input" id="monthly-premium" placeholder="150" min="0"><span class="price-suffix">/month</span></div>
-          </div>
-        </div>
-        <button class="save-price-btn" onclick="savePricing('premium')">Save</button>
-        <span class="price-saved-msg" id="saved-premium">✓ Saved!</span>
-      </div>
-
-      <div class="req-card" style="margin-top:8px;">
-        <div class="label">Note</div>
-        <p style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.6;">Pricing is saved locally and synced to the landing page automatically. Buyout price is automatically calculated as 24x monthly. When you update Stripe, create both monthly subscription and one-time payment links, then paste them in <strong style="color:#fff;">⚙️ Stripe Links</strong>.</p>
       </div>
     </div>
 
@@ -464,6 +412,33 @@ const sb = supabase.createClient(
   'sb_publishable_x9BC4b-yBIZAXz67WTVTkQ_v3wOCGhZ'
 );
 
+// ── SITE CONFIG (pricing + Stripe links, shared via Supabase) ──
+const DEFAULT_PRICING = {
+  starter:      { setup: 500,  monthly: 55  },
+  professional: { setup: 800,  monthly: 85  },
+  premium:      { setup: 1200, monthly: 150 }
+};
+let SITE_CONFIG = { pricing: DEFAULT_PRICING, stripe_links: {} };
+
+async function loadConfig(){
+  const {data} = await sb.from('site_config').select('key,value');
+  (data||[]).forEach(r => { SITE_CONFIG[r.key] = r.value; });
+}
+
+async function saveConfig(key){
+  const {error} = await sb.from('site_config').upsert({ key, value: SITE_CONFIG[key], updated_at: new Date().toISOString() });
+  if (error) console.error('saveConfig', error);
+  return !error;
+}
+
+// ── ADMIN GATE ──
+async function checkAdmin(){
+  const {data:{user}} = await sb.auth.getUser();
+  if (!user) return false;
+  const {data:prof} = await sb.from('profiles').select('is_admin').eq('id', user.id).single();
+  return !!(prof && prof.is_admin);
+}
+
 function showMsg(txt,type){const e=document.getElementById('auth-msg');e.textContent=txt;e.className='msg '+type;}
 function fmt(d){return new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'});}
 function fmtShort(d){return new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});}
@@ -474,7 +449,11 @@ async function doLogin(){
   if(!email||!pass){showMsg('Enter email and password.','error');return;}
   const {data,error}=await sb.auth.signInWithPassword({email,password:pass});
   if(error){showMsg(error.message,'error');}
-  else loadAdmin();
+  else if(await checkAdmin()) loadAdmin();
+  else {
+    await sb.auth.signOut();
+    showMsg('This account does not have admin access.','error');
+  }
 }
 
 async function doSignout(){
@@ -488,46 +467,81 @@ function showTab(name){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   const panel = document.getElementById('tab-'+name);
   if(panel) panel.classList.add('active');
-  const tabs=['inquiries','edit-requests','clients','sites-mgmt','stripe-settings','pricing-mgmt'];
+  const tabs=['requests','clients','sites-mgmt','settings'];
   const idx=tabs.indexOf(name);
   if(idx>-1)document.querySelectorAll('.tab')[idx]?.classList.add('active');
   if(name==='sites-mgmt') loadSitesMgmt();
-  if(name==='stripe-settings') loadStripeInputs();
-  if(name==='pricing-mgmt') loadPricingInputs();
+  if(name==='settings'){ loadStripeInputs(); loadPricingInputs(); }
 }
 
 async function loadAdmin(){
   document.getElementById('auth-screen').style.display='none';
   document.getElementById('admin-screen').style.display='block';
-  await Promise.all([loadInquiries(),loadEditRequests(),loadClients()]);
+  await loadConfig();
+  await Promise.all([loadRequests(),loadClients()]);
   setupRealtime();
 }
 
-// ── INQUIRIES ──
-async function loadInquiries(){
-  const {data} = await sb.from('edit_requests')
-    .select('*, profiles(full_name,email)')
-    .eq('status','inquiry')
-    .order('created_at',{ascending:false});
-  
-  document.getElementById('s-inquiries').textContent = data?.length||0;
-  const c = document.getElementById('inquiries-list');
-  if(!data||!data.length){c.innerHTML='<div class="empty">No inquiries yet.</div>';return;}
+// ── UNIFIED REQUESTS QUEUE ──
+// Merges prototype inquiries (contact_requests) with edit requests,
+// payment notices and plan switches (edit_requests) into one list.
+let reqFilter = 'all';
+let allRequests = [];
 
-  c.innerHTML = data.map(r=>{
-    const name = r.profiles?.full_name||'Unknown';
-    const email = r.profiles?.email||'—';
-    const initials = (name.trim().split(' ').map(w=>w[0]||'').join('').substring(0,2)||'?').toUpperCase();
-    return `
+function reqCategory(r){
+  if (r.status === 'done') return 'done';
+  if (r.status === 'payment-sent') return 'payment-sent';
+  if (r.source === 'contact' || r.status === 'inquiry') return 'inquiry';
+  return 'pending';
+}
+
+async function loadRequests(){
+  const [contacts, edits] = await Promise.all([
+    sb.from('contact_requests').select('*').order('created_at',{ascending:false}),
+    sb.from('edit_requests').select('*, profiles(email,full_name)').order('created_at',{ascending:false})
+  ]);
+  allRequests = [
+    ...(contacts.data||[]).map(r=>({source:'contact', ...r})),
+    ...(edits.data||[]).map(r=>({source:'edit', ...r}))
+  ].sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
+
+  document.getElementById('s-inquiries').textContent = allRequests.filter(r=>reqCategory(r)==='inquiry').length;
+  document.getElementById('s-pending').textContent  = allRequests.filter(r=>reqCategory(r)==='pending').length;
+  renderRequests();
+}
+
+function setReqFilter(f){
+  reqFilter = f;
+  document.querySelectorAll('#req-filters .chip').forEach(b=>b.classList.toggle('active', b.dataset.filter===f));
+  renderRequests();
+}
+
+function renderRequests(){
+  const c = document.getElementById('requests-list');
+  const rows = allRequests.filter(r => reqFilter==='all' ? reqCategory(r)!=='done' : reqCategory(r)===reqFilter);
+  if(!rows.length){c.innerHTML='<div class="empty">Nothing here yet.</div>';return;}
+  c.innerHTML = rows.map(r => r.source==='contact' ? renderInquiryCard(r) : renderEditCard(r)).join('');
+}
+
+function renderInquiryCard(r){
+  const name = ((r.first_name||'')+' '+(r.last_name||'')).trim()||'Unknown';
+  const email = r.email||'—';
+  const initials = (name.trim().split(' ').map(w=>w[0]||'').join('').substring(0,2)||'?').toUpperCase();
+  const cat = reqCategory(r);
+  const pricing = getPricing();
+  const badge = cat==='done' ? '<span class="badge done"><span class="badge-dot"></span>Done</span>'
+    : cat==='payment-sent' ? '<span class="badge payment-sent"><span class="badge-dot"></span>Payment Sent</span>'
+    : '<span class="badge pending"><span class="badge-dot"></span>New Inquiry</span>';
+  return `
     <div class="account-card" id="inq-${r.id}">
       <div class="account-header">
         <div class="account-avatar">${initials}</div>
         <div style="flex:1;min-width:0;">
-          <div class="account-name">${name}</div>
-          <div class="account-email">📧 <a href="mailto:${email}" style="color:var(--lime);text-decoration:none;">${email}</a></div>
-          <div class="account-meta">Submitted ${fmtShort(r.created_at)}</div>
+          <div class="account-name">${name}${r.business?` — <span style="color:var(--lime);">${r.business}</span>`:''}</div>
+          <div class="account-email">📧 <a href="mailto:${email}" style="color:var(--lime);text-decoration:none;">${email}</a>${r.phone?` &nbsp;·&nbsp; 📞 ${r.phone}`:''}</div>
+          <div class="account-meta">Submitted ${fmtShort(r.created_at)}${r.plan?` &nbsp;·&nbsp; Interested in: <strong style="color:#fff;">${r.plan}</strong>`:''}</div>
         </div>
-        <span class="badge pending"><span class="badge-dot"></span>New Inquiry</span>
+        ${badge}
       </div>
       <div class="inquiry-box">
         <div class="inquiry-field"><span class="inquiry-label">Details</span><span class="inquiry-value" style="white-space:pre-wrap;">${r.message||'—'}</span></div>
@@ -535,56 +549,26 @@ async function loadInquiries(){
       <div class="action-row">
         <select class="plan-select" id="plan-sel-${r.id}">
           <option value="">Select plan to offer...</option>
-          <option value="starter">Starter — $55/mo</option>
-          <option value="professional">Professional — $85/mo</option>
-          <option value="premium">Premium — $150/mo</option>
+          <option value="starter">Starter — $${pricing.starter.setup} + $${pricing.starter.monthly}/mo</option>
+          <option value="professional">Professional — $${pricing.professional.setup} + $${pricing.professional.monthly}/mo</option>
+          <option value="premium">Premium — $${pricing.premium.setup.toLocaleString()} + $${pricing.premium.monthly}/mo</option>
         </select>
         <button class="pay-btn" id="pay-btn-${r.id}"
           onclick="sendPaymentLink('${r.id}','${email}','${name.split(' ')[0]}')">
           Send Payment Link →
         </button>
-        <button onclick="markInquiryDone('${r.id}')" style="padding:6px 14px;border-radius:100px;font-size:11px;font-family:'Syne',sans-serif;font-weight:600;cursor:pointer;border:1px solid rgba(80,200,80,0.2);background:rgba(80,200,80,0.05);color:#6dc86d;">Mark Done</button>
+        ${cat!=='done'
+          ? `<button onclick="setReqStatus('contact','${r.id}','done')" style="padding:6px 14px;border-radius:100px;font-size:11px;font-family:'Syne',sans-serif;font-weight:600;cursor:pointer;border:1px solid rgba(80,200,80,0.2);background:rgba(80,200,80,0.05);color:#6dc86d;">Mark Done</button>`
+          : `<button onclick="setReqStatus('contact','${r.id}','pending')" class="mark-done">Undo</button>`}
       </div>
-    </div>`}).join('');
+    </div>`;
 }
 
-async function markInquiryDone(id){
-  await sb.from('edit_requests').update({status:'done'}).eq('id',id);
-  loadInquiries();
-  loadEditRequests();
-}
-
-async function sendPaymentLink(inquiryId,email,firstName){
-  const planKey=document.getElementById('plan-sel-'+inquiryId).value;
-  if(!planKey){alert('Please select a plan first.');return;}
-  const links=getStripeLinks();
-  const stripeLink=links[planKey];
-  if(!stripeLink||!stripeLink.startsWith('http')){alert('No Stripe link saved for this plan. Go to ⚙️ Stripe Links tab first.');return;}
-  const planNames={starter:'Starter ($299 setup + $55/mo)',professional:'Professional ($599 setup + $85/mo)',premium:'Premium ($1,200 setup + $150/mo)'};
-  await sb.from('edit_requests').update({status:'payment-sent'}).eq('id',inquiryId);
-  const subject=encodeURIComponent('Your Tech Bros for Yeshua Website Payment Link');
-  const body=encodeURIComponent(`Hi ${firstName},\n\nThank you for your interest! Here is your payment link for the ${planNames[planKey]} plan:\n\n${stripeLink}\n\nOnce payment is complete, you'll have full access to your client portal.\n\nGod bless,\nNathan\nTech Bros for Yeshua`);
-  window.open(`mailto:${email}?subject=${subject}&body=${body}`);
-  document.getElementById('pay-btn-'+inquiryId).textContent='✓ Link Sent';
-  document.getElementById('pay-btn-'+inquiryId).className='pay-btn sent';
-  document.getElementById('pay-btn-'+inquiryId).disabled=true;
-  const badge=document.querySelector(`#inq-${inquiryId} .badge`);
-  if(badge){badge.className='badge payment-sent';badge.innerHTML='<span class="badge-dot"></span>Payment Sent';}
-}
-
-async function updateInquiryStatus(id,status){
-  await sb.from('contact_requests').update({status}).eq('id',id);
-  loadInquiries();
-}
-
-// ── EDIT REQUESTS ──
-async function loadEditRequests(){
-  const {data}=await sb.from('edit_requests').select('*, profiles(email,full_name)').order('created_at',{ascending:false});
-  const pending=data?.filter(r=>r.status==='pending')||[];
-  document.getElementById('s-pending').textContent=pending.length;
-  const c=document.getElementById('edit-list');
-  if(!data||!data.length){c.innerHTML='<div class="empty">No edit requests yet.</div>';return;}
-  c.innerHTML=data.map(r=>`
+function renderEditCard(r){
+  const cat = reqCategory(r);
+  const badgeCls = cat==='done'?'done':cat==='payment-sent'?'payment-sent':'pending';
+  const badgeTxt = cat==='inquiry'?'notification':(r.status||'pending');
+  return `
     <div class="req-card" id="req-${r.id}">
       <div class="req-top">
         <div style="flex:1;min-width:0;">
@@ -592,49 +576,75 @@ async function loadEditRequests(){
           <div class="req-meta">👤 ${r.profiles?.full_name||'Client'} &nbsp;·&nbsp; 📧 ${r.profiles?.email||'—'} &nbsp;·&nbsp; 📄 ${(r.page||'—').substring(0,40)}</div>
         </div>
         <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
-          <span class="badge ${r.status==='done'?'done':'pending'}"><span class="badge-dot"></span>${r.status||'pending'}</span>
-          ${r.status!=='done'?`<button class="mark-done" onclick="markDone('${r.id}')">Mark Done</button>`:`<button class="mark-done" onclick="markUndone('${r.id}')">Undo</button>`}
+          <span class="badge ${badgeCls}"><span class="badge-dot"></span>${badgeTxt}</span>
+          ${cat!=='done'
+            ? `<button class="mark-done" onclick="setReqStatus('edit','${r.id}','done')">Mark Done</button>`
+            : `<button class="mark-done" onclick="setReqStatus('edit','${r.id}','pending')">Undo</button>`}
         </div>
       </div>
       <div class="req-msg">${r.message||''}</div>
       <div class="req-date">${fmt(r.created_at)}</div>
-    </div>`).join('');
+    </div>`;
 }
 
-async function markDone(id){
-  await sb.from('edit_requests').update({status:'done'}).eq('id',id);
-  loadEditRequests();
+async function setReqStatus(source,id,status){
+  const table = source==='contact' ? 'contact_requests' : 'edit_requests';
+  await sb.from(table).update({status}).eq('id',id);
+  loadRequests();
 }
-async function markUndone(id){
-  await sb.from('edit_requests').update({status:'pending'}).eq('id',id);
-  loadEditRequests();
+
+async function sendPaymentLink(inquiryId,email,firstName){
+  const planKey=document.getElementById('plan-sel-'+inquiryId).value;
+  if(!planKey){alert('Please select a plan first.');return;}
+  const links=getStripeLinks();
+  const stripeLink=links[planKey];
+  if(!stripeLink||!stripeLink.startsWith('http')){alert('No Stripe link saved for this plan. Go to the ⚙️ Pricing & Stripe tab first.');return;}
+  const p=getPricing()[planKey];
+  const names={starter:'Starter',professional:'Professional',premium:'Premium'};
+  const planLabel=`${names[planKey]} ($${p.setup.toLocaleString()} build + $${p.monthly}/mo)`;
+  await sb.from('contact_requests').update({status:'payment-sent'}).eq('id',inquiryId);
+  const subject=encodeURIComponent('Your Tech Bros for Yeshua Website Payment Link');
+  const body=encodeURIComponent(`Hi ${firstName},\n\nThank you for your interest! Here is your payment link for the ${planLabel} plan:\n\n${stripeLink}\n\nOnce payment is complete, you'll have full access to your client portal.\n\nGod bless,\nNathan\nTech Bros for Yeshua`);
+  window.open(`mailto:${email}?subject=${subject}&body=${body}`);
+  loadRequests();
 }
 
 // ── CLIENTS ──
 async function loadClients(){
-  const {data}=await sb.from('profiles').select('*, subscriptions(plan,status,billing_date)').order('created_at',{ascending:false});
-  const {data:sitesData}=await sb.from('sites').select('id,status').eq('status','active');
+  const [{data},{data:sitesData},{data:reqData}]=await Promise.all([
+    sb.from('profiles').select('*, subscriptions(plan,status,billing_date)').order('created_at',{ascending:false}),
+    sb.from('sites').select('id,user_id,site_name,status'),
+    sb.from('edit_requests').select('id,user_id,status')
+  ]);
   document.getElementById('s-clients').textContent=data?.length||0;
-  document.getElementById('s-sites').textContent=sitesData?.length||0;
+  document.getElementById('s-sites').textContent=(sitesData||[]).filter(s=>s.status==='active').length;
   const c=document.getElementById('clients-list');
   if(!data||!data.length){c.innerHTML='<div class="empty">No clients yet.</div>';return;}
+  const pricing=getPricing();
   c.innerHTML=data.map(r=>{
     const sub=r.subscriptions?.find(s=>s.status==='active');
+    const mySites=(sitesData||[]).filter(s=>s.user_id===r.id);
+    const openReqs=(reqData||[]).filter(q=>q.user_id===r.id&&q.status!=='done').length;
+    const siteIcons={active:'🟢',demo:'🔧','payment-pending':'💳',paused:'⏸'};
+    const sitesLine=mySites.length
+      ? mySites.map(s=>`${siteIcons[s.status]||'⏸'} ${s.site_name}`).join(' &nbsp;·&nbsp; ')
+      : '<span style="color:rgba(255,255,255,0.25);">No sites yet</span>';
     return `
     <div class="req-card" id="client-${r.id}">
       <div class="req-top">
         <div style="flex:1;min-width:0;">
           <div class="req-type">${r.full_name||'—'}</div>
           <div class="req-meta">📧 <a href="mailto:${r.email}" style="color:var(--lime);text-decoration:none;">${r.email}</a> &nbsp;·&nbsp; Plan: <strong style="color:#fff;">${sub?.plan||'None'}</strong>${sub?.billing_date?` &nbsp;·&nbsp; Next billing: ${fmtShort(sub.billing_date)}`:''}</div>
+          <div class="req-meta" style="margin-top:4px;">🌐 ${sitesLine} &nbsp;·&nbsp; ${openReqs?`✏️ <strong style="color:#ffb400;">${openReqs} open request${openReqs>1?'s':''}</strong>`:'✏️ No open requests'}</div>
         </div>
         <span class="badge new"><span class="badge-dot"></span>${r.status||'active'}</span>
       </div>
       <div class="action-row">
         <select class="plan-select" id="change-plan-${r.id}">
           <option value="">Change plan...</option>
-          <option value="starter">Starter — $55/mo</option>
-          <option value="professional">Professional — $85/mo</option>
-          <option value="premium">Premium — $150/mo</option>
+          <option value="starter">Starter — $${pricing.starter.monthly}/mo</option>
+          <option value="professional">Professional — $${pricing.professional.monthly}/mo</option>
+          <option value="premium">Premium — $${pricing.premium.monthly}/mo</option>
         </select>
         <button class="pay-btn" onclick="changePlan('${r.id}','${r.email}','${r.full_name||r.email}')">Change Plan →</button>
         <button class="pay-btn" onclick="addManualSub('${r.id}')">+ Add Subscription</button>
@@ -732,49 +742,47 @@ async function deleteSite(id){
   document.getElementById('site-card-'+id)?.remove();
 }
 
-// ── STRIPE ──
-function saveStripeLinks(){
-  const links={
+// ── STRIPE (links stored in Supabase site_config, visible to all clients) ──
+async function saveStripeLinks(){
+  SITE_CONFIG.stripe_links={
     starter:document.getElementById('sl-starter').value.trim(),
     professional:document.getElementById('sl-professional').value.trim(),
     premium:document.getElementById('sl-premium').value.trim(),
-    'starter-buyout':document.getElementById('sl-starter-buyout').value.trim(),
-    'professional-buyout':document.getElementById('sl-professional-buyout').value.trim(),
-    'premium-buyout':document.getElementById('sl-premium-buyout').value.trim()
+    'starter-onetime':document.getElementById('sl-starter-onetime').value.trim(),
+    'professional-onetime':document.getElementById('sl-professional-onetime').value.trim(),
+    'premium-onetime':document.getElementById('sl-premium-onetime').value.trim()
   };
-  localStorage.setItem('stripe_links',JSON.stringify(links));
-  const msg=document.getElementById('stripe-save-msg');msg.style.display='inline';setTimeout(()=>msg.style.display='none',2000);
+  const ok=await saveConfig('stripe_links');
+  const msg=document.getElementById('stripe-save-msg');
+  msg.textContent=ok?'✓ Saved!':'⚠ Save failed — run supabase_setup.sql first';
+  msg.style.display='inline';setTimeout(()=>msg.style.display='none',3000);
 }
-function getStripeLinks(){try{return JSON.parse(localStorage.getItem('stripe_links'))||{};}catch{return{};}}
+function getStripeLinks(){return SITE_CONFIG.stripe_links||{};}
 function loadStripeInputs(){
   const links=getStripeLinks();
-  if(links.starter)document.getElementById('sl-starter').value=links.starter;
-  if(links.professional)document.getElementById('sl-professional').value=links.professional;
-  if(links.premium)document.getElementById('sl-premium').value=links.premium;
-  if(links['starter-buyout'])document.getElementById('sl-starter-buyout').value=links['starter-buyout'];
-  if(links['professional-buyout'])document.getElementById('sl-professional-buyout').value=links['professional-buyout'];
-  if(links['premium-buyout'])document.getElementById('sl-premium-buyout').value=links['premium-buyout'];
+  ['starter','professional','premium'].forEach(p=>{
+    if(links[p])document.getElementById('sl-'+p).value=links[p];
+    if(links[p+'-onetime'])document.getElementById('sl-'+p+'-onetime').value=links[p+'-onetime'];
+  });
 }
 
 // ── REALTIME ──
 function setupRealtime(){
-  // New inquiry submitted
-  sb.channel('admin-inquiries').on('postgres_changes',{event:'INSERT',schema:'public',table:'edit_requests',filter:'status=eq.inquiry'},(payload)=>{
+  // New prototype inquiry submitted (contact_requests is where the portal saves them)
+  sb.channel('admin-inquiries').on('postgres_changes',{event:'INSERT',schema:'public',table:'contact_requests'},(payload)=>{
     showAdminToast('📋 New inquiry from ' + (payload.new.business||payload.new.email||'a client') + '!', 'lime');
-    loadInquiries();
+    loadRequests();
   }).subscribe();
 
-  // Edit request submitted
+  // Edit request / payment notice / plan switch submitted
   sb.channel('admin-requests').on('postgres_changes',{event:'*',schema:'public',table:'edit_requests'},(payload)=>{
     if(payload.eventType==='INSERT') {
       const t = payload.new.edit_type || '';
       if(t.includes('Payment'))    showAdminToast('💳 Client initiated payment: '+payload.new.message?.split('\n')[0], 'lime');
       else if(t.includes('Switch')) showAdminToast('🔄 Plan switch request from a client!', 'blue');
-      else if(t.includes('Prototype')) showAdminToast('📋 New inquiry received!', 'lime');
       else showAdminToast('✏️ New edit request from a client!', 'lime');
     }
-    loadEditRequests();
-    loadInquiries();
+    loadRequests();
   }).subscribe();
 
   // New client signed up
@@ -810,67 +818,47 @@ function showAdminToast(msg, color) {
 }
 
 
-// ── PRICING MANAGEMENT ──
-function saveOnetimePricing() {
-  const pricing = getPricing();
-  pricing['starter-onetime']      = parseInt(document.getElementById('onetime-starter').value) || 500;
-  pricing['professional-onetime'] = parseInt(document.getElementById('onetime-professional').value) || 800;
-  pricing['premium-onetime']      = parseInt(document.getElementById('onetime-premium').value) || 1200;
-  localStorage.setItem('tb4y_pricing', JSON.stringify(pricing));
-  const msg = document.getElementById('saved-onetime');
-  msg.style.display = 'inline'; setTimeout(() => msg.style.display = 'none', 2500);
-}
-const DEFAULT_PRICING = {
-  starter:      { setup: 299,  monthly: 55  },
-  professional: { setup: 599,  monthly: 85  },
-  premium:      { setup: 1200, monthly: 150 }
-};
-
+// ── PRICING MANAGEMENT (stored in Supabase site_config) ──
 function getPricing() {
-  try { return JSON.parse(localStorage.getItem('tb4y_pricing')) || DEFAULT_PRICING; }
-  catch { return DEFAULT_PRICING; }
+  const cfg = SITE_CONFIG.pricing || {};
+  const out = {};
+  ['starter','professional','premium'].forEach(p => {
+    out[p] = Object.assign({}, DEFAULT_PRICING[p], cfg[p]);
+  });
+  return out;
 }
 
-function savePricing(plan) {
-  const setup   = parseInt(document.getElementById('setup-'+plan).value)   || DEFAULT_PRICING[plan].setup;
-  const monthly = parseInt(document.getElementById('monthly-'+plan).value) || DEFAULT_PRICING[plan].monthly;
-  const pricing = getPricing();
-  pricing[plan] = { setup, monthly };
-  localStorage.setItem('tb4y_pricing', JSON.stringify(pricing));
-  updatePreview(plan);
-  const msg = document.getElementById('saved-'+plan);
+async function savePricing() {
+  const pricing = {};
+  ['starter','professional','premium'].forEach(p => {
+    pricing[p] = {
+      setup:   parseInt(document.getElementById('build-'+p).value)   || DEFAULT_PRICING[p].setup,
+      monthly: parseInt(document.getElementById('monthly-'+p).value) || DEFAULT_PRICING[p].monthly
+    };
+  });
+  SITE_CONFIG.pricing = pricing;
+  const ok = await saveConfig('pricing');
+  const msg = document.getElementById('saved-pricing');
+  msg.textContent = ok ? '✓ Saved!' : '⚠ Save failed — run supabase_setup.sql first';
   msg.style.display = 'inline';
-  setTimeout(() => msg.style.display = 'none', 2500);
-}
-
-function updatePreview(plan) {
-  const pricing = getPricing();
-  const p = pricing[plan];
-  const names = { starter:'Starter', professional:'Professional', premium:'Premium' };
-  const el = document.getElementById('preview-'+plan);
-  if (el) el.innerHTML = `<strong>$${p.setup}</strong> setup + <strong>$${p.monthly}/mo</strong>`;
+  setTimeout(() => msg.style.display = 'none', 3000);
 }
 
 function loadPricingInputs() {
   const pricing = getPricing();
-  ['starter','professional','premium'].forEach(plan => {
-    const p = pricing[plan];
-    const setupEl   = document.getElementById('setup-'+plan);
-    const monthlyEl = document.getElementById('monthly-'+plan);
-    if (setupEl)   setupEl.value   = p.setup;
-    if (monthlyEl) monthlyEl.value = p.monthly;
-    updatePreview(plan);
-  });
-  const defaults = { starter: 500, professional: 800, premium: 1200 };
-  ['starter','professional','premium'].forEach(plan => {
-    const el = document.getElementById('onetime-'+plan);
-    if (el) el.value = pricing[plan+'-onetime'] || defaults[plan];
+  ['starter','professional','premium'].forEach(p => {
+    document.getElementById('build-'+p).value   = pricing[p].setup;
+    document.getElementById('monthly-'+p).value = pricing[p].monthly;
   });
 }
 
 
 // ── INIT ──
-sb.auth.getSession().then(({data:{session}})=>{if(session)loadAdmin();});
+sb.auth.getSession().then(async ({data:{session}})=>{
+  if(!session) return;
+  if(await checkAdmin()) loadAdmin();
+  else await sb.auth.signOut();
+});
 </script>
 
 <script>

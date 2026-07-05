@@ -552,7 +552,7 @@ body{font-family:'DM Sans',sans-serif;background:transparent;color:#fff;min-heig
           <div class="p-form">
             <div class="form-row2">
               <div class="p-field"><label>Type of Website</label><select id="site-type"><option value="">Select...</option><option>Business / Company site</option><option>Portfolio / Personal brand</option><option>E-commerce / Online store</option><option>Restaurant / Food service</option><option>Church / Nonprofit</option><option>Blog / News</option><option>Landing page</option><option>Booking / Appointment site</option><option>Other</option></select></div>
-              <div class="p-field"><label>Website Plan</label><select id="site-plan"><option value="">Select plan...</option><option value="starter">Starter — $299 setup + $55/mo</option><option value="professional">Professional — $599 setup + $85/mo</option><option value="premium">Premium — $1,200 setup + $150/mo</option></select></div>
+              <div class="p-field"><label>Website Plan</label><select id="site-plan"><option value="">Select plan...</option><option value="starter">Starter — $500 build + $55/mo</option><option value="professional">Professional — $800 build + $85/mo</option><option value="premium">Premium — $1,200 build + $150/mo</option></select></div>
             </div>
             <div class="p-field"><label>Business / Site Name</label><input type="text" id="site-name-input" placeholder="e.g. Smith's Auto Repair"></div>
             <div class="p-field"><label>Describe your vision</label><textarea id="site-desc" placeholder="Tell us everything..." style="min-height:120px;"></textarea></div>
@@ -719,11 +719,24 @@ const SURL = 'https://ganpjzutbzygaxlcgejd.supabase.co';
 const SKEY = 'sb_publishable_x9BC4b-yBIZAXz67WTVTkQ_v3wOCGhZ';
 const sb = supabase.createClient(SURL, SKEY);
 
+// Change this one line if your domain ever changes:
+const SITE_URL = 'https://techbros4yeshuaweb.netlify.app';
+
 const PLANS = {
-  starter:      {name:'Starter',      price:'$299 setup + $55/mo', features:['Up to 5 pages','Mobile responsive','Contact form','Basic SEO','Hosting + SSL','1 month free edits']},
-  professional: {name:'Professional', price:'$599 setup + $85/mo', features:['Up to 10 pages','Mobile responsive','Contact form + live chat','Advanced SEO','Hosting + SSL','1 year free edits','Payment processing']},
-  premium:      {name:'Premium',      price:'$1,200 setup + $150/mo', features:['Unlimited pages','Mobile responsive','Full feature set','Advanced SEO + analytics','Hosting + SSL','Unlimited edits forever','Payments + subscriptions']}
+  starter:      {name:'Starter',      price:'$500 build + $55/mo', features:['Up to 5 pages','Mobile responsive','Contact form','Basic SEO','Hosting + SSL','1 month free edits']},
+  professional: {name:'Professional', price:'$800 build + $85/mo', features:['Up to 10 pages','Mobile responsive','Contact form + live chat','Advanced SEO','Hosting + SSL','1 year free edits','Payment processing']},
+  premium:      {name:'Premium',      price:'$1,200 build + $150/mo', features:['Unlimited pages','Mobile responsive','Full feature set','Advanced SEO + analytics','Hosting + SSL','Unlimited edits forever','Payments + subscriptions']}
 };
+
+// Stripe payment links, managed in the admin panel and stored in Supabase
+// (site_config table) so every client sees them on every device.
+let STRIPE_LINKS = {};
+const stripeLinksReady = (async () => {
+  try {
+    const { data } = await sb.from('site_config').select('value').eq('key', 'stripe_links').single();
+    if (data?.value) STRIPE_LINKS = data.value;
+  } catch (e) { /* links stay empty; payment buttons fall back to email */ }
+})();
 
 let currentUser = null;
 
@@ -778,7 +791,7 @@ async function doSignup() {
   if (!name||!email||!pass) { showAuthMsg('Please fill in all fields.','error'); return; }
   if (pass.length<8) { showAuthMsg('Password must be at least 8 characters.','error'); return; }
   const btn = document.getElementById('as-btn'); btn.textContent='Creating...'; btn.disabled=true;
-  const {error} = await sb.auth.signUp({email, password:pass, options:{data:{full_name:name}}});
+  const {error} = await sb.auth.signUp({email, password:pass, options:{data:{full_name:name}, emailRedirectTo: SITE_URL + '/portal.html'}});
   if (error) { showAuthMsg(error.message,'error'); btn.textContent='Create Account →'; btn.disabled=false; }
   else {
     document.getElementById('auth-msg').className = 'msg';
@@ -806,7 +819,7 @@ async function doSignup() {
 async function doForgot() {
   const email = document.getElementById('al-email').value.trim();
   if (!email) { showAuthMsg('Enter your email first.','error'); return; }
-  await sb.auth.resetPasswordForEmail(email, {redirectTo:'https://techbros4yeshua.netlify.app/reset.html'});
+  await sb.auth.resetPasswordForEmail(email, {redirectTo: SITE_URL + '/reset.html'});
   showAuthMsg('Password reset email sent!','success');
 }
 
@@ -1261,8 +1274,9 @@ function selectPayPlan(type, plan) {
   if (type === 'monthly')  document.getElementById('pm-step2-btn').disabled = false;
 }
 
-function payWebsite() {
-  const links = JSON.parse(localStorage.getItem('stripe_links') || '{}');
+async function payWebsite() {
+  await stripeLinksReady;
+  const links = STRIPE_LINKS;
   const websiteLink = links[payState.website + '-onetime'] || links[payState.website] || null;
   const fallback = document.getElementById('pm-stripe-fallback');
 
@@ -1277,8 +1291,9 @@ function payWebsite() {
   }
 }
 
-function payMonthly() {
-  const links = JSON.parse(localStorage.getItem('stripe_links') || '{}');
+async function payMonthly() {
+  await stripeLinksReady;
+  const links = STRIPE_LINKS;
   const monthlyLink = payState.monthly && payState.monthly !== 'none' ? links[payState.monthly] : null;
   const fallback = document.getElementById('pm-stripe-fallback');
 
@@ -1369,7 +1384,8 @@ async function confirmPlanSwitch() {
   const msg = document.getElementById('switch-msg');
   btn.textContent = 'Processing...'; btn.disabled = true;
 
-  const links = JSON.parse(localStorage.getItem('stripe_links') || '{}');
+  await stripeLinksReady;
+  const links = STRIPE_LINKS;
   const mPrices = { starter: 55, professional: 85, premium: 150 };
 
   // Cancel old monthly subscription if switching monthly
