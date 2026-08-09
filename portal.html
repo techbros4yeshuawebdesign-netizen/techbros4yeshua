@@ -756,7 +756,10 @@ async function doGoogle(btn){
     + window.location.pathname.replace(/[^/]*$/, '') + 'portal.html';
   const { error } = await sb.auth.signInWithOAuth({
     provider: 'google',
-    options: { redirectTo }
+    options: {
+      redirectTo,
+      queryParams: { prompt: 'select_account' }
+    }
   });
   if(error){
     if(btn){ btn.disabled = false; }
