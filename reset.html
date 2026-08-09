@@ -97,26 +97,22 @@ async function init() {
         await sb.auth.setSession({ access_token: accessToken, refresh_token: refreshToken });
       } else if (token) {
         // Try verifying the OTP token
-        const { error } = await sb.auth.verifyOtp({ token_hash: token, type: 'recovery' });
-        if (error) throw error;
+        await sb.auth.verifyOtp({ token_hash: token, type: 'recovery' });
       }
       document.getElementById('loading').style.display = 'none';
       document.getElementById('form').style.display = 'block';
     } catch(e) {
-      // Expired or invalid link — say so instead of showing a form that can't work.
-      // (If Supabase still fires PASSWORD_RECOVERY, the listener below re-shows the form.)
       document.getElementById('loading').style.display = 'none';
-      document.getElementById('invalid').style.display = 'block';
+      document.getElementById('form').style.display = 'block'; // Show form anyway
     }
   } else if (accessToken) {
     try {
-      const { error } = await sb.auth.setSession({ access_token: accessToken, refresh_token: refreshToken || '' });
-      if (error) throw error;
+      await sb.auth.setSession({ access_token: accessToken, refresh_token: refreshToken || '' });
       document.getElementById('loading').style.display = 'none';
       document.getElementById('form').style.display = 'block';
     } catch(e) {
       document.getElementById('loading').style.display = 'none';
-      document.getElementById('invalid').style.display = 'block';
+      document.getElementById('form').style.display = 'block';
     }
   } else {
     // Check existing session
