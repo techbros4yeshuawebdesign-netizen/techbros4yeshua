@@ -713,6 +713,12 @@ body{font-family:'DM Sans',sans-serif;background:transparent;color:#fff;min-heig
 </div>
 
 <script>
+(function(){
+  // absolute URL to reset.html, in the same folder as this page
+  window.TB4Y_RESET_URL = window.location.origin
+    + window.location.pathname.replace(/[^/]*$/, '')
+    + 'reset.html';
+})();
 window.onerror = (msg, src, line) => console.error('JS Error:', msg, 'line:', line);
 window.onunhandledrejection = (e) => console.error('Promise Error:', e.reason);
 const SURL = 'https://ganpjzutbzygaxlcgejd.supabase.co';
@@ -806,7 +812,7 @@ async function doSignup() {
 async function doForgot() {
   const email = document.getElementById('al-email').value.trim();
   if (!email) { showAuthMsg('Enter your email first.','error'); return; }
-  await sb.auth.resetPasswordForEmail(email, {redirectTo:'https://techbros4yeshua.netlify.app/reset.html'});
+  await sb.auth.resetPasswordForEmail(email, {redirectTo: window.TB4Y_RESET_URL});
   showAuthMsg('Password reset email sent!','success');
 }
 

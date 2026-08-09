@@ -2426,6 +2426,12 @@ document.querySelectorAll('.plan-price-num').forEach(el => {
 
 
 <script>
+(function(){
+  // absolute URL to reset.html, in the same folder as this page
+  window.TB4Y_RESET_URL = window.location.origin
+    + window.location.pathname.replace(/[^/]*$/, '')
+    + 'reset.html';
+})();
 // ── INDEX PAGE AUTH ──
 const _sb = supabase.createClient(
   'https://ganpjzutbzygaxlcgejd.supabase.co',
@@ -2509,7 +2515,7 @@ async function doForgot() {
   const email = document.getElementById('ll-email').value.trim();
   if (!email) { showLoginMsg('Enter your email above first.', 'error'); return; }
   await _sb.auth.resetPasswordForEmail(email, {
-    redirectTo: 'https://techbros4yeshua-web-design.netlify.app/reset.html'
+    redirectTo: window.TB4Y_RESET_URL
   });
   showLoginMsg('Password reset email sent — check your inbox!', 'success');
 }
