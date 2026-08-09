@@ -356,6 +356,24 @@ body{font-family:'DM Sans',sans-serif;background:transparent;color:#fff;min-heig
 .google-btn:disabled{opacity:.6;cursor:not-allowed;transform:none;}
 .google-btn svg{width:18px;height:18px;flex-shrink:0;}
 
+
+/* ── LONG-URL / OVERFLOW PROTECTION ── */
+html, body { max-width: 100%; overflow-x: hidden; }
+.site-url, .site-url a, .req-msg, .req-meta, .account-email, .inquiry-value {
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+/* flex children must be allowed to shrink or long text forces the page wide */
+.site-card > *, .req-top > *, .account-header > * { min-width: 0; }
+.site-card { flex-wrap: wrap; }
+/* cap runaway URLs to 2 lines */
+.site-url {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 </style>
 </head>
 <body>
@@ -855,6 +873,18 @@ async function loadOverview() {
   }
 }
 
+
+// Trim very long URLs for display (full URL still used in the link)
+function shortUrl(u){
+  try{
+    const x = new URL(u);
+    const tail = (x.pathname + x.search).replace(/\/$/,'');
+    return x.hostname + (tail.length > 24 ? tail.slice(0,24) + '…' : tail);
+  }catch(e){
+    return u.length > 48 ? u.slice(0,48) + '…' : u;
+  }
+}
+
 async function loadSites() {
   const {data} = await sb.from('sites').select('*').eq('user_id',currentUser.id).order('created_at',{ascending:false});
   const c = document.getElementById('sites-list');
@@ -863,7 +893,7 @@ async function loadSites() {
     <div class="site-card">
       <div>
         <div class="site-name">${s.site_name}</div>
-        <div class="site-url">${s.site_url?`<a href="${s.site_url}" target="_blank">${s.site_url}</a>`:'URL pending'}</div>
+        <div class="site-url">${s.site_url?`<a href="${s.site_url}" target="_blank">${shortUrl(s.site_url)}</a>`:'URL pending'}</div>
         <div class="site-meta">${s.pages||1} page${(s.pages||1)!==1?'s':''} · Added ${new Date(s.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</div>
       </div>
       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">

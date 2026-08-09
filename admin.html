@@ -263,6 +263,24 @@ body{font-family:'DM Sans',sans-serif;background:#080a04;color:#fff;min-height:1
 .google-btn:hover{transform:translateY(-1px);box-shadow:0 4px 18px rgba(0,0,0,.35);}
 .google-btn svg{width:18px;height:18px;flex-shrink:0;}
 
+
+/* ── LONG-URL / OVERFLOW PROTECTION ── */
+html, body { max-width: 100%; overflow-x: hidden; }
+.site-url, .site-url a, .req-msg, .req-meta, .account-email, .inquiry-value {
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+/* flex children must be allowed to shrink or long text forces the page wide */
+.site-card > *, .req-top > *, .account-header > * { min-width: 0; }
+.site-card { flex-wrap: wrap; }
+/* cap runaway URLs to 2 lines */
+.site-url {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 </style>
 </head>
 <body>
