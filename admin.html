@@ -281,6 +281,12 @@ html, body { max-width: 100%; overflow-x: hidden; }
   overflow: hidden;
 }
 
+
+.cancel-btn{padding:7px 16px;border-radius:100px;font-size:12px;font-family:'Syne',sans-serif;
+  font-weight:700;cursor:pointer;border:1px solid rgba(220,50,50,0.35);
+  background:rgba(220,50,50,0.08);color:#ff8080;transition:all .2s;}
+.cancel-btn:hover{background:rgba(220,50,50,0.18);box-shadow:0 0 14px rgba(220,50,50,0.25);}
+
 </style>
 </head>
 <body>
@@ -370,14 +376,26 @@ html, body { max-width: 100%; overflow-x: hidden; }
       <div class="stripe-notice">⚠️ Add billing info at <a href="https://dashboard.stripe.com/settings/billing" target="_blank" style="color:#ffb400;">dashboard.stripe.com</a> first, then create payment links for each plan.</div>
       <div class="req-card">
         <div class="label">Stripe Payment Links</div>
-        <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:10px;">Monthly Subscription Links</div>
-        <div class="stripe-row"><label>Starter</label><input type="text" id="sl-starter" placeholder="https://buy.stripe.com/..."></div>
-        <div class="stripe-row"><label>Professional</label><input type="text" id="sl-professional" placeholder="https://buy.stripe.com/..."></div>
-        <div class="stripe-row"><label>Premium</label><input type="text" id="sl-premium" placeholder="https://buy.stripe.com/..."></div>
-        <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin:16px 0 10px;">Buyout (One-Time) Links</div>
-        <div class="stripe-row"><label>Starter Buyout</label><input type="text" id="sl-starter-buyout" placeholder="https://buy.stripe.com/..."></div>
-        <div class="stripe-row"><label>Pro Buyout</label><input type="text" id="sl-professional-buyout" placeholder="https://buy.stripe.com/..."></div>
-        <div class="stripe-row"><label>Premium Buyout</label><input type="text" id="sl-premium-buyout" placeholder="https://buy.stripe.com/..."></div>
+        <div style="background:rgba(200,241,53,0.05);border:1px solid rgba(200,241,53,0.15);border-radius:10px;padding:12px 14px;margin-bottom:6px;font-size:12px;color:rgba(255,255,255,0.55);line-height:1.6;">
+          In Stripe, build each link with <strong style="color:#fff;">two line items</strong>: the website as a
+          one-time price, and the maintenance plan as a recurring monthly price. Stripe then charges the
+          combined total today and the monthly amount thereafter — a single checkout for the client.
+        </div>
+<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--lime);margin:16px 0 8px;">Starter $500</div>
+        <div class="stripe-row"><label>+ Basic $55/mo</label><input type="text" id="cl-starter-starter" placeholder="https://buy.stripe.com/..."></div>
+        <div class="stripe-row"><label>+ Standard $85/mo</label><input type="text" id="cl-starter-professional" placeholder="https://buy.stripe.com/..."></div>
+        <div class="stripe-row"><label>+ Full $150/mo</label><input type="text" id="cl-starter-premium" placeholder="https://buy.stripe.com/..."></div>
+        <div class="stripe-row"><label>Website only</label><input type="text" id="cl-starter-none" placeholder="https://buy.stripe.com/..."></div>
+<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--lime);margin:16px 0 8px;">Professional $800</div>
+        <div class="stripe-row"><label>+ Basic $55/mo</label><input type="text" id="cl-professional-starter" placeholder="https://buy.stripe.com/..."></div>
+        <div class="stripe-row"><label>+ Standard $85/mo</label><input type="text" id="cl-professional-professional" placeholder="https://buy.stripe.com/..."></div>
+        <div class="stripe-row"><label>+ Full $150/mo</label><input type="text" id="cl-professional-premium" placeholder="https://buy.stripe.com/..."></div>
+        <div class="stripe-row"><label>Website only</label><input type="text" id="cl-professional-none" placeholder="https://buy.stripe.com/..."></div>
+<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--lime);margin:16px 0 8px;">Premium $1,200</div>
+        <div class="stripe-row"><label>+ Basic $55/mo</label><input type="text" id="cl-premium-starter" placeholder="https://buy.stripe.com/..."></div>
+        <div class="stripe-row"><label>+ Standard $85/mo</label><input type="text" id="cl-premium-professional" placeholder="https://buy.stripe.com/..."></div>
+        <div class="stripe-row"><label>+ Full $150/mo</label><input type="text" id="cl-premium-premium" placeholder="https://buy.stripe.com/..."></div>
+        <div class="stripe-row"><label>Website only</label><input type="text" id="cl-premium-none" placeholder="https://buy.stripe.com/..."></div>
         <button class="save-btn" onclick="saveStripeLinks()">Save Links</button>
         <span id="stripe-save-msg" style="font-size:12px;color:var(--lime);margin-left:12px;display:none;">✓ Saved!</span>
       </div>
@@ -703,6 +721,7 @@ async function loadClients(){
         </select>
         <button class="pay-btn" onclick="changePlan('${r.id}','${r.email}','${r.full_name||r.email}')">Change Plan →</button>
         <button class="pay-btn" onclick="addManualSub('${r.id}')">+ Add Subscription</button>
+        ${sub ? `<button class="cancel-btn" onclick="cancelSub('${r.id}','${(r.full_name||r.email).replace(/'/g,"\\'")}','${sub.plan}')">Cancel Subscription</button>` : ''}
       </div>
       <div class="req-date">Joined ${fmtShort(r.created_at)}</div>
     </div>`}).join('');
@@ -724,6 +743,36 @@ async function changePlan(userId,email,name){
     window.open(`mailto:${email}?subject=${subject}&body=${body}`);
   }
   alert('✓ Plan changed. Old subscription cancelled.');
+  loadClients();
+}
+
+
+async function cancelSub(userId, name, plan){
+  if(!confirm(
+    'Cancel ' + name + "'s " + plan + ' subscription?\n\n'
+    + 'This marks them inactive in the portal.\n'
+    + 'IMPORTANT: it does NOT stop Stripe from billing them. '
+    + 'You must also cancel the subscription in your Stripe dashboard.'
+  )) return;
+
+  const { error } = await sb.from('subscriptions')
+    .update({ status:'cancelled' })
+    .eq('user_id', userId)
+    .eq('status', 'active');
+
+  if(error){ alert('Could not cancel: ' + error.message); return; }
+
+  await sb.from('edit_requests').insert({
+    user_id: userId,
+    page: 'SUBSCRIPTION',
+    edit_type: '🚫 Subscription Cancelled',
+    message: 'Subscription (' + plan + ') cancelled by admin on '
+             + new Date().toLocaleDateString()
+             + '.\nRemember to cancel it in Stripe as well.',
+    status: 'done'
+  });
+
+  alert('Cancelled in the portal.\n\nNow cancel it in Stripe so billing actually stops.');
   loadClients();
 }
 
@@ -798,27 +847,30 @@ async function deleteSite(id){
 }
 
 // ── STRIPE ──
+const COMBO_KEYS = (function(){
+  const out=[];
+  ['starter','professional','premium'].forEach(w=>{
+    ['starter','professional','premium','none'].forEach(m=>out.push(w+'+'+m));
+  });
+  return out;
+})();
+
 function saveStripeLinks(){
-  const links={
-    starter:document.getElementById('sl-starter').value.trim(),
-    professional:document.getElementById('sl-professional').value.trim(),
-    premium:document.getElementById('sl-premium').value.trim(),
-    'starter-buyout':document.getElementById('sl-starter-buyout').value.trim(),
-    'professional-buyout':document.getElementById('sl-professional-buyout').value.trim(),
-    'premium-buyout':document.getElementById('sl-premium-buyout').value.trim()
-  };
+  const links = JSON.parse(localStorage.getItem('stripe_links')||'{}');
+  COMBO_KEYS.forEach(k=>{
+    const el = document.getElementById('cl-' + k.replace('+','-'));
+    if (el) links[k] = el.value.trim();
+  });
   localStorage.setItem('stripe_links',JSON.stringify(links));
   const msg=document.getElementById('stripe-save-msg');msg.style.display='inline';setTimeout(()=>msg.style.display='none',2000);
 }
 function getStripeLinks(){try{return JSON.parse(localStorage.getItem('stripe_links'))||{};}catch{return{};}}
 function loadStripeInputs(){
   const links=getStripeLinks();
-  if(links.starter)document.getElementById('sl-starter').value=links.starter;
-  if(links.professional)document.getElementById('sl-professional').value=links.professional;
-  if(links.premium)document.getElementById('sl-premium').value=links.premium;
-  if(links['starter-buyout'])document.getElementById('sl-starter-buyout').value=links['starter-buyout'];
-  if(links['professional-buyout'])document.getElementById('sl-professional-buyout').value=links['professional-buyout'];
-  if(links['premium-buyout'])document.getElementById('sl-premium-buyout').value=links['premium-buyout'];
+  COMBO_KEYS.forEach(k=>{
+    const el=document.getElementById('cl-'+k.replace('+','-'));
+    if(el && links[k]) el.value = links[k];
+  });
 }
 
 // ── REALTIME ──
