@@ -374,6 +374,19 @@ html, body { max-width: 100%; overflow-x: hidden; }
   overflow: hidden;
 }
 
+
+.checkout-box{background:rgba(200,241,53,0.05);border:1.5px solid rgba(200,241,53,0.2);
+  border-radius:16px;padding:20px 22px;margin-bottom:18px;}
+.checkout-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;
+  padding:8px 0;font-size:14px;}
+.checkout-label{color:rgba(255,255,255,0.6);}
+.checkout-val{font-family:'Syne',sans-serif;font-weight:700;color:#fff;white-space:nowrap;}
+.checkout-total{display:flex;justify-content:space-between;align-items:baseline;
+  margin-top:12px;padding-top:12px;border-top:1px solid rgba(200,241,53,0.2);
+  font-family:'Syne',sans-serif;font-weight:700;font-size:16px;}
+.checkout-total-val{color:var(--lime);font-size:24px;}
+.checkout-after{font-size:12px;color:rgba(255,255,255,0.4);margin-top:8px;text-align:right;}
+
 </style>
 </head>
 <body>
@@ -1268,93 +1281,59 @@ function selectPayPlan(type, plan) {
   if (type === 'monthly')  document.getElementById('pm-step2-btn').disabled = false;
 }
 
-function payWebsite() {
+function payNow() {
   const links = JSON.parse(localStorage.getItem('stripe_links') || '{}');
-  const websiteLink = links[payState.website + '-onetime'] || links[payState.website] || null;
+  const key = payState.website + '+' + (payState.monthly || 'none');
+  const link = links[key];
   const fallback = document.getElementById('pm-stripe-fallback');
 
-  if (websiteLink) {
-    window.open(websiteLink, '_blank');
-    document.getElementById('pm-pay-website-btn').style.display = 'none';
-    document.getElementById('pm-website-paid').style.display = 'block';
+  if (link && link.startsWith('http')) {
+    window.open(link, '_blank');
+    document.getElementById('pm-pay-btn').style.display = 'none';
+    document.getElementById('pm-paid').style.display = 'block';
     recordPaymentIntent();
   } else {
     fallback.style.display = 'block';
-    fallback.innerHTML = '⚠️ Website payment link not set up yet. Email <a href="mailto:techBros4yeshua.web.design@gmail.com" style="color:#ffb400;">techBros4yeshua.web.design@gmail.com</a> to complete payment.';
+    fallback.innerHTML = 'Checkout is not set up for this combination yet. '
+      + 'Email <a href="mailto:techBros4yeshua.web.design@gmail.com" style="color:#ffb400;">'
+      + 'techBros4yeshua.web.design@gmail.com</a> and Nathan will send you a payment link.';
   }
-}
-
-function payMonthly() {
-  const links = JSON.parse(localStorage.getItem('stripe_links') || '{}');
-  const monthlyLink = payState.monthly && payState.monthly !== 'none' ? links[payState.monthly] : null;
-  const fallback = document.getElementById('pm-stripe-fallback');
-
-  if (monthlyLink) {
-    window.open(monthlyLink, '_blank');
-    document.getElementById('pm-pay-monthly-btn').style.display = 'none';
-    document.getElementById('pm-monthly-paid').style.display = 'block';
-  } else {
-    fallback.style.display = 'block';
-    fallback.innerHTML = '⚠️ Monthly payment link not set up yet. Email <a href="mailto:techBros4yeshua.web.design@gmail.com" style="color:#ffb400;">techBros4yeshua.web.design@gmail.com</a> to subscribe.';
-  }
-}
-
-async function recordPaymentIntent() {
-  // Update site status to payment-pending
-  await sb.from('sites').update({status:'payment-pending'}).eq('id', payState.siteId);
-
-  // Notify via edit request
-  await sb.from('edit_requests').insert({
-    user_id: currentUser.id,
-    page: 'PAYMENT',
-    edit_type: '💳 Payment Initiated',
-    message: `Client initiated payment for ${payState.siteName}.
-Website: ${payState.website}
-Monthly: ${payState.monthly||'none'}`,
-    status: 'inquiry'
-  });
-
-  showToast('✅ Payment link opened! Nathan will be notified when payment completes.');
-  closePaymentModal();
-  loadSites();
 }
 
 // Update summary on step 3
 function renderPayStep(step) {
-  if (step === 3) {
-    const prices  = { starter:'$500',  professional:'$800',  premium:'$1,200' };
-    const mPrices = { starter:'$55/mo',professional:'$85/mo',premium:'$150/mo' };
-    const names   = { starter:'Starter Site', professional:'Professional Site', premium:'Premium Site' };
-    const mNames  = { starter:'Basic Maintenance', professional:'Standard Maintenance', premium:'Full Coverage' };
+  if (step !== 3) return;
 
-    // Website payment section
-    const wLabel = document.getElementById('pm-website-label');
-    const wPrice = document.getElementById('pm-website-price');
-    if (wLabel) wLabel.textContent = names[payState.website] || '—';
-    if (wPrice) wPrice.textContent = prices[payState.website] || '—';
+  const sitePrice = { starter:500, professional:800, premium:1200 };
+  const moPrice   = { starter:55,  professional:85,  premium:150 };
+  const siteName  = { starter:'Starter Site', professional:'Professional Site', premium:'Premium Site' };
+  const moName    = { starter:'Basic Maintenance', professional:'Standard Maintenance', premium:'Full Coverage' };
 
-    // Reset website paid state
-    document.getElementById('pm-pay-website-btn').style.display = 'block';
-    document.getElementById('pm-website-paid').style.display = 'none';
+  const w  = payState.website;
+  const m  = payState.monthly;
+  const wp = sitePrice[w] || 0;
+  const mp = (m && m !== 'none') ? (moPrice[m] || 0) : 0;
 
-    // Monthly payment section
-    const mWrap = document.getElementById('pm-monthly-wrap');
-    if (payState.monthly && payState.monthly !== 'none') {
-      mWrap.style.display = 'block';
-      const mLabel = document.getElementById('pm-monthly-label');
-      const mPrice = document.getElementById('pm-monthly-price');
-      if (mLabel) mLabel.textContent = (mNames[payState.monthly]||'') + ' — recurring';
-      if (mPrice) mPrice.textContent = mPrices[payState.monthly] || '—';
-      document.getElementById('pm-pay-monthly-btn').style.display = 'block';
-      document.getElementById('pm-monthly-paid').style.display = 'none';
-    } else {
-      mWrap.style.display = 'none';
-    }
+  document.getElementById('pm-website-label').textContent = siteName[w] || '—';
+  document.getElementById('pm-website-price').textContent = '$' + wp.toLocaleString();
 
-    // Reset fallback
-    const fallback = document.getElementById('pm-stripe-fallback');
-    if (fallback) fallback.style.display = 'none';
+  const moRow = document.getElementById('pm-monthly-row');
+  if (mp) {
+    moRow.style.display = 'flex';
+    document.getElementById('pm-monthly-label').textContent = (moName[m] || '') + ' — first month';
+    document.getElementById('pm-monthly-price').textContent = '$' + mp;
+    document.getElementById('pm-after').textContent = 'then $' + mp + '/month, cancel anytime';
+  } else {
+    moRow.style.display = 'none';
+    document.getElementById('pm-after').textContent = 'No recurring charge';
   }
+
+  document.getElementById('pm-due-today').textContent = '$' + (wp + mp).toLocaleString();
+
+  document.getElementById('pm-pay-btn').style.display = 'block';
+  document.getElementById('pm-paid').style.display = 'none';
+  document.getElementById('pm-stripe-fallback').style.display = 'none';
+
 }
 
 // ── PLAN SWITCHING ──
@@ -1393,19 +1372,10 @@ async function confirmPlanSwitch() {
     await sb.from('subscriptions').update({status:'cancelled'}).eq('user_id',currentUser.id).eq('status','active');
   }
 
-  // Notify Nathan via edit request
   const names = { starter:'Starter', professional:'Professional', premium:'Premium', none:'None' };
-  await sb.from('edit_requests').insert({
-    user_id: currentUser.id,
-    page: 'PLAN SWITCH',
-    edit_type: '🔄 Plan Switch Request',
-    message: `Client wants to switch plans.
-Website: ${names[switchState.website]||'No change'}
-Monthly: ${names[switchState.monthly]||'No change'}
-
-Stripe will automatically handle billing for the new plan.`,
-    status: 'inquiry'
-  });
+  await logEvent('plan_change','Client changed plan',
+    'Website: '+(names[switchState.website]||'no change')
+    +' · Monthly: '+(names[switchState.monthly]||'no change'));
 
   // Open Stripe link if available
   if (switchState.monthly && switchState.monthly !== 'none' && links[switchState.monthly]) {
@@ -1476,39 +1446,31 @@ Stripe will automatically handle billing for the new plan.`,
 
         <!-- STEP 3: PAYMENT -->
         <div class="payment-step" id="pm-step3">
-          <div class="pm-title">Complete Your Payments</div>
-          <div class="pm-sub">Two separate payments — one for your website, one for monthly maintenance.</div>
+          <div class="pm-title">Complete Your Payment</div>
+          <div class="pm-sub">One checkout — your website plus your first month.</div>
 
-          <!-- PAYMENT 1 — Website -->
-          <div style="background:rgba(200,241,53,0.06);border:1.5px solid rgba(200,241,53,0.2);border-radius:14px;padding:18px 20px;margin-bottom:12px;">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
-              <div>
-                <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:14px;color:#fff;">💻 Payment 1 — Website</div>
-                <div id="pm-website-label" style="font-size:13px;color:var(--mid);margin-top:2px;">—</div>
-              </div>
-              <div id="pm-website-price" style="font-family:'Syne',sans-serif;font-weight:700;font-size:20px;color:var(--lime);">—</div>
+          <div class="checkout-box">
+            <div class="checkout-row">
+              <span class="checkout-label" id="pm-website-label">—</span>
+              <span class="checkout-val" id="pm-website-price">—</span>
             </div>
-            <button class="pm-next-btn" id="pm-pay-website-btn" onclick="payWebsite()" style="padding:11px;">Pay for Website →</button>
-            <div id="pm-website-paid" style="display:none;text-align:center;padding:10px;color:#6dc86d;font-weight:700;font-size:13px;">✅ Payment link opened!</div>
+            <div class="checkout-row" id="pm-monthly-row">
+              <span class="checkout-label" id="pm-monthly-label">—</span>
+              <span class="checkout-val" id="pm-monthly-price">—</span>
+            </div>
+            <div class="checkout-total">
+              <span>Due today</span>
+              <span class="checkout-total-val" id="pm-due-today">—</span>
+            </div>
+            <div class="checkout-after" id="pm-after">—</div>
           </div>
 
-          <!-- PAYMENT 2 — Monthly (only if selected) -->
-          <div id="pm-monthly-wrap" style="background:rgba(79,159,255,0.06);border:1.5px solid rgba(79,159,255,0.2);border-radius:14px;padding:18px 20px;margin-bottom:12px;display:none;">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
-              <div>
-                <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:14px;color:#fff;">📅 Payment 2 — Monthly Maintenance</div>
-                <div id="pm-monthly-label" style="font-size:13px;color:var(--mid);margin-top:2px;">—</div>
-              </div>
-              <div id="pm-monthly-price" style="font-family:'Syne',sans-serif;font-weight:700;font-size:20px;color:#4f9fff;">—</div>
-            </div>
-            <button class="pm-next-btn" id="pm-pay-monthly-btn" onclick="payMonthly()" style="padding:11px;background:linear-gradient(135deg,#4f9fff,#88ccff);color:#080a04;">Subscribe Monthly →</button>
-            <div id="pm-monthly-paid" style="display:none;text-align:center;padding:10px;color:#6dc86d;font-weight:700;font-size:13px;">✅ Subscription link opened!</div>
-          </div>
-
-          <div id="pm-stripe-fallback" style="display:none;background:rgba(255,180,0,0.08);border:1px solid rgba(255,180,0,0.2);border-radius:12px;padding:14px;font-size:13px;color:#ffb400;margin-bottom:12px;"></div>
+          <button class="pm-next-btn" id="pm-pay-btn" onclick="payNow()">Continue to Secure Checkout →</button>
+          <div id="pm-paid" style="display:none;text-align:center;padding:12px;color:#6dc86d;font-weight:700;font-size:14px;">✅ Checkout opened in a new tab</div>
+          <div id="pm-stripe-fallback" style="display:none;background:rgba(255,180,0,0.08);border:1px solid rgba(255,180,0,0.2);border-radius:12px;padding:14px;font-size:13px;color:#ffb400;margin-top:12px;"></div>
 
           <div class="pm-back" onclick="goPayStep(2)">← Back</div>
-          <p style="font-size:11px;color:rgba(255,255,255,0.2);text-align:center;margin-top:12px;">Secured by Stripe · Cancel anytime · No hidden fees</p>
+          <p style="font-size:11px;color:rgba(255,255,255,0.2);text-align:center;margin-top:12px;">Secured by Stripe · Cancel the monthly plan anytime</p>
         </div>
 
       </div>

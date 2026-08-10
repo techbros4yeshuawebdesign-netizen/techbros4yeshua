@@ -287,6 +287,26 @@ html, body { max-width: 100%; overflow-x: hidden; }
   background:rgba(220,50,50,0.08);color:#ff8080;transition:all .2s;}
 .cancel-btn:hover{background:rgba(220,50,50,0.18);box-shadow:0 0 14px rgba(220,50,50,0.25);}
 
+
+.log-filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;}
+.log-filter{padding:6px 14px;border-radius:100px;font-size:11px;font-family:'Syne',sans-serif;
+  font-weight:600;cursor:pointer;border:1px solid rgba(255,255,255,0.1);
+  background:rgba(255,255,255,0.03);color:rgba(255,255,255,0.45);transition:all .2s;}
+.log-filter:hover{border-color:rgba(200,241,53,0.3);color:var(--lime);}
+.log-filter.active{background:rgba(200,241,53,0.15);border-color:var(--lime);color:var(--lime);}
+.log-day{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:rgba(255,255,255,0.3);margin:18px 0 8px;}
+.log-item{display:flex;gap:12px;padding:12px 16px;background:var(--card);
+  border:1px solid var(--border);border-radius:12px;margin-bottom:7px;align-items:flex-start;}
+.log-icon{font-size:17px;line-height:1.2;flex-shrink:0;width:24px;text-align:center;}
+.log-body{flex:1;min-width:0;}
+.log-title{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;color:#fff;}
+.log-detail{font-size:12px;color:var(--mid);margin-top:3px;word-break:break-word;line-height:1.5;}
+.log-who{font-size:11px;color:rgba(255,255,255,0.3);margin-top:4px;}
+.log-time{font-size:11px;color:rgba(255,255,255,0.28);white-space:nowrap;flex-shrink:0;}
+.log-amt{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:var(--lime);
+  white-space:nowrap;flex-shrink:0;}
+
 </style>
 </head>
 <body>
@@ -334,6 +354,7 @@ html, body { max-width: 100%; overflow-x: hidden; }
       <button class="tab" onclick="showTab('sites-mgmt')">🌐 Manage Sites</button>
       <button class="tab" onclick="showTab('stripe-settings')">⚙️ Stripe Links</button>
       <button class="tab" onclick="showTab('pricing-mgmt')">💰 Pricing</button>
+      <button class="tab" onclick="showTab('activity-log')">📜 Activity Log</button>
     </div>
 
     <!-- INQUIRIES -->
@@ -571,12 +592,13 @@ function showTab(name){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   const panel = document.getElementById('tab-'+name);
   if(panel) panel.classList.add('active');
-  const tabs=['inquiries','edit-requests','clients','sites-mgmt','stripe-settings','pricing-mgmt'];
+  const tabs=['inquiries','edit-requests','clients','sites-mgmt','stripe-settings','pricing-mgmt','activity-log'];
   const idx=tabs.indexOf(name);
   if(idx>-1)document.querySelectorAll('.tab')[idx]?.classList.add('active');
   if(name==='sites-mgmt') loadSitesMgmt();
   if(name==='stripe-settings') loadStripeInputs();
   if(name==='pricing-mgmt') loadPricingInputs();
+  if(name==='activity-log') loadLog();
 }
 
 async function loadAdmin(){
@@ -648,6 +670,7 @@ async function sendPaymentLink(inquiryId,email,firstName){
   const subject=encodeURIComponent('Your Tech Bros for Yeshua Website Payment Link');
   const body=encodeURIComponent(`Hi ${firstName},\n\nThank you for your interest! Here is your payment link for the ${planNames[planKey]} plan:\n\n${stripeLink}\n\nOnce payment is complete, you'll have full access to your client portal.\n\nGod bless,\nNathan\nTech Bros for Yeshua`);
   window.open(`mailto:${email}?subject=${subject}&body=${body}`);
+  adminLog('payment_link','Payment link sent', planNames[planKey]+' → '+email);
   document.getElementById('pay-btn-'+inquiryId).textContent='✓ Link Sent';
   document.getElementById('pay-btn-'+inquiryId).className='pay-btn sent';
   document.getElementById('pay-btn-'+inquiryId).disabled=true;
@@ -742,6 +765,7 @@ async function changePlan(userId,email,name){
     const body=encodeURIComponent(`Hi ${name},\n\nYour plan has been updated to ${planNames[newPlan]}.\n\nPayment link:\n${links[newPlan]}\n\nGod bless,\nNathan`);
     window.open(`mailto:${email}?subject=${subject}&body=${body}`);
   }
+  adminLog('plan_change','Plan changed by admin', name+' → '+planNames[newPlan], userId, planAmounts[newPlan]);
   alert('✓ Plan changed. Old subscription cancelled.');
   loadClients();
 }
@@ -762,15 +786,7 @@ async function cancelSub(userId, name, plan){
 
   if(error){ alert('Could not cancel: ' + error.message); return; }
 
-  await sb.from('edit_requests').insert({
-    user_id: userId,
-    page: 'SUBSCRIPTION',
-    edit_type: '🚫 Subscription Cancelled',
-    message: 'Subscription (' + plan + ') cancelled by admin on '
-             + new Date().toLocaleDateString()
-             + '.\nRemember to cancel it in Stripe as well.',
-    status: 'done'
-  });
+  adminLog('cancel','Subscription cancelled', name+' · plan: '+plan+' · remember to cancel in Stripe', userId);
 
   alert('Cancelled in the portal.\n\nNow cancel it in Stripe so billing actually stops.');
   loadClients();
@@ -783,6 +799,7 @@ async function addManualSub(userId){
   const billing=new Date();billing.setMonth(billing.getMonth()+1);
   await sb.from('subscriptions').update({status:'cancelled'}).eq('user_id',userId).eq('status','active');
   await sb.from('subscriptions').insert({user_id:userId,plan,amount:planAmounts[plan],billing_date:billing.toISOString().split('T')[0],status:'active',stripe_link:getStripeLinks()[plan]||null});
+  adminLog('plan_change','Subscription added by admin', 'Plan: '+plan, userId, planAmounts[plan]);
   alert('✓ Subscription added!');loadClients();
 }
 
@@ -824,12 +841,14 @@ async function addSite(){
   deadline.setDate(deadline.getDate() + 7);
   await sb.from('sites').insert({user_id:userId,site_name:name,site_url:url||null,pages,status:'demo',approval_deadline:deadline.toISOString()});
   document.getElementById('site-name-add').value='';document.getElementById('site-url-add').value='';document.getElementById('site-pages-add').value='';document.getElementById('site-client-id').value='';
+  adminLog('site','Site added', name+(url?' · '+url:''), userId);
   const msg=document.getElementById('add-site-msg');msg.style.display='inline';setTimeout(()=>msg.style.display='none',3000);
   loadSitesMgmt();
 }
 
 async function updateSiteStatus(id,status){
   await sb.from('sites').update({status}).eq('id',id);
+  adminLog('site','Site status changed','Status set to: '+status);
   loadSitesMgmt();
 }
 
@@ -843,6 +862,7 @@ async function editSiteUrl(id,currentUrl){
 async function deleteSite(id){
   if(!confirm('Remove this site?'))return;
   await sb.from('sites').delete().eq('id',id);
+  adminLog('site','Site removed','Site id: '+id);
   document.getElementById('site-card-'+id)?.remove();
 }
 
@@ -873,8 +893,73 @@ function loadStripeInputs(){
   });
 }
 
+
+// ── ACTIVITY LOG ──
+let LOG_FILTER = 'all';
+const LOG_ICON = {
+  signup:'👤', inquiry:'📋', edit_request:'✏️', payment:'💳',
+  payment_link:'📤', plan_change:'🔄', cancel:'🚫', site:'🌐'
+};
+
+async function adminLog(event_type, title, detail, userId, amount){
+  try{
+    await sb.from('activity_log').insert({
+      user_id: userId || null,
+      actor: 'admin',
+      event_type, title,
+      detail: detail || null,
+      amount: (amount === undefined ? null : amount)
+    });
+  }catch(e){}
+}
+
+function filterLog(f, btn){
+  LOG_FILTER = f;
+  document.querySelectorAll('.log-filter').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  loadLog();
+}
+
+async function loadLog(){
+  const c = document.getElementById('log-list');
+  if(!c) return;
+  let q = sb.from('activity_log')
+            .select('*, profiles(full_name,email)')
+            .order('created_at',{ascending:false})
+            .limit(300);
+  if(LOG_FILTER !== 'all') q = q.eq('event_type', LOG_FILTER);
+
+  const { data, error } = await q;
+  if(error){ c.innerHTML = '<div class="empty">Could not load the log. Has activity_log been created in Supabase?</div>'; return; }
+  if(!data || !data.length){ c.innerHTML = '<div class="empty">Nothing logged yet.</div>'; return; }
+
+  let html = '', lastDay = '';
+  data.forEach(r=>{
+    const d = new Date(r.created_at);
+    const day = d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+    if(day !== lastDay){ html += `<div class="log-day">${day}</div>`; lastDay = day; }
+    const who = r.profiles?.full_name || r.profiles?.email || '';
+    html += `
+      <div class="log-item">
+        <div class="log-icon">${LOG_ICON[r.event_type]||'•'}</div>
+        <div class="log-body">
+          <div class="log-title">${r.title||''}</div>
+          ${r.detail?`<div class="log-detail">${r.detail}</div>`:''}
+          <div class="log-who">${who?who+' · ':''}${r.actor||''}</div>
+        </div>
+        ${r.amount?`<div class="log-amt">$${Number(r.amount).toLocaleString()}</div>`:''}
+        <div class="log-time">${d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'})}</div>
+      </div>`;
+  });
+  c.innerHTML = html;
+}
+
 // ── REALTIME ──
 function setupRealtime(){
+  sb.channel('admin-log').on('postgres_changes',{event:'INSERT',schema:'public',table:'activity_log'},()=>{
+    if(document.getElementById('tab-activity-log')?.classList.contains('active')) loadLog();
+  }).subscribe();
+
   // New inquiry submitted
   sb.channel('admin-inquiries').on('postgres_changes',{event:'INSERT',schema:'public',table:'edit_requests',filter:'status=eq.inquiry'},(payload)=>{
     showAdminToast('📋 New inquiry from ' + (payload.new.business||payload.new.email||'a client') + '!', 'lime');
