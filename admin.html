@@ -894,6 +894,103 @@ function loadStripeInputs(){
 }
 
 
+
+// ══════════════════════════════════════════════════════════
+// AUTO-LOGGER — wraps the Supabase client so that every
+// insert / update / delete on any table is recorded, with no
+// need to remember a log call at each site.
+// ══════════════════════════════════════════════════════════
+(function(){
+  if (typeof sb === 'undefined' || sb.__logged) return;
+  sb.__logged = true;
+
+  const ACTOR = (typeof ADMIN_EMAILS !== 'undefined') ? 'admin' : 'client';
+
+  const TABLE_LABEL = {
+    sites:'Site', subscriptions:'Subscription', edit_requests:'Request',
+    profiles:'Client', contact_requests:'Inquiry'
+  };
+
+  function eventTypeFor(table, op, payload){
+    if (table === 'sites')          return 'site';
+    if (table === 'subscriptions')  return (payload && payload.status === 'cancelled') ? 'cancel' : 'plan_change';
+    if (table === 'edit_requests')  return (payload && payload.status === 'inquiry') ? 'inquiry' : 'edit_request';
+    if (table === 'profiles')       return 'signup';
+    return 'other';
+  }
+
+  function describe(table, op, payload){
+    const label = TABLE_LABEL[table] || table;
+    if (op === 'delete') return label + ' deleted';
+    if (op === 'insert') return label + ' created';
+    if (payload && payload.status) return label + ' set to: ' + payload.status;
+    if (payload) {
+      const k = Object.keys(payload).filter(x => x !== 'updated_at');
+      return label + ' updated (' + k.join(', ') + ')';
+    }
+    return label + ' updated';
+  }
+
+  function detailFor(payload){
+    if (!payload) return null;
+    const skip = new Set(['id','user_id','created_at']);
+    const parts = [];
+    Object.keys(payload).forEach(k=>{
+      if (skip.has(k)) return;
+      let v = payload[k];
+      if (v === null || v === undefined || v === '') return;
+      v = String(v);
+      if (v.length > 90) v = v.slice(0,90) + '…';
+      parts.push(k + ': ' + v);
+    });
+    return parts.length ? parts.join(' · ') : null;
+  }
+
+  const origFrom = sb.from.bind(sb);
+
+  sb.from = function(table){
+    const qb = origFrom(table);
+    if (table === 'activity_log') return qb;   // never log the log
+
+    ['insert','update','delete'].forEach(op=>{
+      if (typeof qb[op] !== 'function') return;
+      const origOp = qb[op].bind(qb);
+
+      qb[op] = function(...args){
+        const payload = Array.isArray(args[0]) ? args[0][0] : args[0];
+        const builder = origOp(...args);
+        if (!builder || typeof builder.then !== 'function') return builder;
+
+        const origThen = builder.then.bind(builder);
+        builder.then = function(onOk, onErr){
+          return origThen(function(res){
+            if (res && !res.error) {
+              const row = Array.isArray(res.data) ? res.data[0] : res.data;
+              let uid = (payload && payload.user_id) || (row && row.user_id) || null;
+              if (!uid && table === 'profiles') uid = (payload && payload.id) || (row && row.id) || null;
+              if (!uid && typeof currentUser !== 'undefined' && currentUser) uid = currentUser.id;
+
+              try {
+                origFrom('activity_log').insert({
+                  user_id: uid,
+                  actor: ACTOR,
+                  event_type: eventTypeFor(table, op, payload),
+                  title: describe(table, op, payload),
+                  detail: detailFor(payload),
+                  amount: (payload && payload.amount) ? payload.amount : null
+                }).then(()=>{}, ()=>{});
+              } catch(e){}
+            }
+            return onOk ? onOk(res) : res;
+          }, onErr);
+        };
+        return builder;
+      };
+    });
+    return qb;
+  };
+})();
+
 // ── ACTIVITY LOG ──
 let LOG_FILTER = 'all';
 const LOG_ICON = {
