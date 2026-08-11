@@ -415,17 +415,14 @@ html, body { max-width: 100%; overflow-x: hidden; }
         <div class="stripe-row"><label>+ Basic $55/mo</label><input type="text" id="cl-starter-starter" placeholder="https://buy.stripe.com/..."></div>
         <div class="stripe-row"><label>+ Standard $85/mo</label><input type="text" id="cl-starter-professional" placeholder="https://buy.stripe.com/..."></div>
         <div class="stripe-row"><label>+ Full $150/mo</label><input type="text" id="cl-starter-premium" placeholder="https://buy.stripe.com/..."></div>
-        <div class="stripe-row"><label>Website only</label><input type="text" id="cl-starter-none" placeholder="https://buy.stripe.com/..."></div>
 <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--lime);margin:16px 0 8px;">Professional $800</div>
         <div class="stripe-row"><label>+ Basic $55/mo</label><input type="text" id="cl-professional-starter" placeholder="https://buy.stripe.com/..."></div>
         <div class="stripe-row"><label>+ Standard $85/mo</label><input type="text" id="cl-professional-professional" placeholder="https://buy.stripe.com/..."></div>
         <div class="stripe-row"><label>+ Full $150/mo</label><input type="text" id="cl-professional-premium" placeholder="https://buy.stripe.com/..."></div>
-        <div class="stripe-row"><label>Website only</label><input type="text" id="cl-professional-none" placeholder="https://buy.stripe.com/..."></div>
 <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--lime);margin:16px 0 8px;">Premium $1,200</div>
         <div class="stripe-row"><label>+ Basic $55/mo</label><input type="text" id="cl-premium-starter" placeholder="https://buy.stripe.com/..."></div>
         <div class="stripe-row"><label>+ Standard $85/mo</label><input type="text" id="cl-premium-professional" placeholder="https://buy.stripe.com/..."></div>
         <div class="stripe-row"><label>+ Full $150/mo</label><input type="text" id="cl-premium-premium" placeholder="https://buy.stripe.com/..."></div>
-        <div class="stripe-row"><label>Website only</label><input type="text" id="cl-premium-none" placeholder="https://buy.stripe.com/..."></div>
         <button class="save-btn" onclick="saveStripeLinks()">Save Links</button>
         <span id="stripe-save-msg" style="font-size:12px;color:var(--lime);margin-left:12px;display:none;">✓ Saved!</span>
       </div>
@@ -896,7 +893,7 @@ async function deleteSite(id){
 const COMBO_KEYS = (function(){
   const out=[];
   ['starter','professional','premium'].forEach(w=>{
-    ['starter','professional','premium','none'].forEach(m=>out.push(w+'+'+m));
+    ['starter','professional','premium'].forEach(m=>out.push(w+'+'+m));
   });
   return out;
 })();

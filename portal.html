@@ -387,6 +387,16 @@ html, body { max-width: 100%; overflow-x: hidden; }
 .checkout-total-val{color:var(--lime);font-size:24px;}
 .checkout-after{font-size:12px;color:rgba(255,255,255,0.4);margin-top:8px;text-align:right;}
 
+
+.cancel-card{background:rgba(220,50,50,0.05);border:1px solid rgba(220,50,50,0.18);
+  border-radius:16px;padding:20px 24px;margin-top:14px;}
+.cancel-title{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:#ff8080;margin-bottom:8px;}
+.cancel-copy{font-size:13px;color:var(--mid);line-height:1.65;margin-bottom:14px;}
+.cancel-plan-btn{background:transparent;border:1px solid rgba(220,50,50,0.4);color:#ff8080;
+  font-family:'Syne',sans-serif;font-weight:700;font-size:13px;padding:11px 22px;
+  border-radius:100px;cursor:pointer;transition:all .2s;}
+.cancel-plan-btn:hover{background:rgba(220,50,50,0.12);}
+
 </style>
 </head>
 <body>
@@ -522,6 +532,18 @@ html, body { max-width: 100%; overflow-x: hidden; }
           <button class="lime-solid" onclick="showTab('inquiry')">Request Free Prototype →</button>
         </div>
 
+        <!-- CANCEL PLAN -->
+        <div id="sub-cancel" class="cancel-card" style="display:none;">
+          <div class="cancel-title">Cancel your monthly plan</div>
+          <p class="cancel-copy">
+            Your plan stays active until the end of the current billing period. After that,
+            hosting and maintenance stop and your site is taken offline.
+            You can restart any time by contacting Nathan.
+          </p>
+          <button class="cancel-plan-btn" onclick="cancelMyPlan()">Cancel My Plan</button>
+          <p id="cancel-msg" style="font-size:13px;margin-top:10px;display:none;"></p>
+        </div>
+
         <!-- PLAN SWITCHING -->
         <div id="sub-switch" class="switch-plan-card" style="display:none;margin-top:14px;">
           <div class="switch-plan-title">Switch or Add a Plan</div>
@@ -552,10 +574,6 @@ html, body { max-width: 100%; overflow-x: hidden; }
           </div>
           <div class="plan-option" id="sw-m-premium" onclick="selectSwitchPlan('monthly','premium')">
             <div><div class="plan-option-name">Full Coverage</div><div class="plan-option-price">$150/mo · unlimited edits</div></div>
-            <span class="plan-option-check">✓</span>
-          </div>
-          <div class="plan-option" id="sw-m-none" onclick="selectSwitchPlan('monthly','none')">
-            <div><div class="plan-option-name">No Maintenance</div><div class="plan-option-price">Cancel monthly plan</div></div>
             <span class="plan-option-check">✓</span>
           </div>
 
@@ -929,11 +947,47 @@ async function loadSubscription() {
   const plan = PLANS[data.plan]||{name:data.plan,price:`$${data.amount}/month`,features:[]};
   document.getElementById('sub-active').style.display='block';
   document.getElementById('sub-switch').style.display='block';
+  document.getElementById('sub-cancel').style.display='block';
   document.getElementById('sub-plan-name').textContent = plan.name;
   document.getElementById('sub-plan-price').textContent = plan.price;
   document.getElementById('sub-features').innerHTML = plan.features.map(f=>`<li>${f}</li>`).join('');
   document.getElementById('sub-billing-info').innerHTML = `Next billing: <strong>${data.billing_date?new Date(data.billing_date).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}):'—'}</strong>`;
   if (data.stripe_link) document.getElementById('sub-billing-btn').onclick=()=>window.open(data.stripe_link,'_blank');
+}
+
+
+async function cancelMyPlan(){
+  if(!confirm(
+    'Cancel your monthly plan?\n\n'
+    + 'It stays active until the end of your current billing period, '
+    + 'then hosting and maintenance stop and your site goes offline.'
+  )) return;
+
+  const msg = document.getElementById('cancel-msg');
+  msg.style.display = 'block';
+  msg.style.color = 'var(--mid)';
+  msg.textContent = 'Cancelling...';
+
+  const { error } = await sb.from('subscriptions')
+    .update({ status:'cancelled' })
+    .eq('user_id', currentUser.id)
+    .eq('status','active');
+
+  if(error){
+    msg.style.color = '#ff8080';
+    msg.textContent = 'Could not cancel: ' + error.message
+      + ' — please email techBros4yeshua.web.design@gmail.com';
+    return;
+  }
+
+  await logEvent('cancel','Client cancelled their plan',
+    'Cancelled from the client portal — confirm the cancellation in Stripe');
+
+  msg.style.color = '#6dc86d';
+  msg.textContent = 'Your plan has been cancelled. Nathan has been notified.';
+  showToast('Your plan has been cancelled.');
+  loadSubscription();
+  loadOverview();
 }
 
 async function loadRequests() {
@@ -1555,7 +1609,7 @@ async function confirmPlanSwitch() {
         <!-- STEP 2: CHOOSE MONTHLY -->
         <div class="payment-step" id="pm-step2">
           <div class="pm-title">Choose Monthly Maintenance</div>
-          <div class="pm-sub">Optional — keeps your site live, secure and maintained.</div>
+          <div class="pm-sub">Keeps your site live, secure and maintained.</div>
           <div class="plan-option" id="pm-mo-starter" onclick="selectPayPlan('monthly','starter')">
             <div><div class="plan-option-name">Basic</div><div class="plan-option-price">$55/mo · 5 edits/month</div></div>
             <span class="plan-option-check">✓</span>
@@ -1566,10 +1620,6 @@ async function confirmPlanSwitch() {
           </div>
           <div class="plan-option" id="pm-mo-premium" onclick="selectPayPlan('monthly','premium')">
             <div><div class="plan-option-name">Full Coverage</div><div class="plan-option-price">$150/mo · Unlimited edits</div></div>
-            <span class="plan-option-check">✓</span>
-          </div>
-          <div class="plan-option" id="pm-mo-none" onclick="selectPayPlan('monthly','none')">
-            <div><div class="plan-option-name">No Maintenance</div><div class="plan-option-price">I'll handle hosting myself</div></div>
             <span class="plan-option-check">✓</span>
           </div>
           <button class="pm-next-btn" id="pm-step2-btn" onclick="goPayStep(3)" disabled>Next: Payment →</button>
