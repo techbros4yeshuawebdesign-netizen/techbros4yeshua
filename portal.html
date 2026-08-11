@@ -629,7 +629,22 @@ html, body { max-width: 100%; overflow-x: hidden; }
           <div class="p-form">
             <div class="form-row2">
               <div class="p-field"><label>Type of Website</label><select id="site-type"><option value="">Select...</option><option>Business / Company site</option><option>Portfolio / Personal brand</option><option>E-commerce / Online store</option><option>Restaurant / Food service</option><option>Church / Nonprofit</option><option>Blog / News</option><option>Landing page</option><option>Booking / Appointment site</option><option>Other</option></select></div>
-              <div class="p-field"><label>Website Plan</label><select id="site-plan"><option value="">Select plan...</option><option value="starter">Starter — $299 setup + $55/mo</option><option value="professional">Professional — $599 setup + $85/mo</option><option value="premium">Premium — $1,200 setup + $150/mo</option></select></div>
+              <div class="p-field"><label>Website Package (one-time)</label>
+                <select id="site-plan">
+                  <option value="">Select website...</option>
+                  <option value="starter">Starter Site — $500</option>
+                  <option value="professional">Professional Site — $800</option>
+                  <option value="premium">Premium Site — $1,200</option>
+                </select>
+              </div>
+              <div class="p-field"><label>Monthly Maintenance</label>
+                <select id="site-monthly">
+                  <option value="">Select monthly plan...</option>
+                  <option value="starter">Basic — $55/mo · 5 edits</option>
+                  <option value="professional">Standard — $85/mo · 10 edits</option>
+                  <option value="premium">Full Coverage — $150/mo · unlimited edits</option>
+                </select>
+              </div>
             </div>
             <div class="p-field"><label>Business / Site Name</label><input type="text" id="site-name-input" placeholder="e.g. Smith's Auto Repair"></div>
             <div class="p-field"><label>Describe your vision</label><textarea id="site-desc" placeholder="Tell us everything..." style="min-height:120px;"></textarea></div>
@@ -715,9 +730,9 @@ const SKEY = 'sb_publishable_x9BC4b-yBIZAXz67WTVTkQ_v3wOCGhZ';
 const sb = supabase.createClient(SURL, SKEY);
 
 const PLANS = {
-  starter:      {name:'Starter',      price:'$299 setup + $55/mo', features:['Up to 5 pages','Mobile responsive','Contact form','Basic SEO','Hosting + SSL','1 month free edits']},
-  professional: {name:'Professional', price:'$599 setup + $85/mo', features:['Up to 10 pages','Mobile responsive','Contact form + live chat','Advanced SEO','Hosting + SSL','1 year free edits','Payment processing']},
-  premium:      {name:'Premium',      price:'$1,200 setup + $150/mo', features:['Unlimited pages','Mobile responsive','Full feature set','Advanced SEO + analytics','Hosting + SSL','Unlimited edits forever','Payments + subscriptions']}
+  starter:      {name:'Basic',         price:'$55/month', features:['Hosting + SSL','Security updates','Uptime monitoring','5 edits per month','Email support']},
+  professional: {name:'Standard',      price:'$85/month', features:['Hosting + SSL','Security updates','Uptime monitoring','10 edits per month','Priority support','Monthly performance report']},
+  premium:      {name:'Full Coverage', price:'$150/month', features:['Hosting + SSL','Security updates','Uptime monitoring','Unlimited edits','24hr priority support','Monthly performance report','SEO monitoring']}
 };
 
 let currentUser = null;
@@ -1015,15 +1030,18 @@ async function submitRequest(mode) {
   if (mode==='new') {
     const siteType=document.getElementById('site-type').value;
     const sitePlan=document.getElementById('site-plan').value;
+    const siteMonthly=document.getElementById('site-monthly').value;
     const siteName=document.getElementById('site-name-input').value.trim();
     const siteDesc=document.getElementById('site-desc').value.trim();
     const siteDomain=document.getElementById('site-domain').value.trim();
     const m=document.getElementById('new-site-msg');
-    if (!siteType||!sitePlan||!siteName||!siteDesc) { m.textContent='Please fill in all required fields.'; m.className='msg error'; return; }
+    if (!siteType||!sitePlan||!siteMonthly||!siteName||!siteDesc) { m.textContent='Please choose a website package and a monthly plan, and fill in the remaining fields.'; m.className='msg error'; return; }
     const btn=document.getElementById('new-site-btn'); btn.textContent='Submitting...'; btn.disabled=true;
-    const {error}=await sb.from('edit_requests').insert({user_id:currentUser.id,page:'NEW WEBSITE',edit_type:'New Website Request — '+siteType,message:'Plan: '+sitePlan+'\nSite Name: '+siteName+'\nDomain: '+(siteDomain||'Not provided')+'\n\nVision:\n'+siteDesc,status:'pending'});
+    const {error}=await sb.from('edit_requests').insert({user_id:currentUser.id,page:'NEW WEBSITE',edit_type:'New Website Request — '+siteType,message:'Website: '+sitePlan+' ($'+({starter:500,professional:800,premium:1200}[sitePlan]||'?')+')'
+      +'\nMonthly: '+siteMonthly+' ($'+({starter:55,professional:85,premium:150}[siteMonthly]||'?')+'/mo)'
+      +'\nSite Name: '+siteName+'\nDomain: '+(siteDomain||'Not provided')+'\n\nVision:\n'+siteDesc,status:'pending'});
     if (error) { m.textContent='Error. Try again.'; m.className='msg error'; btn.textContent='Submit New Site Request →'; btn.disabled=false; }
-    else { m.textContent='✓ Submitted! Nathan will reach out within 24 hours.'; m.className='msg success'; btn.textContent='Submit New Site Request →'; btn.disabled=false; document.getElementById('site-type').value=''; document.getElementById('site-plan').value=''; document.getElementById('site-name-input').value=''; document.getElementById('site-desc').value=''; document.getElementById('site-domain').value=''; await loadRequests(); setTimeout(()=>showTab('requests'),1500); }
+    else { m.textContent='✓ Submitted! Nathan will reach out within 24 hours.'; m.className='msg success'; btn.textContent='Submit New Site Request →'; btn.disabled=false; document.getElementById('site-type').value=''; document.getElementById('site-plan').value='';document.getElementById('site-monthly').value=''; document.getElementById('site-name-input').value=''; document.getElementById('site-desc').value=''; document.getElementById('site-domain').value=''; await loadRequests(); setTimeout(()=>showTab('requests'),1500); }
   } else {
     const page=document.getElementById('req-page').value.trim();
     const type=document.getElementById('req-type').value;

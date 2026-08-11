@@ -688,7 +688,7 @@ async function sendPaymentLink(inquiryId,email,firstName){
   const links=getStripeLinks();
   const stripeLink=links[planKey];
   if(!stripeLink||!stripeLink.startsWith('http')){alert('No Stripe link saved for this plan. Go to ⚙️ Stripe Links tab first.');return;}
-  const planNames={starter:'Starter ($299 setup + $55/mo)',professional:'Professional ($599 setup + $85/mo)',premium:'Premium ($1,200 setup + $150/mo)'};
+  const planNames={starter:'Basic ($55/mo)',professional:'Standard ($85/mo)',premium:'Full Coverage ($150/mo)'};
   await sb.from('edit_requests').update({status:'payment-sent'}).eq('id',inquiryId);
   const subject=encodeURIComponent('Your Tech Bros for Yeshua Website Payment Link');
   const body=encodeURIComponent(`Hi ${firstName},\n\nThank you for your interest! Here is your payment link for the ${planNames[planKey]} plan:\n\n${stripeLink}\n\nOnce payment is complete, you'll have full access to your client portal.\n\nGod bless,\nNathan\nTech Bros for Yeshua`);
