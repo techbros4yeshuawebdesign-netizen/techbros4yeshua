@@ -441,6 +441,23 @@ html, body { max-width: 100%; overflow-x: hidden; }
       </div>
     </div>
 
+    <!-- ACTIVITY LOG -->
+    <div id="tab-activity-log" class="tab-panel">
+      <div class="label">Everything That Has Happened</div>
+      <div class="log-filters">
+        <button class="log-filter active" onclick="filterLog('all',this)">All</button>
+        <button class="log-filter" onclick="filterLog('signup',this)">Signups</button>
+        <button class="log-filter" onclick="filterLog('inquiry',this)">Inquiries</button>
+        <button class="log-filter" onclick="filterLog('edit_request',this)">Requests</button>
+        <button class="log-filter" onclick="filterLog('payment',this)">Payments</button>
+        <button class="log-filter" onclick="filterLog('payment_link',this)">Links Sent</button>
+        <button class="log-filter" onclick="filterLog('plan_change',this)">Plan Changes</button>
+        <button class="log-filter" onclick="filterLog('cancel',this)">Cancellations</button>
+        <button class="log-filter" onclick="filterLog('site',this)">Sites</button>
+      </div>
+      <div id="log-list"><div class="loading">Loading activity...</div></div>
+    </div>
+
   <!-- PRICING MANAGEMENT -->
     <div id="tab-pricing-mgmt" class="tab-panel">
       <div class="label">Manage Plan Pricing</div>
