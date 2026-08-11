@@ -663,9 +663,9 @@ async function loadInquiries(){
       <div class="action-row">
         <select class="plan-select" id="plan-sel-${r.id}">
           <option value="">Select plan to offer...</option>
-          <option value="starter">Starter — $55/mo</option>
-          <option value="professional">Professional — $85/mo</option>
-          <option value="premium">Premium — $150/mo</option>
+          <option value="starter">Basic — $55/mo</option>
+          <option value="professional">Standard — $85/mo</option>
+          <option value="premium">Full Coverage — $150/mo</option>
         </select>
         <button class="pay-btn" id="pay-btn-${r.id}"
           onclick="sendPaymentLink('${r.id}','${email}','${name.split(' ')[0]}')">
@@ -776,7 +776,7 @@ async function loadClients(){
 async function changePlan(userId,email,name){
   const newPlan=document.getElementById('change-plan-'+userId).value;
   if(!newPlan){alert('Select a new plan first.');return;}
-  const planNames={starter:'Starter ($55/mo)',professional:'Professional ($85/mo)',premium:'Premium ($150/mo)'};
+  const planNames={starter:'Basic ($55/mo)',professional:'Standard ($85/mo)',premium:'Full Coverage ($150/mo)'};
   const planAmounts={starter:55,professional:85,premium:150};
   if(!confirm(`Change ${name}'s plan to ${planNames[newPlan]}? Current subscription will be cancelled.`))return;
   await sb.from('subscriptions').update({status:'cancelled'}).eq('user_id',userId).eq('status','active');
@@ -830,7 +830,11 @@ async function addManualSub(userId){
 async function loadSitesMgmt(){
   const {data:clients}=await sb.from('profiles').select('id,full_name,email').order('full_name');
   const sel=document.getElementById('site-client-id');
-  if(clients){sel.innerHTML='<option value="">Select client...</option>'+clients.map(c=>`<option value="${c.id}">${c.full_name||c.email}</option>`).join('');}
+  if(clients){sel.innerHTML='<option value="">Select client...</option>'+clients.map(c=>{
+    const name = c.full_name || '(no name)';
+    const label = c.email ? name + ' — ' + c.email : name;
+    return `<option value="${c.id}">${label}</option>`;
+  }).join('');}
   const {data:sites}=await sb.from('sites').select('*, profiles(full_name,email)').order('created_at',{ascending:false});
   const c=document.getElementById('all-sites-list');
   if(!sites||!sites.length){c.innerHTML='<div class="empty">No sites yet.</div>';return;}
