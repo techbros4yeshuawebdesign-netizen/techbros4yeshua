@@ -307,6 +307,15 @@ html, body { max-width: 100%; overflow-x: hidden; }
 .log-amt{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:var(--lime);
   white-space:nowrap;flex-shrink:0;}
 
+
+.log-diag{background:var(--card);border:1px solid rgba(255,180,0,0.25);border-radius:14px;
+  padding:20px 22px;}
+.log-diag-t{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:#ffb400;margin-bottom:8px;}
+.log-diag-m{font-family:ui-monospace,monospace;font-size:12px;color:#ff8080;
+  background:rgba(220,50,50,0.08);border-radius:8px;padding:10px 12px;margin-bottom:10px;
+  word-break:break-word;}
+.log-diag-h{font-size:13px;color:rgba(255,255,255,0.55);line-height:1.6;}
+
 </style>
 </head>
 <body>
@@ -1020,6 +1029,8 @@ function filterLog(f, btn){
 async function loadLog(){
   const c = document.getElementById('log-list');
   if(!c) return;
+  c.innerHTML = '<div class="loading">Loading activity...</div>';
+
   let q = sb.from('activity_log')
             .select('*, profiles(full_name,email)')
             .order('created_at',{ascending:false})
@@ -1027,8 +1038,32 @@ async function loadLog(){
   if(LOG_FILTER !== 'all') q = q.eq('event_type', LOG_FILTER);
 
   const { data, error } = await q;
-  if(error){ c.innerHTML = '<div class="empty">Could not load the log. Has activity_log been created in Supabase?</div>'; return; }
-  if(!data || !data.length){ c.innerHTML = '<div class="empty">Nothing logged yet.</div>'; return; }
+
+  if(error){
+    c.innerHTML = `
+      <div class="log-diag">
+        <div class="log-diag-t">The activity log can't be read</div>
+        <div class="log-diag-m">${error.message}${error.code?' (code '+error.code+')':''}</div>
+        <div class="log-diag-h">
+          If this mentions a missing relation, the <strong>activity_log</strong> table
+          has not been created yet. Run <strong>supabase-activity-log.sql</strong> in
+          Supabase → SQL Editor, then reload this page.
+        </div>
+      </div>`;
+    return;
+  }
+
+  if(!data || !data.length){
+    c.innerHTML = `
+      <div class="log-diag">
+        <div class="log-diag-t">The table exists but nothing has been recorded</div>
+        <div class="log-diag-h">Press the button below to write a test entry. It will show
+        the exact error if the write is being rejected.</div>
+        <button class="save-btn" style="margin-top:12px;" onclick="testLogWrite()">Run write test</button>
+        <div id="log-test-out" style="margin-top:10px;font-size:13px;"></div>
+      </div>`;
+    return;
+  }
 
   let html = '', lastDay = '';
   data.forEach(r=>{
@@ -1049,6 +1084,26 @@ async function loadLog(){
       </div>`;
   });
   c.innerHTML = html;
+}
+
+async function testLogWrite(){
+  const out = document.getElementById('log-test-out');
+  out.innerHTML = 'Writing...';
+  const { data, error } = await sb.from('activity_log').insert({
+    actor:'admin', event_type:'other',
+    title:'Write test', detail:'Manual test from the admin panel'
+  }).select();
+
+  if(error){
+    out.innerHTML = '<span style="color:#ff8080;">Write rejected: '
+      + error.message + (error.code ? ' (code ' + error.code + ')' : '')
+      + '</span><br><span style="color:rgba(255,255,255,.4);font-size:12px;">'
+      + 'If this mentions row-level security, run: '
+      + 'alter table public.activity_log disable row level security;</span>';
+  } else {
+    out.innerHTML = '<span style="color:#6dc86d;">Write succeeded. Reloading…</span>';
+    setTimeout(loadLog, 900);
+  }
 }
 
 // ── REALTIME ──

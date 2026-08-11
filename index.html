@@ -1682,7 +1682,7 @@ input:focus, select:focus, textarea:focus {
 </div>
   <div class="hero-badge"><div class="badge-dot"></div>Free prototype — no card required</div>
   <h1><span class="glitch" data-text="Your business">Your business</span><br><em>deserves a real</em><br><span class="glitch" data-text="website.">website.</span></h1>
-  <p>We build fast, modern websites for small businesses — starting at $25/month. No upfront cost. See your site before you pay a dime.</p>
+  <p>We build fast, modern websites for small businesses — from $500, or $55/month with hosting and maintenance included. See your site before you pay a dime.</p>
   <div class="hero-btns">
     <a href="portal.html?action=inquiry" class="btn-primary">Get a Free Prototype →</a>
     <a href="#pricing" class="btn-ghost">See Pricing</a>
@@ -1695,13 +1695,13 @@ input:focus, select:focus, textarea:focus {
     <span class="ticker-item"><span class="ticker-dot"></span><strong>Free prototype</strong> — see your site before you commit</span>
     <span class="ticker-item"><span class="ticker-dot"></span><strong>5-7 day</strong> turnaround on prototypes</span>
     <span class="ticker-item"><span class="ticker-dot"></span><strong>Mobile-first</strong> design on every plan</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Starting at <strong>$25/month</strong> — no setup fee</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Websites from <strong>$500</strong> — see it before you pay</span>
     <span class="ticker-item"><span class="ticker-dot"></span><strong>SSL + hosting</strong> included on all plans</span>
     <span class="ticker-item"><span class="ticker-dot"></span><strong>Cancel anytime</strong> — no contracts</span>
     <span class="ticker-item"><span class="ticker-dot"></span><strong>Free prototype</strong> — see your site before you commit</span>
     <span class="ticker-item"><span class="ticker-dot"></span><strong>5-7 day</strong> turnaround on prototypes</span>
     <span class="ticker-item"><span class="ticker-dot"></span><strong>Mobile-first</strong> design on every plan</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Starting at <strong>$25/month</strong> — no setup fee</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Websites from <strong>$500</strong> — see it before you pay</span>
     <span class="ticker-item"><span class="ticker-dot"></span><strong>SSL + hosting</strong> included on all plans</span>
     <span class="ticker-item"><span class="ticker-dot"></span><strong>Cancel anytime</strong> — no contracts</span>
   </div>
@@ -1955,34 +1955,6 @@ input:focus, select:focus, textarea:focus {
   <p>© 2026 Tech Bros for Yeshua. Built for small businesses.</p>
 </footer>
 
-<!-- PLAN MODAL -->
-<div class="modal-overlay" id="plan-modal">
-  <div class="modal-box">
-    <button class="modal-close" onclick="closeModal()">×</button>
-    <div class="modal-plan-label">Selected Plan</div>
-    <div class="modal-plan-name" id="modal-plan-name">Starter — $25/mo</div>
-    <div class="modal-tabs">
-      <button class="modal-tab" id="mt-login" onclick="switchModalTab('login')">Sign In</button>
-      <button class="modal-tab active" id="mt-signup" onclick="switchModalTab('signup')">Create Account</button>
-    </div>
-    <div id="modal-msg" class="msg"></div>
-    <!-- Login -->
-    <div id="mf-login" style="display:none">
-      <div class="f-group"><label>Email</label><input type="email" id="ml-email" placeholder="you@example.com"></div>
-      <div class="f-group"><label>Password</label><input type="password" id="ml-pass" placeholder="••••••••"></div>
-      <button class="lime-btn" id="ml-btn" onclick="doModalLogin()">Sign In & Continue →</button>
-      <span class="forgot-link" onclick="doModalForgot()">Forgot password?</span>
-    </div>
-    <!-- Signup -->
-    <div id="mf-signup">
-      <div class="f-group"><label>Full Name</label><input type="text" id="ms-name" placeholder="John Smith"></div>
-      <div class="f-group"><label>Email</label><input type="email" id="ms-email" placeholder="you@example.com"></div>
-      <div class="f-group"><label>Password</label><input type="password" id="ms-pass" placeholder="Min. 8 characters"></div>
-      <button class="lime-btn" id="ms-btn" onclick="doModalSignup()">Create Account & Continue →</button>
-      <p style="font-size:12px;color:rgba(255,255,255,0.25);text-align:center;margin-top:10px;">Already have an account? <span onclick="switchModalTab('login')" style="color:var(--lime);cursor:pointer;">Sign in</span></p>
-    </div>
-  </div>
-</div>
 
 
 
@@ -2437,88 +2409,6 @@ const _sb = supabase.createClient(
   'https://ganpjzutbzygaxlcgejd.supabase.co',
   'sb_publishable_x9BC4b-yBIZAXz67WTVTkQ_v3wOCGhZ'
 );
-
-function switchLoginTab(tab) {
-  document.getElementById('lf-login').style.display = tab === 'login' ? 'block' : 'none';
-  document.getElementById('lf-signup').style.display = tab === 'signup' ? 'block' : 'none';
-  document.querySelectorAll('.login-tab').forEach((t, i) => {
-    t.classList.toggle('active', (tab==='login'&&i===0)||(tab==='signup'&&i===1));
-  });
-  document.getElementById('login-msg').className = 'msg';
-}
-
-function showLoginMsg(txt, type) {
-  const el = document.getElementById('login-msg');
-  el.textContent = txt; el.className = 'msg ' + type;
-}
-
-async function doLogin() {
-  const email = document.getElementById('ll-email').value.trim();
-  const pass = document.getElementById('ll-pass').value;
-  if (!email || !pass) { showLoginMsg('Enter your email and password.', 'error'); return; }
-  const btn = document.getElementById('ll-btn');
-  btn.textContent = 'Signing in...'; btn.disabled = true;
-  const { data, error } = await _sb.auth.signInWithPassword({ email, password: pass });
-  if (error) {
-    if (error.message.includes('Email not confirmed')) {
-      showLoginMsg('Please check your email and click the verification link first.', 'error');
-    } else if (error.message.includes('Invalid login')) {
-      showLoginMsg('Wrong email or password. Please try again.', 'error');
-    } else {
-      showLoginMsg(error.message, 'error');
-    }
-    btn.textContent = 'Sign In →'; btn.disabled = false;
-  } else {
-    window.location.href = 'portal.html';
-  }
-}
-
-async function doSignup() {
-  const name = document.getElementById('ls-name').value.trim();
-  const email = document.getElementById('ls-email').value.trim();
-  const pass = document.getElementById('ls-pass').value;
-  if (!name || !email || !pass) { showLoginMsg('Please fill in all fields.', 'error'); return; }
-  if (pass.length < 8) { showLoginMsg('Password must be at least 8 characters.', 'error'); return; }
-  const btn = document.getElementById('ls-btn');
-  btn.textContent = 'Creating...'; btn.disabled = true;
-  const { error } = await _sb.auth.signUp({
-    email, password: pass,
-    options: { data: { full_name: name } }
-  });
-  if (error) {
-    showLoginMsg(error.message, 'error');
-    btn.textContent = 'Create Account →'; btn.disabled = false;
-  } else {
-    // Show email verification message
-    const loginSection = document.getElementById('login');
-    loginSection.innerHTML = `
-      <div style="max-width:480px;margin:0 auto;text-align:center;padding:40px 20px;">
-        <div style="font-size:52px;margin-bottom:16px;">📧</div>
-        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:24px;color:#fff;margin-bottom:10px;">Check Your Email!</div>
-        <div style="font-size:15px;color:rgba(255,255,255,0.55);line-height:1.7;margin-bottom:24px;">
-          We sent a verification link to<br>
-          <strong style="color:var(--lime);">${email}</strong><br><br>
-          Click the link in that email to verify your account, then come back here to sign in.
-        </div>
-        <div style="background:rgba(200,241,53,0.08);border:1px solid rgba(200,241,53,0.15);border-radius:14px;padding:16px 20px;font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:24px;line-height:1.6;">
-          📌 Don't see it? Check your <strong style="color:#fff;">spam or junk folder</strong>.<br>
-          The email comes from Tech Bros for Yeshua.
-        </div>
-        <a href="portal.html" style="background:linear-gradient(135deg,#c8f135,#d8ff45);color:#080a04;font-family:'Syne',sans-serif;font-weight:700;font-size:15px;padding:14px 32px;border-radius:100px;text-decoration:none;display:inline-block;">
-          Go to Sign In →
-        </a>
-      </div>`;
-  }
-}
-
-async function doForgot() {
-  const email = document.getElementById('ll-email').value.trim();
-  if (!email) { showLoginMsg('Enter your email above first.', 'error'); return; }
-  await _sb.auth.resetPasswordForEmail(email, {
-    redirectTo: window.TB4Y_RESET_URL
-  });
-  showLoginMsg('Password reset email sent — check your inbox!', 'success');
-}
 
 // Check if already logged in — show portal button instead
 _sb.auth.getSession().then(({ data: { session } }) => {
