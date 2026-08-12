@@ -481,6 +481,12 @@ html, body { max-width: 100%; overflow-x: hidden; }
             <div style="display:flex;gap:10px;align-items:center;"><span style="font-size:12px;color:var(--mid);width:80px;">Status</span><span id="ov-status"></span></div>
           </div>
         </div>
+        <div class="card fade-in" id="notify-card">
+          <div class="card-label">Phone Notifications</div>
+          <p id="notify-status" style="font-size:13px;color:var(--mid);line-height:1.6;margin-bottom:14px;">—</p>
+          <button id="notify-btn" class="lime-solid" onclick="enableNotifications(this)" style="border:none;cursor:pointer;display:none;">Turn on notifications</button>
+        </div>
+
         <div class="card fade-in">
           <div class="card-label">Quick Actions</div>
           <div class="actions-grid">
@@ -1088,11 +1094,27 @@ async function submitInquiry() {
 // ── REAL-TIME ──
 function setupRealtime() {
   sb.channel('my-requests').on('postgres_changes',{event:'UPDATE',schema:'public',table:'edit_requests',filter:'user_id=eq.'+currentUser.id},(payload)=>{
-    if(payload.new.status==='done') showToast('✅ Your edit request has been completed!');
+    if(payload.new.status==='done'){
+      alertClient('Your request is complete',
+        (payload.new.edit_type||'Your request') + ' has been finished.');
+    }
     loadRequests();
   }).subscribe();
-  sb.channel('my-sites').on('postgres_changes',{event:'*',schema:'public',table:'sites',filter:'user_id=eq.'+currentUser.id},()=>{
-    showToast('🌐 Your site has been updated!'); loadSites(); loadOverview();
+  sb.channel('my-sites').on('postgres_changes',{event:'*',schema:'public',table:'sites',filter:'user_id=eq.'+currentUser.id},(payload)=>{
+    const st = payload.new && payload.new.status;
+    const nm = (payload.new && payload.new.site_name) || 'Your site';
+    if(payload.eventType === 'INSERT' && st === 'demo'){
+      alertClient('Your demo is ready', nm + ' is ready to review in your portal.');
+    } else if(st === 'demo'){
+      alertClient('Your demo has been updated', nm + ' has new changes to review.');
+    } else if(st === 'active'){
+      alertClient('Your site is live', nm + ' is now live.');
+    } else if(st === 'paused'){
+      alertClient('Your site has been paused', nm + ' is currently offline.');
+    } else {
+      showToast('Your site has been updated');
+    }
+    loadSites(); loadOverview();
   }).subscribe();
   sb.channel('my-sub').on('postgres_changes',{event:'*',schema:'public',table:'subscriptions',filter:'user_id=eq.'+currentUser.id},()=>{
     loadSubscription(); loadOverview();
@@ -1102,9 +1124,19 @@ function setupRealtime() {
 function showToast(msg) {
   const t=document.createElement('div');
   t.textContent=msg;
-  t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1a3a1a;color:var(--lime);font-family:Syne,sans-serif;font-weight:700;font-size:14px;padding:12px 24px;border-radius:100px;z-index:999;box-shadow:0 4px 20px rgba(0,0,0,0.4);white-space:nowrap;animation:fadeUp 0.3s both;';
+  t.style.cssText=
+    'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);'
+    +'background:#1a3a1a;color:var(--lime);'
+    +'font-family:Syne,system-ui,sans-serif;font-weight:700;font-size:14px;'
+    +'padding:13px 20px;border-radius:14px;z-index:9999;'
+    +'box-shadow:0 4px 24px rgba(0,0,0,0.5);'
+    +'border:1px solid rgba(200,241,53,0.25);'
+    +'width:calc(100vw - 32px);max-width:420px;'
+    +'text-align:center;line-height:1.45;'
+    +'word-break:break-word;overflow-wrap:anywhere;'
+    +'animation:fadeUp 0.3s both;';
   document.body.appendChild(t);
-  setTimeout(()=>t.remove(),4000);
+  setTimeout(()=>t.remove(),5000);
 }
 
 
@@ -1449,6 +1481,86 @@ function selectPayPlan(type, plan) {
     return qb;
   };
 })();
+
+
+// ── PHONE / DESKTOP NOTIFICATIONS ──
+// Uses the browser Notification API. Works on Android Chrome and desktop.
+// On iPhone the site must first be added to the Home Screen (iOS limitation).
+function notifySupported(){
+  return 'Notification' in window;
+}
+
+function notifyState(){
+  if(!notifySupported()) return 'unsupported';
+  return Notification.permission; // granted | denied | default
+}
+
+async function enableNotifications(btn){
+  if(!notifySupported()){
+    updateNotifyUI();
+    return;
+  }
+  const res = await Notification.requestPermission();
+  if(res === 'granted'){
+    pushNotify('Notifications on', "We'll let you know when your demo is ready or a request is completed.");
+    logEvent('other','Enabled phone notifications');
+  }
+  updateNotifyUI();
+}
+
+function pushNotify(title, body){
+  try{
+    if(notifyState() !== 'granted') return;
+    if(document.visibilityState === 'visible') return; // already looking at it
+    const n = new Notification(title, {
+      body: body || '',
+      icon: 'https://techbros4yeshuawebdesign-netizen.github.io/favicon.ico',
+      tag: 'tb4y',
+      renotify: true
+    });
+    n.onclick = function(){ window.focus(); n.close(); };
+  }catch(e){}
+}
+
+// Show both a toast (if on-page) and a push (if not)
+function alertClient(title, body){
+  showToast(title);
+  pushNotify(title, body);
+}
+
+function updateNotifyUI(){
+  const wrap = document.getElementById('notify-card');
+  const btn  = document.getElementById('notify-btn');
+  const st   = document.getElementById('notify-status');
+  if(!wrap || !btn || !st) return;
+
+  const state = notifyState();
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  const standalone = window.navigator.standalone === true
+    || (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
+
+  if(state === 'granted'){
+    st.textContent = 'Notifications are on for this device.';
+    st.style.color = '#6dc86d';
+    btn.style.display = 'none';
+  } else if(state === 'denied'){
+    st.textContent = 'Notifications are blocked. Turn them back on in your browser settings for this site.';
+    st.style.color = '#ff8080';
+    btn.style.display = 'none';
+  } else if(state === 'unsupported'){
+    if(isIOS && !standalone){
+      st.textContent = 'On iPhone, tap Share → Add to Home Screen, then open it from there to turn notifications on.';
+    } else {
+      st.textContent = 'This browser does not support notifications.';
+    }
+    st.style.color = 'var(--mid)';
+    btn.style.display = 'none';
+  } else {
+    st.textContent = "Get told the moment your demo is ready or a request is finished — no need to keep checking back.";
+    st.style.color = 'var(--mid)';
+    btn.style.display = 'inline-block';
+  }
+}
 
 // ── ACTIVITY LOG ──
 async function logEvent(event_type, title, detail, amount){
