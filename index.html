@@ -1638,6 +1638,14 @@ input:focus, select:focus, textarea:focus {
 }
 .summary-total-value { color: var(--lime); font-size: 20px; }
 
+
+.ownership-note{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);
+  border-radius:14px;padding:18px 22px;margin-top:22px;max-width:760px;}
+.ownership-title{font-family:'Syne',system-ui,sans-serif;font-weight:700;font-size:13px;
+  letter-spacing:.06em;text-transform:uppercase;color:var(--lime);margin-bottom:8px;}
+.ownership-note p{font-size:13px;color:var(--mid);line-height:1.7;margin:0;}
+.ownership-note a{color:var(--lime);text-decoration:underline;}
+
 </style>
 </head>
 <body>
@@ -1791,7 +1799,7 @@ input:focus, select:focus, textarea:focus {
           <li>Contact form</li>
           <li>Basic SEO</li>
           <li>1 round of revisions</li>
-          <li>You own the files</li>
+          <li>Built and hosted by us</li>
         </ul>
         <div class="plan-select-indicator">Tap to select →</div>
       </div>
@@ -1809,7 +1817,7 @@ input:focus, select:focus, textarea:focus {
           <li>Advanced SEO</li>
           <li>2 rounds of revisions</li>
           <li>Payment processing</li>
-          <li>You own the files</li>
+          <li>Built and hosted by us</li>
         </ul>
         <div class="plan-select-indicator">Tap to select →</div>
       </div>
@@ -1826,11 +1834,21 @@ input:focus, select:focus, textarea:focus {
           <li>Advanced SEO + analytics</li>
           <li>Unlimited revisions</li>
           <li>Payments + subscriptions</li>
-          <li>You own the files</li>
+          <li>Built and hosted by us</li>
         </ul>
         <div class="plan-select-indicator">Tap to select →</div>
       </div>
 
+    </div>
+
+    <div class="ownership-note reveal">
+      <div class="ownership-title">About your website</div>
+      <p>
+        Built and hosted by us. Your one-time payment covers the build; hosting
+        continues under your monthly plan. File ownership is a separate
+        arrangement — <a href="mailto:techBros4yeshua.web.design@gmail.com">get in touch</a>
+        if you'd like to discuss owning your site outright.
+      </p>
     </div>
 
     <!-- STEP 2 — hidden until step 1 selected -->
