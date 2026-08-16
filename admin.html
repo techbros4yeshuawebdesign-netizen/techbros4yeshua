@@ -316,6 +316,24 @@ html, body { max-width: 100%; overflow-x: hidden; }
   word-break:break-word;}
 .log-diag-h{font-size:13px;color:rgba(255,255,255,0.55);line-height:1.6;}
 
+
+.inv{background:rgba(200,241,53,.05);border:1px solid rgba(200,241,53,.22);
+  border-radius:12px;padding:14px 16px;margin-top:12px;position:relative;}
+.inv-head{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--lime);margin-bottom:10px;}
+.inv-row{display:flex;justify-content:space-between;gap:12px;padding:5px 0;font-size:13px;
+  color:rgba(255,255,255,.7);}
+.inv-row em{font-style:normal;font-size:11px;color:rgba(255,255,255,.3);}
+.inv-row b{color:#fff;white-space:nowrap;}
+.inv-tot{display:flex;justify-content:space-between;margin-top:9px;padding-top:9px;
+  border-top:1px solid rgba(200,241,53,.2);font-family:'Syne',sans-serif;font-weight:700;font-size:14px;}
+.inv-tot b{color:var(--lime);font-size:18px;}
+.inv-sub{font-size:12px;color:rgba(255,255,255,.4);text-align:right;margin-top:3px;}
+.inv-copy{margin-top:11px;background:rgba(200,241,53,.1);border:1px solid rgba(200,241,53,.3);
+  color:var(--lime);font-family:'Syne',sans-serif;font-weight:700;font-size:11px;
+  padding:7px 15px;border-radius:100px;cursor:pointer;}
+.inv-copy:hover{background:rgba(200,241,53,.2);}
+
 </style>
 </head>
 <body>
@@ -411,6 +429,8 @@ html, body { max-width: 100%; overflow-x: hidden; }
           one-time price, and the maintenance plan as a recurring monthly price. Stripe then charges the
           combined total today and the monthly amount thereafter — a single checkout for the client.
         </div>
+<div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--lime);margin:16px 0 8px;">AI assistant add-on</div>
+        <div class="stripe-row"><label>AI $25/mo</label><input type="text" id="cl-ai-addon" placeholder="https://buy.stripe.com/..."></div>
 <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--lime);margin:16px 0 8px;">Starter $500</div>
         <div class="stripe-row"><label>+ Basic $55/mo</label><input type="text" id="cl-starter-starter" placeholder="https://buy.stripe.com/..."></div>
         <div class="stripe-row"><label>+ Standard $85/mo</label><input type="text" id="cl-starter-professional" placeholder="https://buy.stripe.com/..."></div>
@@ -547,7 +567,7 @@ html, body { max-width: 100%; overflow-x: hidden; }
 
       <div class="req-card" style="margin-top:8px;">
         <div class="label">Note</div>
-        <p style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.6;">Pricing is saved locally and synced to the landing page automatically. Buyout price is automatically calculated as 24x monthly. When you update Stripe, create both monthly subscription and one-time payment links, then paste them in <strong style="color:#fff;">⚙️ Stripe Links</strong>.</p>
+        <p style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.6;">Pricing is saved locally and synced to the landing page automatically. When you change a price here, create the matching payment links in Stripe and paste them into <strong style="color:#fff;">⚙️ Stripe Links</strong>.</p>
       </div>
     </div>
 
@@ -631,6 +651,81 @@ async function loadAdmin(){
   setupRealtime();
 }
 
+
+// ── INVOICE BUILDER ──
+// Reads the ORDER line the portal writes and works out exactly what to
+// put on a Stripe invoice: one total due now, and the monthly recurring items.
+
+const PRICE = {
+  website: { starter:500, professional:800, premium:1200 },
+  monthly: { starter:55,  professional:85,  premium:150 },
+  ai: 25
+};
+const LABEL = {
+  website: { starter:'Starter website build', professional:'Professional website build',
+             premium:'Premium website build' },
+  monthly: { starter:'Basic maintenance', professional:'Standard maintenance',
+             premium:'Full Coverage maintenance' }
+};
+
+function parseOrder(msg){
+  const m = /ORDER\|website=([^|]*)\|monthly=([^|]*)\|ai=([01])/.exec(msg || '');
+  if (!m) return null;
+  return { website: m[1] || null, monthly: m[2] || null, ai: m[3] === '1' };
+}
+
+function invoiceFor(order){
+  const once = [], every = [];
+  if (order.website && PRICE.website[order.website])
+    once.push({ label: LABEL.website[order.website], amount: PRICE.website[order.website] });
+  if (order.monthly && PRICE.monthly[order.monthly])
+    every.push({ label: LABEL.monthly[order.monthly], amount: PRICE.monthly[order.monthly] });
+  // Full Coverage includes the assistant
+  if (order.ai && order.monthly !== 'premium')
+    every.push({ label: 'AI assistant', amount: PRICE.ai });
+
+  const onceTotal  = once.reduce((n,i)=>n+i.amount, 0);
+  const everyTotal = every.reduce((n,i)=>n+i.amount, 0);
+  return { once, every, onceTotal, everyTotal, dueNow: onceTotal + everyTotal };
+}
+
+function invoiceHTML(order, id){
+  const v = invoiceFor(order);
+  if (!v.once.length && !v.every.length) return '';
+
+  const row = (i, rec) =>
+    '<div class="inv-row"><span>' + i.label
+    + (rec ? ' <em>monthly</em>' : ' <em>one-time</em>') + '</span>'
+    + '<b>$' + i.amount.toLocaleString() + '</b></div>';
+
+  return '<div class="inv">'
+    + '<div class="inv-head">Stripe invoice</div>'
+    + v.once.map(i=>row(i,false)).join('')
+    + v.every.map(i=>row(i,true)).join('')
+    + '<div class="inv-tot"><span>Due now</span><b>$' + v.dueNow.toLocaleString() + '</b></div>'
+    + (v.everyTotal
+        ? '<div class="inv-sub">then $' + v.everyTotal + '/month automatically</div>'
+        : '<div class="inv-sub">no recurring charge</div>')
+    + '<button class="inv-copy" onclick="copyInvoice(\'' + id + '\')">Copy line items</button>'
+    + '<textarea id="inv-txt-' + id + '" style="position:absolute;left:-9999px;">'
+    + v.once.map(i=>i.label + ' — $' + i.amount + ' one-time').join('\n')
+    + (v.every.length ? '\n' : '')
+    + v.every.map(i=>i.label + ' — $' + i.amount + '/month recurring').join('\n')
+    + '</textarea>'
+    + '</div>';
+}
+
+function copyInvoice(id){
+  const t = document.getElementById('inv-txt-' + id);
+  if (!t) return;
+  t.select();
+  document.execCommand('copy');
+  const btn = event.target;
+  const was = btn.textContent;
+  btn.textContent = 'Copied';
+  setTimeout(()=> btn.textContent = was, 1500);
+}
+
 // ── INQUIRIES ──
 async function loadInquiries(){
   const {data} = await sb.from('edit_requests')
@@ -658,8 +753,9 @@ async function loadInquiries(){
         <span class="badge pending"><span class="badge-dot"></span>New Inquiry</span>
       </div>
       <div class="inquiry-box">
-        <div class="inquiry-field"><span class="inquiry-label">Details</span><span class="inquiry-value" style="white-space:pre-wrap;">${r.message||'—'}</span></div>
+        <div class="inquiry-field"><span class="inquiry-label">Details</span><span class="inquiry-value" style="white-space:pre-wrap;">${(r.message||'—').replace(/\n\nORDER\|.*$/,'')}</span></div>
       </div>
+      ${(() => { const o = parseOrder(r.message); return o ? invoiceHTML(o, r.id) : ''; })()}
       <div class="action-row">
         <select class="plan-select" id="plan-sel-${r.id}">
           <option value="">Select plan to offer...</option>
@@ -761,9 +857,9 @@ async function loadClients(){
       <div class="action-row">
         <select class="plan-select" id="change-plan-${r.id}">
           <option value="">Change plan...</option>
-          <option value="starter">Starter — $55/mo</option>
-          <option value="professional">Professional — $85/mo</option>
-          <option value="premium">Premium — $150/mo</option>
+          <option value="starter">Basic — $55/mo</option>
+          <option value="professional">Standard — $85/mo</option>
+          <option value="premium">Full Coverage — $150/mo</option>
         </select>
         <button class="pay-btn" onclick="changePlan('${r.id}','${r.email}','${r.full_name||r.email}')">Change Plan →</button>
         <button class="pay-btn" onclick="addManualSub('${r.id}')">+ Add Subscription</button>
@@ -908,6 +1004,8 @@ function saveStripeLinks(){
     const el = document.getElementById('cl-' + k.replace('+','-'));
     if (el) links[k] = el.value.trim();
   });
+  const aiEl = document.getElementById('cl-ai-addon');
+  if (aiEl) links['ai-addon'] = aiEl.value.trim();
   localStorage.setItem('stripe_links',JSON.stringify(links));
   const msg=document.getElementById('stripe-save-msg');msg.style.display='inline';setTimeout(()=>msg.style.display='none',2000);
 }
@@ -918,6 +1016,8 @@ function loadStripeInputs(){
     const el=document.getElementById('cl-'+k.replace('+','-'));
     if(el && links[k]) el.value = links[k];
   });
+  const aiEl=document.getElementById('cl-ai-addon');
+  if(aiEl && links['ai-addon']) aiEl.value = links['ai-addon'];
 }
 
 

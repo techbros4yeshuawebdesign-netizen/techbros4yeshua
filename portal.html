@@ -666,7 +666,7 @@ html, body { max-width: 100%; overflow-x: hidden; }
       <div class="card">
         <div class="card-label">Frequently Asked Questions</div>
         <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>What counts as an edit request?</span><span>+</span></div><div class="faq-a">An edit is any change to your existing site — text updates, image swaps, color changes, moving sections around, or adding a small new element. New pages or major redesigns are separate requests.</div></div>
-        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>How many edits do I get per month?</span><span>+</span></div><div class="faq-a">Starter: 2 edits/month. Professional: 4 edits/month. Premium: Unlimited edits. Extra edits on Starter/Pro are $10 each.</div></div>
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>How many edits do I get per month?</span><span>+</span></div><div class="faq-a">Basic: 5 edits/month. Standard: 10 edits/month. Full Coverage: unlimited edits. Extra edits on Basic or Standard are $10 each.</div></div>
         <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>How long does an edit take?</span><span>+</span></div><div class="faq-a">Most edits are completed within 3–5 business days. Complex changes may take longer. You'll see your request status update in the Edit Requests tab.</div></div>
         <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>What does maintenance include?</span><span>+</span></div><div class="faq-a">Maintenance covers: security updates, hosting uptime monitoring, SSL certificate renewal, and regular backups. It does NOT include new features, integrations, or redesigns.</div></div>
         <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>How do I approve my prototype?</span><span>+</span></div><div class="faq-a">You have 7 days from when your prototype is ready to review and request changes. On day 7 we proceed with the current version and begin your subscription. Use the Edit Requests tab for any remaining changes.</div></div>
@@ -749,10 +749,12 @@ const inPlan = params.get('plan');
 const inAction = params.get('action');
 const inMonthly = params.get('monthly');
 const inMode = params.get('mode');
+const inAI = params.get('ai');
 
 if (inPlan) sessionStorage.setItem('chosen_plan', inPlan);
 if (inMonthly) sessionStorage.setItem('chosen_monthly', inMonthly);
 if (inMode) sessionStorage.setItem('chosen_mode', inMode);
+if (inAI) sessionStorage.setItem('chosen_ai', inAI);
 
 // ── AUTH ──
 function switchTab(t) {
@@ -1072,6 +1074,15 @@ async function submitInquiry() {
   if (!biz||!desc) { m.textContent='Please fill in your business name and description.'; m.className='msg error'; return; }
   const btn=document.getElementById('inq-btn'); btn.textContent='Submitting...'; btn.disabled=true;
   const nameParts = (currentUser.user_metadata?.full_name||'').split(' ');
+
+  // what they picked on the landing page
+  const pWebsite = params.get('plan')    || sessionStorage.getItem('chosen_plan')    || plan || '';
+  const pMonthly = params.get('monthly') || sessionStorage.getItem('chosen_monthly') || '';
+  const pAI      = params.get('ai')      || sessionStorage.getItem('chosen_ai')      || '';
+
+  // machine-readable line the admin panel reads to build the invoice
+  const order = 'ORDER|website=' + pWebsite + '|monthly=' + pMonthly + '|ai=' + (pAI ? '1' : '0');
+
   const {error}=await sb.from('edit_requests').insert({
     user_id: currentUser.id,
     page: 'FREE PROTOTYPE INQUIRY',
@@ -1080,10 +1091,10 @@ async function submitInquiry() {
       +'\nName: '+((currentUser.user_metadata?.full_name)||'—')
       +'\nEmail: '+currentUser.email
       +'\nPhone: '+(phone||'Not provided')
-      +'\nPlan Interest: '+(plan||'Not specified')
       +'\nWebsite Type: '+(type||'Not specified')
       +'\nDomain: '+(domain||'None')
-      +'\n\nVision:\n'+desc,
+      +'\n\nVision:\n'+desc
+      +'\n\n'+order,
     status: 'inquiry'
   });
   btn.textContent='Submit Inquiry →'; btn.disabled=false;
@@ -1241,9 +1252,15 @@ function prefillInquiry() {
     summaryText += 'Website: ' + (websiteNames[plan] || plan) + '\n';
   }
 
+  const wantsAI = params.get('ai') || sessionStorage.getItem('chosen_ai');
   if (monthly && monthly !== 'none') {
     summaryHTML += `<div>📅 <strong style="color:#fff;">Monthly Plan:</strong> ${monthlyNames[monthly] || monthly}</div>`;
     summaryText += 'Monthly Plan: ' + (monthlyNames[monthly] || monthly) + '\n';
+    if (wantsAI) {
+      const inc = monthly === 'premium';
+      summaryHTML += `<div>🤖 <strong style="color:#fff;">AI Assistant:</strong> ${inc ? 'Included with Full Coverage' : '$25/mo per site'}</div>`;
+      summaryText += 'AI Assistant: ' + (inc ? 'included' : '$25/mo per site') + '\n';
+    }
   } else if (monthly === 'none') {
     summaryHTML += `<div>📅 <strong style="color:#fff;">Monthly Plan:</strong> None — self-hosted</div>`;
     summaryText += 'Monthly Plan: None (self-hosted)\n';
