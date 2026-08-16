@@ -1487,72 +1487,7 @@ input:focus, select:focus, textarea:focus {
 /* Scroll reveal observer */
 
 
-/* ── BUYOUT / MONTHLY TOGGLE ── */
-.pricing-toggle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 100px;
-  padding: 4px;
-  margin: 0 auto 36px;
-  width: fit-content;
-}
-.toggle-btn {
-  padding: 9px 22px;
-  border-radius: 100px;
-  font-family: 'Syne', sans-serif;
-  font-weight: 600;
-  font-size: 13px;
-  cursor: pointer;
-  border: none;
-  background: transparent;
-  color: rgba(255,255,255,0.4);
-  transition: all 0.3s ease;
-  white-space: nowrap;
-}
-.toggle-btn.active {
-  background: var(--lime);
-  color: #080a04;
-  box-shadow: 0 0 20px rgba(200,241,53,0.4);
-}
-.buyout-badge {
-  display: inline-block;
-  background: rgba(200,241,53,0.15);
-  color: var(--lime);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  padding: 2px 8px;
-  border-radius: 100px;
-  margin-left: 6px;
-  vertical-align: middle;
-}
-.plan-price-original {
-  font-size: 13px;
-  color: rgba(255,255,255,0.3);
-  text-decoration: line-through;
-  margin-bottom: 2px;
-}
-.plan-buyout-note {
-  font-size: 12px;
-  color: rgba(255,255,255,0.4);
-  margin-top: 4px;
-  line-height: 1.4;
-}
-.plan-savings {
-  display: inline-block;
-  background: rgba(200,241,53,0.1);
-  color: var(--lime);
-  font-size: 11px;
-  font-weight: 700;
-  padding: 3px 10px;
-  border-radius: 100px;
-  margin-top: 6px;
-}
+
 
 
 /* ── TWO STEP PRICING ── */
@@ -1646,6 +1581,65 @@ input:focus, select:focus, textarea:focus {
 .ownership-note p{font-size:13px;color:var(--mid);line-height:1.7;margin:0;}
 .ownership-note a{color:var(--lime);text-decoration:underline;}
 
+
+.plan-features li.feat-star{color:var(--lime);font-weight:600;}
+.ai-band{margin-top:60px;padding-top:42px;border-top:1px solid rgba(200,241,53,0.12);}
+.ai-tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.12em;
+  text-transform:uppercase;background:rgba(200,241,53,.13);color:var(--lime);
+  padding:4px 12px;border-radius:100px;border:1px solid rgba(200,241,53,.3);margin-bottom:12px;}
+.ai-title{font-family:'Syne',system-ui,sans-serif;font-weight:700;
+  font-size:clamp(24px,4vw,38px);line-height:1.15;}
+.ai-title em{font-style:normal;color:var(--lime);}
+.ai-lead{color:var(--mid);font-size:16px;line-height:1.7;max-width:640px;margin:14px 0 32px;}
+.ai-cols{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start;}
+@media(max-width:820px){.ai-cols{grid-template-columns:1fr;}}
+.ai-list{list-style:none;display:flex;flex-direction:column;gap:16px;}
+.ai-list li{display:flex;gap:13px;align-items:flex-start;}
+.ai-ico{width:30px;height:30px;border-radius:9px;background:rgba(200,241,53,.1);
+  border:1px solid rgba(200,241,53,.22);display:flex;align-items:center;
+  justify-content:center;font-size:15px;flex-shrink:0;}
+.ai-list b{display:block;font-family:'Syne',system-ui,sans-serif;font-weight:700;
+  font-size:15px;margin-bottom:3px;}
+.ai-list span{font-size:14px;color:var(--mid);line-height:1.6;}
+.ai-demo{background:rgba(10,12,5,.75);border:1.5px solid rgba(200,241,53,.18);
+  border-radius:16px;overflow:hidden;}
+.ai-demo-top{display:flex;align-items:center;gap:10px;padding:13px 16px;
+  background:rgba(200,241,53,.06);border-bottom:1px solid rgba(200,241,53,.15);}
+.ai-demo-top b{font-family:'Syne',system-ui,sans-serif;font-size:13px;}
+.ai-demo-top small{display:block;font-size:11px;color:#6dc86d;}
+.ai-demo-body{padding:16px;display:flex;flex-direction:column;gap:10px;}
+.ai-bub{max-width:86%;padding:10px 14px;border-radius:14px;font-size:13.5px;line-height:1.55;}
+.ai-bub.them{background:rgba(255,255,255,.06);border-bottom-left-radius:4px;align-self:flex-start;}
+.ai-bub.you{background:rgba(200,241,53,.15);border:1px solid rgba(200,241,53,.25);
+  border-bottom-right-radius:4px;align-self:flex-end;}
+.ai-note{font-size:12px;color:rgba(255,255,255,.3);text-align:center;padding:0 16px 14px;line-height:1.5;}
+
+
+.ai-addon{display:none;align-items:flex-start;gap:14px;margin-top:16px;padding:18px 20px;
+  background:rgba(200,241,53,.04);border:1.5px dashed rgba(200,241,53,.28);
+  border-radius:14px;cursor:pointer;transition:all .25s;}
+.ai-addon.show{display:flex;}
+.ai-addon:hover{background:rgba(200,241,53,.08);border-color:rgba(200,241,53,.45);}
+.ai-addon.on{background:rgba(200,241,53,.1);border-style:solid;border-color:var(--lime);
+  box-shadow:0 0 24px rgba(200,241,53,.12);}
+.ai-addon.locked{cursor:default;opacity:.9;border-style:solid;border-color:rgba(200,241,53,.4);
+  background:rgba(200,241,53,.09);}
+.ai-addon-check{width:26px;height:26px;border-radius:8px;border:1.5px solid rgba(200,241,53,.4);
+  display:flex;align-items:center;justify-content:center;font-family:'Syne',system-ui,sans-serif;
+  font-weight:700;font-size:15px;color:var(--lime);flex-shrink:0;transition:all .2s;}
+.ai-addon.on .ai-addon-check,.ai-addon.locked .ai-addon-check{background:var(--lime);color:#080a04;}
+.ai-addon-title{font-family:'Syne',system-ui,sans-serif;font-weight:700;font-size:15px;
+  display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;}
+.ai-addon-price{color:var(--lime);font-size:14px;}
+.ai-addon-sub{font-size:13px;color:var(--mid);margin-top:4px;line-height:1.55;}
+
+
+
+
+.skip-ai{background:none;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.4);
+  font-family:'DM Sans',sans-serif;font-size:13px;padding:10px 24px;border-radius:100px;
+  cursor:pointer;transition:all .2s;}
+.skip-ai:hover{border-color:rgba(200,241,53,.35);color:var(--lime);}
 </style>
 </head>
 <body>
@@ -1896,8 +1890,10 @@ input:focus, select:focus, textarea:focus {
           <div class="plan-badge">Full Coverage</div>
           <div class="plan-name">Full Coverage</div>
           <div class="plan-price"><div class="plan-price-num">$150</div><div class="plan-price-mo">/mo</div></div>
-          <div class="plan-desc">Unlimited edits, highest priority, full coverage.</div>
+          <div class="plan-desc">Unlimited edits, an AI assistant on your site, and priority everything.</div>
           <ul class="plan-features">
+            <li class="feat-star">AI assistant answers your customers 24/7</li>
+            <li class="feat-star">Captures enquiries while you work</li>
             <li>Hosting + SSL</li>
             <li>Security updates</li>
             <li>Uptime monitoring</li>
@@ -1911,13 +1907,84 @@ input:focus, select:focus, textarea:focus {
 
       </div>
 
-
     </div>
 
-    <!-- STEP 3 — Summary + CTA -->
+    <!-- AI ASSISTANT -->
+    <div class="ai-band reveal">
+      <span class="ai-tag">Included with Full Coverage</span>
+      <div class="ai-title">An assistant that <em>answers your customers</em><br>while you're on the job</div>
+      <p class="ai-lead">
+        Most enquiries arrive when you can't get to the phone. The assistant knows your hours,
+        your prices and your services, answers straight away, and takes the details so you can
+        call back when you're free.
+      </p>
+
+      <div class="ai-cols">
+        <ul class="ai-list">
+          <li><div class="ai-ico">🕐</div><div>
+            <b>Answers at 11pm on a Sunday</b>
+            <span>Hours, prices, service area, what you do and don't take on — answered the moment they ask.</span>
+          </div></li>
+          <li><div class="ai-ico">📋</div><div>
+            <b>Takes the details</b>
+            <span>Name, number and what they need, passed straight to you. No more enquiries lost because nobody picked up.</span>
+          </div></li>
+          <li><div class="ai-ico">✍️</div><div>
+            <b>Written around your business</b>
+            <span>We write and tune it for you, and keep it current when your prices or hours change.</span>
+          </div></li>
+          <li><div class="ai-ico">🛡️</div><div>
+            <b>It won't make things up</b>
+            <span>It only knows what you've told it. Anything else, it says you'll confirm — and you approve every booking yourself.</span>
+          </div></li>
+        </ul>
+
+        <div class="ai-demo">
+          <div class="ai-demo-top">
+            <span style="font-size:19px;">💬</span>
+            <div><b>Your business</b><small>● Online</small></div>
+          </div>
+          <div class="ai-demo-body">
+            <div class="ai-bub them">Hi! How can I help?</div>
+            <div class="ai-bub you">Do you work Saturdays?</div>
+            <div class="ai-bub them">We do — 8am to 2pm. What do you need looking at?</div>
+            <div class="ai-bub you">Leaking sink, and I'd rather not wait till Monday</div>
+            <div class="ai-bub them">Let's get you sorted. Pop your name, number and address over and I'll pass it straight on.</div>
+          </div>
+          <div class="ai-note">You get the details by email the moment they're given.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 3 — add-on -->
     <div id="step3-wrap" style="display:none;margin-top:50px;">
       <div class="step-label reveal">
         <span class="step-num">3</span>
+        <span>Add the AI assistant?</span>
+      </div>
+      <p style="color:var(--mid);font-size:14px;margin-bottom:24px;">
+        Optional. It answers your customers around the clock and takes their details for you.
+      </p>
+
+      <div id="ai-addon" class="ai-addon" onclick="toggleAI()">
+        <div class="ai-addon-check" id="ai-check">+</div>
+        <div style="flex:1;min-width:0;">
+          <div class="ai-addon-title">Add the AI assistant
+            <span class="ai-addon-price" id="ai-price">+$25/mo per site</span>
+          </div>
+          <div class="ai-addon-sub" id="ai-sub">Answers your customers day and night and takes their details for you.</div>
+        </div>
+      </div>
+
+      <div style="text-align:center;margin-top:18px;">
+        <button onclick="skipAI()" class="skip-ai">No thanks, continue &rarr;</button>
+      </div>
+    </div>
+
+    <!-- STEP 4 — Summary + CTA -->
+    <div id="step4-wrap" style="display:none;margin-top:50px;">
+      <div class="step-label reveal">
+        <span class="step-num">4</span>
         <span>Your selection</span>
       </div>
       <div class="order-summary" id="order-summary"></div>
@@ -2434,166 +2501,170 @@ document.querySelectorAll('.plan-price-num').forEach(el => {
     + window.location.pathname.replace(/[^/]*$/, '')
     + 'reset.html';
 })();
-
-
-
-
-
-
-<script>
-// ── PLAN SELECTION & SUBSCRIPTION FLOW ──
-const STRIPE_LINKS = JSON.parse(localStorage.getItem('stripe_links') || '{}');
-
-const PLAN_DETAILS = {
-  starter: {
-    name: 'Starter',
-    setup: 299, monthly: 55,
-    features: ['Up to 5 pages','Mobile responsive','Contact form','Basic SEO','Hosting + SSL','2 edits/month','1 month free edits']
-  },
-  professional: {
-    name: 'Professional',
-    setup: 599, monthly: 85,
-    features: ['Up to 10 pages','Mobile responsive','Live chat + contact form','Advanced SEO','Hosting + SSL','4 edits/month','1 year free edits','Payment processing']
-  },
-  premium: {
-    name: 'Premium',
-    setup: 1200, monthly: 150,
-    features: ['Unlimited pages','Mobile responsive','Full feature set','Advanced SEO + analytics','Hosting + SSL','Unlimited edits','Payments + subscriptions']
-  }
-};
-
-function openPlanModal(planKey, planLabel) {
-  const plan = PLAN_DETAILS[planKey];
-  if (!plan) { window.location.href = 'portal.html?plan=' + planKey; return; }
-
-  // Get saved pricing from admin if available
-  try {
-    const saved = JSON.parse(localStorage.getItem('tb4y_pricing') || '{}');
-    if (saved[planKey]) { plan.setup = saved[planKey].setup; plan.monthly = saved[planKey].monthly; }
-  } catch(e) {}
-
-  const stripeLink = STRIPE_LINKS[planKey];
-
-  const modal = document.createElement('div');
-  modal.id = 'plan-modal-overlay';
-  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(8px);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;';
-  modal.innerHTML = `
-    <div style="background:#0e100a;border:1.5px solid rgba(200,241,53,0.25);border-radius:24px;padding:36px 32px;max-width:460px;width:100%;position:relative;max-height:90vh;overflow-y:auto;">
-      <button onclick="document.getElementById('plan-modal-overlay').remove()" style="position:absolute;top:14px;right:16px;background:none;border:none;color:rgba(255,255,255,0.4);font-size:22px;cursor:pointer;">✕</button>
-      <div style="font-family:'Syne',system-ui,-apple-system,'Segoe UI',sans-serif;font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--lime);margin-bottom:8px;">${plan.name} Plan</div>
-      <div style="font-family:'Syne',system-ui,-apple-system,'Segoe UI',sans-serif;font-weight:700;font-size:28px;color:#fff;margin-bottom:4px;">$${plan.setup} <span style="font-size:15px;color:rgba(255,255,255,0.4);font-weight:400;">one-time setup</span></div>
-      <div style="font-family:'Syne',system-ui,-apple-system,'Segoe UI',sans-serif;font-weight:700;font-size:20px;color:var(--lime);margin-bottom:20px;">+ $${plan.monthly}<span style="font-size:14px;color:rgba(255,255,255,0.4);font-weight:400;">/month</span></div>
-      <ul style="list-style:none;display:flex;flex-direction:column;gap:8px;margin-bottom:24px;">
-        ${plan.features.map(f => `<li style="font-size:13px;color:rgba(255,255,255,0.65);display:flex;align-items:center;gap:8px;"><span style="color:var(--lime);font-weight:700;">✓</span>${f}</li>`).join('')}
-      </ul>
-      <div style="display:flex;flex-direction:column;gap:10px;">
-        ${stripeLink
-          ? `<a href="${stripeLink}" target="_blank" style="display:block;text-align:center;background:linear-gradient(135deg,#c8f135,#d8ff45);color:#080a04;font-family:'Syne',system-ui,-apple-system,'Segoe UI',sans-serif;font-weight:700;font-size:15px;padding:15px;border-radius:100px;text-decoration:none;">Pay Now — Subscribe →</a>`
-          : `<a href="portal.html?action=inquiry&plan=${planKey}" style="display:block;text-align:center;background:linear-gradient(135deg,#c8f135,#d8ff45);color:#080a04;font-family:'Syne',system-ui,-apple-system,'Segoe UI',sans-serif;font-weight:700;font-size:15px;padding:15px;border-radius:100px;text-decoration:none;">Get Started — Request Prototype →</a>`
-        }
-        <a href="portal.html?action=inquiry&plan=${planKey}" style="display:block;text-align:center;background:rgba(200,241,53,0.08);color:var(--lime);font-family:'Syne',system-ui,-apple-system,'Segoe UI',sans-serif;font-weight:600;font-size:13px;padding:12px;border-radius:100px;text-decoration:none;border:1px solid rgba(200,241,53,0.2);">Get a Free Prototype First</a>
-      </div>
-      <p style="font-size:11px;color:rgba(255,255,255,0.2);text-align:center;margin-top:14px;">Secure payment via Stripe · Cancel anytime · No hidden fees</p>
-    </div>`;
-
-  document.body.appendChild(modal);
-  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
-}
 </script>
 
-
-
-
-
 <script>
-// ── TWO STEP PRICING FLOW ──
+// ── PLAN SELECTION FLOW ──
+// 1 website  ->  2 monthly  ->  3 add-on  ->  4 summary
+
+const AI_PRICE = 25;
 let selectedWebsite = null;
 let selectedMonthly = null;
+let aiOn = false;
 
-function selectWebsite(plan, price) {
+function reveal(id){
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.style.display = 'block';
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(30px)';
+  setTimeout(() => {
+    el.style.transition = 'all .6s ease';
+    el.style.opacity = '1';
+    el.style.transform = 'translateY(0)';
+  }, 50);
+  setTimeout(() => el.scrollIntoView({ behavior:'smooth', block:'start' }), 120);
+}
+
+function hide(id){
+  const el = document.getElementById(id);
+  if (el) el.style.display = 'none';
+}
+
+// ---------- step 1 ----------
+function selectWebsite(plan, price){
   selectedWebsite = { plan, price };
 
-  // Highlight selected
-  document.querySelectorAll('#website-plans .selectable-plan').forEach(el => el.classList.remove('selected'));
+  document.querySelectorAll('#website-plans .selectable-plan')
+    .forEach(el => el.classList.remove('selected'));
   document.getElementById('wp-' + plan)?.classList.add('selected');
 
-  // Show step 2 with animation
-  const step2 = document.getElementById('step2-wrap');
-  step2.style.display = 'block';
-  step2.style.opacity = '0';
-  step2.style.transform = 'translateY(30px)';
-  setTimeout(() => {
-    step2.style.transition = 'all 0.6s ease';
-    step2.style.opacity = '1';
-    step2.style.transform = 'translateY(0)';
-  }, 50);
-
-  // Hide step 3 if going back
-  document.getElementById('step3-wrap').style.display = 'none';
+  // choosing again resets everything downstream
   selectedMonthly = null;
-  document.querySelectorAll('#monthly-plans .selectable-plan').forEach(el => el.classList.remove('selected'));
+  aiOn = false;
+  document.querySelectorAll('#monthly-plans .selectable-plan')
+    .forEach(el => el.classList.remove('selected'));
+  document.getElementById('ai-addon')?.classList.remove('show','on','locked');
+  hide('step3-wrap');
+  hide('step4-wrap');
 
-  // Scroll to step 2
-  setTimeout(() => step2.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+  reveal('step2-wrap');
 }
 
-function selectMonthly(plan, price) {
+// ---------- step 2 ----------
+function selectMonthly(plan, price){
   selectedMonthly = { plan, price };
 
-  // Highlight selected
-  document.querySelectorAll('#monthly-plans .selectable-plan').forEach(el => el.classList.remove('selected'));
-  if (plan !== 'none') document.getElementById('mp-' + plan)?.classList.add('selected');
+  document.querySelectorAll('#monthly-plans .selectable-plan')
+    .forEach(el => el.classList.remove('selected'));
+  document.getElementById('mp-' + plan)?.classList.add('selected');
 
-  // Build summary
-  const websiteNames = { starter: 'Starter Site', professional: 'Professional Site', premium: 'Premium Site' };
-  const monthlyNames = { starter: 'Basic Maintenance', professional: 'Standard Maintenance', premium: 'Full Coverage', none: 'No Maintenance' };
+  const box   = document.getElementById('ai-addon');
+  const check = document.getElementById('ai-check');
+  const price$ = document.getElementById('ai-price');
+  const sub   = document.getElementById('ai-sub');
 
-  const summaryEl = document.getElementById('order-summary');
-  const monthlyRow = plan !== 'none'
-    ? `<div class="summary-row"><span class="summary-label">Monthly Maintenance</span><span class="summary-value">${monthlyNames[plan]} — $${price}/mo</span></div>`
-    : `<div class="summary-row"><span class="summary-label">Monthly Maintenance</span><span class="summary-value" style="color:rgba(255,255,255,0.3);">None selected</span></div>`;
+  hide('step4-wrap');
 
-  const totalMonthly = plan !== 'none' ? `+ $${price}/mo` : '';
+  if (plan === 'premium'){
+    // already part of Full Coverage
+    aiOn = true;
+    box?.classList.add('show','locked');
+    box?.classList.remove('on');
+    if (check)  check.textContent = '\u2713';
+    if (price$) price$.textContent = 'Included';
+    if (sub)    sub.textContent = 'Already part of Full Coverage at no extra cost.';
+    buildSummary();
+    reveal('step3-wrap');
+    setTimeout(() => reveal('step4-wrap'), 500);
+    return;
+  }
 
-  summaryEl.innerHTML = `
-    <div style="font-family:'Syne',system-ui,-apple-system,'Segoe UI',sans-serif;font-weight:700;font-size:15px;color:var(--lime);margin-bottom:16px;">Your Plan Summary</div>
-    <div class="summary-row"><span class="summary-label">Website</span><span class="summary-value">${websiteNames[selectedWebsite.plan]} — $${selectedWebsite.price.toLocaleString()} one-time</span></div>
-    ${monthlyRow}
-    <div class="summary-total">
-      <span>Total</span>
-      <span class="summary-total-value">$${selectedWebsite.price.toLocaleString()} ${totalMonthly}</span>
-    </div>
-  `;
+  aiOn = false;
+  box?.classList.add('show');
+  box?.classList.remove('locked','on');
+  if (check)  check.textContent = '+';
+  if (price$) price$.textContent = '+$' + AI_PRICE + '/mo per site';
+  if (sub)    sub.textContent = 'Answers your customers day and night and takes their details for you.';
 
-  // Show step 3
-  const step3 = document.getElementById('step3-wrap');
-  step3.style.display = 'block';
-  step3.style.opacity = '0';
-  step3.style.transform = 'translateY(30px)';
-  setTimeout(() => {
-    step3.style.transition = 'all 0.6s ease';
-    step3.style.opacity = '1';
-    step3.style.transform = 'translateY(0)';
-  }, 50);
-
-  setTimeout(() => step3.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+  buildSummary();
+  reveal('step3-wrap');
 }
 
-function goToInquiry() {
-  if (!selectedWebsite) return;
-  const plan = selectedWebsite.plan;
-  const monthly = selectedMonthly?.plan || 'none';
-  const mode = monthly !== 'none' ? 'both' : 'onetime';
-  window.location.href = `portal.html?action=inquiry&plan=${plan}&monthly=${monthly}&mode=${mode}`;
+// ---------- step 3 ----------
+function toggleAI(){
+  if (selectedMonthly && selectedMonthly.plan === 'premium'){ reveal('step4-wrap'); return; }
+  aiOn = !aiOn;
+  document.getElementById('ai-addon')?.classList.toggle('on', aiOn);
+  const chk = document.getElementById('ai-check');
+  if (chk) chk.textContent = aiOn ? '\u2713' : '+';
+  buildSummary();
+  reveal('step4-wrap');
 }
 
-function resetPlans() {
+function skipAI(){
+  if (!(selectedMonthly && selectedMonthly.plan === 'premium')){
+    aiOn = false;
+    document.getElementById('ai-addon')?.classList.remove('on');
+    const chk = document.getElementById('ai-check');
+    if (chk) chk.textContent = '+';
+  }
+  buildSummary();
+  reveal('step4-wrap');
+}
+
+// ---------- step 4 ----------
+function buildSummary(){
+  if (!selectedWebsite || !selectedMonthly) return;
+
+  const siteName = { starter:'Starter Site', professional:'Professional Site', premium:'Premium Site' };
+  const moName   = { starter:'Basic Maintenance', professional:'Standard Maintenance', premium:'Full Coverage' };
+
+  const included = selectedMonthly.plan === 'premium';
+  const aiCost   = (aiOn && !included) ? AI_PRICE : 0;
+  const perMonth = selectedMonthly.price + aiCost;
+
+  let rows =
+    '<div class="summary-row"><span class="summary-label">Website</span>'
+    + '<span class="summary-value">' + siteName[selectedWebsite.plan]
+    + ' \u2014 $' + selectedWebsite.price.toLocaleString() + ' one-time</span></div>'
+    + '<div class="summary-row"><span class="summary-label">Monthly Maintenance</span>'
+    + '<span class="summary-value">' + moName[selectedMonthly.plan]
+    + ' \u2014 $' + selectedMonthly.price + '/mo</span></div>';
+
+  if (aiOn){
+    rows += '<div class="summary-row"><span class="summary-label">AI Assistant</span>'
+      + '<span class="summary-value">'
+      + (included ? 'Included with Full Coverage' : '$' + AI_PRICE + '/mo per site')
+      + '</span></div>';
+  }
+
+  const el = document.getElementById('order-summary');
+  if (el) el.innerHTML =
+    '<div style="font-family:Syne,system-ui,sans-serif;font-weight:700;font-size:15px;'
+    + 'color:var(--lime);margin-bottom:16px;">Your Plan Summary</div>'
+    + rows
+    + '<div class="summary-total"><span>Total</span><span class="summary-total-value">$'
+    + selectedWebsite.price.toLocaleString() + ' + $' + perMonth + '/mo</span></div>';
+}
+
+function goToInquiry(){
+  if (!selectedWebsite || !selectedMonthly) return;
+  const ai = aiOn ? '&ai=1' : '';
+  window.location.href = 'portal.html?action=inquiry'
+    + '&plan=' + selectedWebsite.plan
+    + '&monthly=' + selectedMonthly.plan
+    + '&mode=both' + ai;
+}
+
+function resetPlans(){
   selectedWebsite = null;
   selectedMonthly = null;
+  aiOn = false;
   document.querySelectorAll('.selectable-plan').forEach(el => el.classList.remove('selected'));
-  document.getElementById('step2-wrap').style.display = 'none';
-  document.getElementById('step3-wrap').style.display = 'none';
-  document.getElementById('website-plans').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  document.getElementById('ai-addon')?.classList.remove('show','on','locked');
+  hide('step2-wrap'); hide('step3-wrap'); hide('step4-wrap');
+  document.getElementById('website-plans')?.scrollIntoView({ behavior:'smooth', block:'start' });
 }
 </script>
 
