@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leads — Tech Bros for Yeshua</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{--lime:#c8f135;--mid:rgba(255,255,255,0.45);--card:rgba(20,22,12,0.9);--border:rgba(255,255,255,0.09);}
+body{font-family:'DM Sans',system-ui,sans-serif;background:#080a04;color:#fff;min-height:100vh;
+  padding:20px;-webkit-font-smoothing:antialiased;}
+.wrap{max-width:1000px;margin:0 auto;}
+
+.top{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:22px;}
+h1{font-family:'Syne',sans-serif;font-weight:700;font-size:24px;}
+h1 span{color:var(--lime);}
+.refresh{margin-left:auto;background:transparent;border:1px solid var(--border);
+  color:var(--mid);font-family:'Syne',sans-serif;font-weight:600;font-size:12px;
+  padding:9px 18px;border-radius:100px;cursor:pointer;transition:all .2s;}
+.refresh:hover{border-color:var(--lime);color:var(--lime);}
+
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:11px;margin-bottom:22px;}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:16px 18px;}
+.stat b{font-family:'Syne',sans-serif;font-weight:700;font-size:26px;color:var(--lime);display:block;}
+.stat span{font-size:12px;color:var(--mid);}
+
+.filters{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:16px;}
+.f{padding:7px 15px;border-radius:100px;font-size:11px;font-family:'Syne',sans-serif;
+  font-weight:600;cursor:pointer;border:1px solid var(--border);background:rgba(255,255,255,.03);
+  color:var(--mid);transition:all .2s;}
+.f:hover{border-color:rgba(200,241,53,.35);color:var(--lime);}
+.f.on{background:rgba(200,241,53,.14);border-color:var(--lime);color:var(--lime);}
+
+.lead{background:var(--card);border:1px solid var(--border);border-radius:15px;
+  padding:20px 22px;margin-bottom:12px;transition:border-color .2s;}
+.lead:hover{border-color:rgba(200,241,53,.22);}
+.lead.done{opacity:.5;}
+.lead-top{display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:14px;}
+.lead-name{font-family:'Syne',sans-serif;font-weight:700;font-size:17px;}
+.lead-sub{font-size:12px;color:var(--mid);margin-top:2px;}
+.tag{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  padding:3px 10px;border-radius:100px;white-space:nowrap;}
+.tag.full{background:rgba(109,200,109,.14);color:#6dc86d;}
+.tag.part{background:rgba(255,180,0,.14);color:#ffb400;}
+.tag.done{background:rgba(255,255,255,.07);color:var(--mid);}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1px;
+  background:var(--border);border:1px solid var(--border);border-radius:11px;overflow:hidden;}
+.cell{background:#0e100a;padding:11px 14px;}
+.cell b{display:block;font-size:10px;letter-spacing:.07em;text-transform:uppercase;
+  color:rgba(255,255,255,.32);margin-bottom:3px;}
+.cell span{font-size:14px;word-break:break-word;}
+.cell span.none{color:rgba(255,255,255,.24);font-style:italic;font-size:13px;}
+.cell a{color:var(--lime);text-decoration:none;}
+
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px;}
+.act{padding:7px 16px;border-radius:100px;font-size:11px;font-family:'Syne',sans-serif;
+  font-weight:700;cursor:pointer;border:1px solid rgba(200,241,53,.3);
+  background:rgba(200,241,53,.08);color:var(--lime);transition:all .2s;text-decoration:none;
+  display:inline-block;}
+.act:hover{background:rgba(200,241,53,.18);}
+.act.grey{border-color:var(--border);background:rgba(255,255,255,.04);color:var(--mid);}
+.act.grey:hover{border-color:var(--lime);color:var(--lime);background:rgba(255,255,255,.06);}
+
+.script{margin-top:12px;background:#050702;border:1px solid var(--border);border-radius:10px;
+  padding:14px;font-size:12.5px;line-height:1.7;color:rgba(255,255,255,.55);
+  white-space:pre-wrap;word-break:break-word;max-height:260px;overflow-y:auto;display:none;}
+
+.empty{text-align:center;padding:60px 20px;color:var(--mid);}
+.err{background:rgba(220,50,50,.08);border:1px solid rgba(220,50,50,.25);border-radius:13px;
+  padding:18px 20px;color:#ff9c9c;font-size:13.5px;line-height:1.65;}
+.err b{display:block;font-family:'Syne',sans-serif;color:#ff8080;margin-bottom:7px;font-size:15px;}
+.err code{font-family:ui-monospace,monospace;font-size:12px;background:rgba(0,0,0,.3);
+  padding:2px 6px;border-radius:4px;}
+
+.panel{background:var(--card);border:1px solid var(--border);border-radius:15px;
+  padding:18px 20px;margin-bottom:18px;}
+.panel-head{display:flex;align-items:center;gap:12px;}
+.panel-title{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:var(--lime);}
+.panel-head .refresh{margin-left:auto;}
+.warn{background:rgba(255,180,0,.08);border:1px solid rgba(255,180,0,.25);border-radius:10px;
+  padding:12px 15px;font-size:12.5px;color:#ffb400;line-height:1.6;margin:14px 0;}
+.warn b{display:block;margin-bottom:4px;}
+.cfg-row{display:flex;gap:12px;align-items:center;margin-bottom:11px;flex-wrap:wrap;}
+.cfg-row label{width:110px;flex-shrink:0;font-size:11px;letter-spacing:.07em;
+  text-transform:uppercase;color:rgba(255,255,255,.35);}
+.cfg-row input,.cfg-row select{flex:1;min-width:180px;background:rgba(255,255,255,.05);
+  border:1px solid var(--border);border-radius:9px;padding:10px 13px;color:#fff;
+  font-family:'DM Sans',sans-serif;font-size:14px;outline:none;}
+.cfg-row input:focus,.cfg-row select:focus{border-color:var(--lime);}
+.cfg-row select option{background:#111408;}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <h1>Client <span>Leads</span></h1>
+    <button class="refresh" onclick="load()">Refresh</button>
+  </div>
+
+
+  <div class="panel">
+    <div class="panel-head">
+      <span class="panel-title">Assistant settings</span>
+      <button class="refresh" onclick="toggleCfg()" id="cfg-btn">Show</button>
+    </div>
+    <div id="cfg-body" style="display:none;">
+      <div class="warn">
+        <b>Testing only.</b> A key saved here can be read by anyone who opens a client
+        site, because the database key is public in every page. Before any site goes live
+        this must move to a server. Do not put a paid key here.
+      </div>
+
+      <div class="cfg-row">
+        <label>Business</label>
+        <select id="cfg-biz" onchange="loadCfg()">
+          <option>Taco Michael</option>
+        </select>
+      </div>
+      <div class="cfg-row">
+        <label>Z.ai API key</label>
+        <input type="password" id="cfg-key" placeholder="Paste key" autocomplete="off">
+      </div>
+      <div class="cfg-row">
+        <label>Model</label>
+        <select id="cfg-model">
+          <option value="glm-4.5-flash">GLM-4.5-Flash — free</option>
+          <option value="glm-4.7-flash">GLM-4.7-Flash — free</option>
+          <option value="glm-4.7">GLM-4.7 — paid</option>
+          <option value="glm-5.2">GLM-5.2 — paid</option>
+        </select>
+      </div>
+      <div class="cfg-row">
+        <label>Assistant</label>
+        <select id="cfg-on">
+          <option value="true">On</option>
+          <option value="false">Off</option>
+        </select>
+      </div>
+      <button class="act" onclick="saveCfg()" style="margin-top:6px;">Save settings</button>
+      <span id="cfg-msg" style="font-size:12px;margin-left:10px;"></span>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><b id="s-total">—</b><span>Total leads</span></div>
+    <div class="stat"><b id="s-new">—</b><span>Needs action</span></div>
+    <div class="stat"><b id="s-full">—</b><span>Complete</span></div>
+    <div class="stat"><b id="s-today">—</b><span>Today</span></div>
+  </div>
+
+  <div class="filters">
+    <button class="f on" onclick="setF('all',this)">All</button>
+    <button class="f" onclick="setF('new',this)">Needs action</button>
+    <button class="f" onclick="setF('complete',this)">Complete</button>
+    <button class="f" onclick="setF('partial',this)">Partial</button>
+    <button class="f" onclick="setF('done',this)">Handled</button>
+  </div>
+
+  <div id="list"><div class="empty">Loading…</div></div>
+</div>
+
+<script>
+const sb = supabase.createClient(
+  'https://ganpjzutbzygaxlcgejd.supabase.co',
+  'sb_publishable_x9BC4b-yBIZAXz67WTVTkQ_v3wOCGhZ');
+
+
+function toggleCfg(){
+  const b = document.getElementById('cfg-body');
+  const on = b.style.display === 'none';
+  b.style.display = on ? 'block' : 'none';
+  document.getElementById('cfg-btn').textContent = on ? 'Hide' : 'Show';
+  if (on) loadCfg();
+}
+
+async function loadCfg(){
+  const biz = document.getElementById('cfg-biz').value;
+  const { data } = await sb.from('assistant_config').select('*').eq('business', biz).single();
+  if (!data) return;
+  document.getElementById('cfg-key').value   = data.api_key || '';
+  document.getElementById('cfg-model').value = data.model || 'glm-4.5-flash';
+  document.getElementById('cfg-on').value    = String(data.enabled);
+}
+
+async function saveCfg(){
+  const biz = document.getElementById('cfg-biz').value;
+  const msg = document.getElementById('cfg-msg');
+  msg.style.color = 'var(--mid)'; msg.textContent = 'Saving…';
+
+  const { error } = await sb.from('assistant_config').upsert({
+    business: biz,
+    api_key : document.getElementById('cfg-key').value.trim() || null,
+    model   : document.getElementById('cfg-model').value,
+    enabled : document.getElementById('cfg-on').value === 'true',
+    updated_at: new Date().toISOString()
+  }, { onConflict: 'business' });
+
+  if (error){
+    msg.style.color = '#ff8080';
+    msg.textContent = 'Failed: ' + error.message;
+  } else {
+    msg.style.color = '#6dc86d';
+    msg.textContent = 'Saved — reload the client site to pick it up';
+    setTimeout(()=> msg.textContent = '', 4000);
+  }
+}
+
+let FILTER = 'all';
+let ROWS = [];
+
+function setF(f, btn){
+  FILTER = f;
+  document.querySelectorAll('.f').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  render();
+}
+
+function esc(t){
+  return String(t==null?'':t).replace(/[&<>"]/g, c =>
+    ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+}
+
+function when(iso){
+  const d = new Date(iso), now = new Date();
+  const mins = Math.round((now - d) / 60000);
+  if (mins < 1)  return 'just now';
+  if (mins < 60) return mins + ' min ago';
+  if (mins < 1440) return Math.round(mins/60) + ' hr ago';
+  return d.toLocaleDateString('en-US',{month:'short',day:'numeric'})
+    + ' at ' + d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+}
+
+async function load(){
+  const el = document.getElementById('list');
+  const { data, error } = await sb.from('site_leads')
+    .select('*').order('created_at',{ascending:false}).limit(300);
+
+  if (error){
+    el.innerHTML = '<div class="err"><b>Could not read the leads table</b>'
+      + esc(error.message) + (error.code ? ' <code>'+esc(error.code)+'</code>' : '')
+      + '<br><br>If this says the relation does not exist, run '
+      + '<code>supabase-taco-leads.sql</code> in the Supabase SQL editor first.</div>';
+    return;
+  }
+
+  ROWS = data || [];
+  const today = new Date().toDateString();
+  document.getElementById('s-total').textContent = ROWS.length;
+  document.getElementById('s-new').textContent   = ROWS.filter(r=>!r.handled).length;
+  document.getElementById('s-full').textContent  = ROWS.filter(r=>r.complete).length;
+  document.getElementById('s-today').textContent =
+    ROWS.filter(r=> new Date(r.created_at).toDateString() === today).length;
+
+  render();
+}
+
+function render(){
+  const el = document.getElementById('list');
+  let rows = ROWS;
+  if (FILTER === 'new')      rows = rows.filter(r=>!r.handled);
+  if (FILTER === 'done')     rows = rows.filter(r=> r.handled);
+  if (FILTER === 'complete') rows = rows.filter(r=> r.complete);
+  if (FILTER === 'partial')  rows = rows.filter(r=>!r.complete);
+
+  if (!rows.length){
+    el.innerHTML = '<div class="empty">Nothing here yet. Open the taco site, '
+      + 'ask the assistant about catering, and give it a name and phone number.</div>';
+    return;
+  }
+
+  el.innerHTML = rows.map(r=>{
+    const cell = (label, val, link) => {
+      if (!val) return '<div class="cell"><b>'+label+'</b><span class="none">not given</span></div>';
+      const inner = link ? '<a href="'+link+esc(val)+'">'+esc(val)+'</a>' : esc(val);
+      return '<div class="cell"><b>'+label+'</b><span>'+inner+'</span></div>';
+    };
+
+    const tag = r.handled ? '<span class="tag done">Handled</span>'
+      : r.complete ? '<span class="tag full">Complete</span>'
+      : '<span class="tag part">Partial</span>';
+
+    return '<div class="lead'+(r.handled?' done':'')+'">'
+      + '<div class="lead-top">'
+      +   '<div style="flex:1;min-width:0;">'
+      +     '<div class="lead-name">'+esc(r.name || 'Unnamed enquiry')+'</div>'
+      +     '<div class="lead-sub">'+esc(r.business||'')+' · '+esc(r.source||'')
+      +       ' · '+when(r.created_at)+'</div>'
+      +   '</div>'
+      +   tag
+      + '</div>'
+      + '<div class="grid">'
+      +   cell('Phone', r.phone, 'tel:')
+      +   cell('Email', r.email, 'mailto:')
+      +   cell('Event date', r.event_date)
+      +   cell('Guests', r.guests)
+      +   cell('Location', r.location)
+      +   cell('Package', r.package)
+      + '</div>'
+      + '<div class="acts">'
+      +   (r.phone ? '<a class="act" href="tel:'+esc(r.phone)+'">Call</a>' : '')
+      +   (r.email ? '<a class="act" href="mailto:'+esc(r.email)+'">Email</a>' : '')
+      +   (r.transcript ? '<button class="act grey" onclick="toggle(\''+r.id+'\')">Conversation</button>' : '')
+      +   '<button class="act grey" onclick="mark(\''+r.id+'\','+(!r.handled)+')">'
+      +     (r.handled ? 'Mark unhandled' : 'Mark handled') + '</button>'
+      + '</div>'
+      + (r.transcript ? '<div class="script" id="t-'+r.id+'">'+esc(r.transcript)+'</div>' : '')
+      + '</div>';
+  }).join('');
+}
+
+function toggle(id){
+  const el = document.getElementById('t-'+id);
+  if (el) el.style.display = el.style.display === 'block' ? 'none' : 'block';
+}
+
+async function mark(id, handled){
+  await sb.from('site_leads').update({ handled }).eq('id', id);
+  load();
+}
+
+// live updates as leads arrive
+sb.channel('leads').on('postgres_changes',
+  { event:'*', schema:'public', table:'site_leads' }, load).subscribe();
+
+load();
+</script>
+</body>
+</html>

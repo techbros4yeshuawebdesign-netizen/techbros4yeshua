@@ -1640,6 +1640,109 @@ input:focus, select:focus, textarea:focus {
   font-family:'DM Sans',sans-serif;font-size:13px;padding:10px 24px;border-radius:100px;
   cursor:pointer;transition:all .2s;}
 .skip-ai:hover{border-color:rgba(200,241,53,.35);color:var(--lime);}
+
+.cf-grid{display:flex;flex-direction:column;gap:16px;}
+.cf-two{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+@media(max-width:560px){.cf-two{grid-template-columns:1fr;}}
+.cf-field{display:flex;flex-direction:column;gap:7px;}
+.cf-field label{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+  color:rgba(255,255,255,.35);}
+.cf-field label span{text-transform:none;letter-spacing:0;font-weight:400;
+  color:rgba(255,255,255,.2);margin-left:4px;}
+.cf-field input,.cf-field textarea{background:rgba(255,255,255,.05);
+  border:1.5px solid rgba(255,255,255,.1);border-radius:12px;padding:13px 16px;
+  font-family:'DM Sans',system-ui,sans-serif;font-size:15px;color:#fff;outline:none;
+  transition:border-color .2s;width:100%;}
+.cf-field input:focus,.cf-field textarea:focus{border-color:var(--lime);
+  box-shadow:0 0 0 2px rgba(200,241,53,.12);}
+.cf-field input::placeholder,.cf-field textarea::placeholder{color:rgba(255,255,255,.2);}
+.cf-field textarea{min-height:120px;resize:vertical;line-height:1.6;}
+.cf-alert{display:none;font-size:13.5px;padding:12px 16px;border-radius:10px;line-height:1.55;}
+.cf-alert.err{display:block;background:rgba(220,50,50,.1);border:1px solid rgba(220,50,50,.28);color:#ff9c9c;}
+
+
+.work-card{display:flex;gap:20px;align-items:flex-start;background:rgba(10,12,5,.75);
+  border:1.5px solid rgba(200,241,53,.15);border-radius:18px;padding:26px 28px;
+  text-decoration:none;color:inherit;transition:all .28s;max-width:640px;margin:0 auto;}
+.work-card:hover{border-color:rgba(200,241,53,.4);transform:translateY(-4px);
+  box-shadow:0 14px 40px rgba(0,0,0,.4);}
+.work-emoji{font-size:38px;line-height:1;flex-shrink:0;}
+.work-name{font-family:'Syne',system-ui,sans-serif;font-weight:700;font-size:19px;}
+.work-kind{font-size:12px;color:var(--lime);letter-spacing:.05em;margin:3px 0 10px;}
+.work-desc{font-size:14px;color:var(--mid);line-height:1.65;margin-bottom:14px;}
+.work-go{font-family:'Syne',system-ui,sans-serif;font-weight:700;font-size:13px;color:var(--lime);}
+@media(max-width:520px){.work-card{flex-direction:column;gap:14px;}}
+
+
+.btn-demo{display:inline-flex;align-items:center;gap:9px;background:rgba(200,241,53,.07);
+  border:1.5px solid rgba(200,241,53,.35);color:var(--lime);
+  font-family:'Syne',system-ui,sans-serif;font-weight:700;font-size:15px;
+  padding:15px 26px;border-radius:100px;text-decoration:none;transition:all .25s;}
+.btn-demo:hover{background:rgba(200,241,53,.16);border-color:var(--lime);
+  transform:translateY(-2px);box-shadow:0 0 26px rgba(200,241,53,.2);}
+.demo-dot{width:8px;height:8px;border-radius:50%;background:#28c76f;flex-shrink:0;
+  box-shadow:0 0 0 0 rgba(40,199,111,.6);animation:demoPulse 2s infinite;}
+@keyframes demoPulse{
+  0%{box-shadow:0 0 0 0 rgba(40,199,111,.55);}
+  70%{box-shadow:0 0 0 9px rgba(40,199,111,0);}
+  100%{box-shadow:0 0 0 0 rgba(40,199,111,0);}}
+.nav-demo{color:rgba(255,255,255,.6);font-family:'Syne',system-ui,sans-serif;font-weight:600;
+  font-size:13px;text-decoration:none;padding:9px 14px;transition:color .2s;white-space:nowrap;}
+.nav-demo:hover{color:var(--lime);}
+@media(max-width:700px){.nav-demo{display:none;}}
+
+
+#da-open{position:fixed;right:20px;bottom:20px;z-index:9000;width:58px;height:58px;
+  border-radius:50%;border:0;cursor:pointer;background:var(--lime);color:#080a04;
+  font-size:24px;box-shadow:0 8px 26px rgba(0,0,0,.4);transition:transform .25s;}
+#da-open:hover{transform:scale(1.08);}
+.da-ping{position:absolute;top:2px;right:2px;width:13px;height:13px;border-radius:50%;
+  background:#28c76f;border:2px solid #080a04;}
+#da-panel{position:fixed;right:20px;bottom:88px;z-index:9001;
+  width:min(360px,calc(100vw - 40px));max-height:min(560px,calc(100vh - 130px));
+  background:#0e1006;border:1.5px solid rgba(200,241,53,.3);border-radius:16px;
+  display:none;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.6);}
+#da-panel.on{display:flex;}
+.da-top{display:flex;align-items:center;gap:11px;padding:13px 15px;
+  background:rgba(200,241,53,.07);border-bottom:1px solid rgba(200,241,53,.18);}
+.da-av{width:34px;height:34px;border-radius:50%;background:rgba(200,241,53,.14);
+  display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+.da-top b{font-family:'Syne',system-ui,sans-serif;font-size:14px;display:block;}
+.da-top small{font-size:11px;color:var(--mid);}
+.da-x{margin-left:auto;background:none;border:0;color:rgba(255,255,255,.45);
+  font-size:21px;cursor:pointer;line-height:1;}
+#da-body{flex:1;overflow-y:auto;padding:15px;min-height:190px;}
+.da-m{margin-bottom:10px;display:flex;}
+.da-m.u{justify-content:flex-end;}
+.da-b{max-width:85%;padding:10px 14px;border-radius:14px;font-size:14px;line-height:1.55;
+  white-space:pre-wrap;}
+.da-m.a .da-b{background:rgba(255,255,255,.06);border-bottom-left-radius:4px;}
+.da-m.u .da-b{background:rgba(200,241,53,.16);border:1px solid rgba(200,241,53,.25);
+  border-bottom-right-radius:4px;}
+.da-t{display:inline-flex;gap:4px;padding:3px 0;}
+.da-t i{width:6px;height:6px;border-radius:50%;background:var(--lime);animation:daB 1.2s infinite;}
+.da-t i:nth-child(2){animation-delay:.2s;} .da-t i:nth-child(3){animation-delay:.4s;}
+@keyframes daB{0%,60%,100%{opacity:.3;}30%{opacity:1;}}
+.da-chips{display:flex;gap:7px;flex-wrap:wrap;padding:0 15px 12px;}
+.da-chip{background:rgba(200,241,53,.08);border:1px solid rgba(200,241,53,.25);
+  color:var(--lime);font-size:12.5px;padding:7px 13px;border-radius:99px;cursor:pointer;
+  transition:background .2s;font-family:'DM Sans',system-ui,sans-serif;}
+.da-chip:hover{background:rgba(200,241,53,.18);}
+.da-foot{padding:11px 15px;border-top:1px solid rgba(255,255,255,.08);text-align:center;}
+.da-foot a{color:var(--lime);font-size:12.5px;text-decoration:none;
+  font-family:'Syne',system-ui,sans-serif;font-weight:700;}
+.da-foot a:hover{text-decoration:underline;}
+
+
+.da-input{display:flex;gap:8px;padding:0 15px 12px;}
+.da-input input{flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);
+  border-radius:99px;padding:11px 16px;color:#fff;font-size:14px;outline:none;
+  font-family:'DM Sans',system-ui,sans-serif;}
+.da-input input:focus{border-color:var(--lime);}
+.da-input input::placeholder{color:rgba(255,255,255,.25);}
+.da-input button{background:var(--lime);border:0;border-radius:50%;width:40px;height:40px;
+  font-size:16px;cursor:pointer;color:#080a04;flex-shrink:0;}
+
 </style>
 </head>
 <body>
@@ -1667,7 +1770,8 @@ input:focus, select:focus, textarea:focus {
   </div>
   <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
     <a href="portal.html" class="nav-btn outline">Client Login</a>
-    <a href="portal.html?action=inquiry" class="nav-btn">Get Free Prototype →</a>
+    <a href="example-taco.html" class="nav-demo">See our work</a>
+      <a href="#contact" class="nav-btn">Get Free Prototype →</a>
   </div>
 </nav>
 
@@ -1688,7 +1792,10 @@ input:focus, select:focus, textarea:focus {
   <h1><span class="glitch" data-text="Your business">Your business</span><br><em>deserves a real</em><br><span class="glitch" data-text="website.">website.</span></h1>
   <p>We build fast, modern websites for small businesses — from $500, or $55/month with hosting and maintenance included. See your site before you pay a dime.</p>
   <div class="hero-btns">
-    <a href="portal.html?action=inquiry" class="btn-primary">Get a Free Prototype →</a>
+    <a href="#contact" class="btn-primary">Get a Free Prototype →</a>
+    <a href="example-taco.html" class="btn-demo">
+      <span class="demo-dot"></span>See a live site we built
+    </a>
     <a href="#pricing" class="btn-ghost">See Pricing</a>
   </div>
 </section>
@@ -2012,17 +2119,92 @@ input:focus, select:focus, textarea:focus {
 <div class="section-divider"></div>
 
 <!-- CONTACT / FREE PROTOTYPE -->
-<section id="contact" class="section" style="text-align:center;max-width:700px;margin:0 auto;padding:80px 40px;">
-  <div class="sec-label anim-fade" style="text-align:center;">Get Started</div>
-  <div class="sec-title anim-fade" style="text-align:center;font-size:clamp(28px,4vw,52px);">Ready for your<br>free prototype?</div>
-  <p style="color:var(--mid);font-size:17px;line-height:1.7;margin-bottom:40px;opacity:0.8;" class="anim-fade">
-    Create a free account to submit your inquiry. We'll review it and reach out within 24 hours to start building your prototype.
-  </p>
-  <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;" class="anim-fade">
-    <a href="portal.html?action=inquiry" class="btn-primary" style="font-size:16px;padding:18px 36px;">Create Account & Get Started →</a>
-    <a href="portal.html" class="btn-ghost" style="font-size:16px;padding:18px 36px;">Sign In</a>
+
+<!-- EXAMPLE WORK -->
+<section class="section" style="max-width:900px;margin:0 auto;padding:70px 30px;">
+  <div class="sec-label anim-fade" style="text-align:center;">Our work</div>
+  <div class="sec-title anim-fade" style="text-align:center;font-size:clamp(26px,4vw,44px);">
+    See what you'd get
   </div>
-  <p style="font-size:12px;color:rgba(255,255,255,0.25);margin-top:20px;">No credit card required · Free prototype · No obligation</p>
+  <p style="color:var(--mid);font-size:16px;line-height:1.7;margin:16px auto 34px;
+     max-width:520px;text-align:center;" class="anim-fade">
+    Every site is built from scratch around the business it's for. Here's a real one —
+    have a look around, it works exactly as a customer would see it.
+  </p>
+
+  <a href="example-taco.html" class="work-card anim-fade">
+    <div class="work-emoji">🌮</div>
+    <div class="work-body">
+      <div class="work-name">Taco Michael</div>
+      <div class="work-kind">Food truck · Starter build</div>
+      <div class="work-desc">
+        Daily location schedule, full menu, catering packages with a live cost estimator,
+        and a booking form that goes straight to the owner's phone.
+      </div>
+      <span class="work-go">View the site &rarr;</span>
+    </div>
+  </a>
+</section>
+
+<section id="contact" class="section" style="max-width:640px;margin:0 auto;padding:80px 30px;">
+  <div class="sec-label anim-fade" style="text-align:center;">Get in touch</div>
+  <div class="sec-title anim-fade" style="text-align:center;font-size:clamp(28px,4vw,52px);">
+    Tell us about<br>your business
+  </div>
+  <p style="color:var(--mid);font-size:16px;line-height:1.7;margin:16px 0 34px;text-align:center;" class="anim-fade">
+    No account needed. Send a message and we'll come back to you within 24 hours —
+    usually with a free mockup of what your site could look like.
+  </p>
+
+  <div id="cf-done" style="display:none;text-align:center;padding:44px 20px;">
+    <div style="font-size:46px;margin-bottom:14px;">✅</div>
+    <div style="font-family:'Syne',system-ui,sans-serif;font-weight:700;font-size:21px;margin-bottom:8px;">Message sent</div>
+    <div style="color:var(--mid);font-size:15px;line-height:1.65;">
+      Thanks — we've got it. Nathan reads every message himself and will get back to you
+      within 24 hours.
+    </div>
+  </div>
+
+  <div id="cf-form" class="cf-grid anim-fade">
+    <div id="cf-msg" class="cf-alert"></div>
+
+    <div class="cf-two">
+      <div class="cf-field">
+        <label>Your name</label>
+        <input type="text" id="cf-name" placeholder="Maria Reyes" autocomplete="name">
+      </div>
+      <div class="cf-field">
+        <label>Business name</label>
+        <input type="text" id="cf-biz" placeholder="Reyes Landscaping" autocomplete="organization">
+      </div>
+    </div>
+
+    <div class="cf-two">
+      <div class="cf-field">
+        <label>Email</label>
+        <input type="email" id="cf-email" placeholder="you@email.com" autocomplete="email">
+      </div>
+      <div class="cf-field">
+        <label>Phone <span>optional</span></label>
+        <input type="tel" id="cf-phone" placeholder="(555) 000-0000" autocomplete="tel">
+      </div>
+    </div>
+
+    <div class="cf-field">
+      <label>What do you need?</label>
+      <textarea id="cf-note" placeholder="A few lines about your business and what you're after. Don't worry about getting it perfect."></textarea>
+    </div>
+
+    <button class="btn-primary" id="cf-send" onclick="sendContact()" style="width:100%;padding:17px;font-size:16px;">
+      Send message →
+    </button>
+
+    <p style="font-size:12px;color:rgba(255,255,255,0.28);text-align:center;line-height:1.6;">
+      No obligation, no credit card. Prefer to talk?
+      <a href="mailto:techBros4yeshua.web.design@gmail.com" style="color:var(--lime);">Email us directly</a>.
+      <br>Already a client? <a href="portal.html" style="color:var(--lime);">Sign in to your portal</a>.
+    </p>
+  </div>
 </section>
 
 <!-- FOOTER -->
@@ -2671,5 +2853,266 @@ function resetPlans(){
 <!-- Cloudflare Web Analytics -->
 <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "12f0e3cabf7a4e32afcbd1aac6ac358c"}'></script>
 <!-- End Cloudflare Web Analytics -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// ── DIRECT CONTACT — no account required ──
+(function(){
+  const SB = supabase.createClient(
+    'https://ganpjzutbzygaxlcgejd.supabase.co',
+    'sb_publishable_x9BC4b-yBIZAXz67WTVTkQ_v3wOCGhZ');
+
+  function fail(text){
+    const a = document.getElementById('cf-msg');
+    a.className = 'cf-alert err';
+    a.textContent = text;
+  }
+
+  window.sendContact = async function(){
+    const name  = document.getElementById('cf-name').value.trim();
+    const biz   = document.getElementById('cf-biz').value.trim();
+    const email = document.getElementById('cf-email').value.trim();
+    const phone = document.getElementById('cf-phone').value.trim();
+    const note  = document.getElementById('cf-note').value.trim();
+
+    if (!name || !email || !note){
+      fail('Please add your name, email, and a line about what you need.');
+      return;
+    }
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){
+      fail("That email address doesn't look right — mind checking it?");
+      return;
+    }
+
+    const btn = document.getElementById('cf-send');
+    btn.textContent = 'Sending…';
+    btn.disabled = true;
+
+    // whatever they picked in the pricing steps, if anything
+    let order = '';
+    try{
+      if (typeof selectedWebsite !== 'undefined' && selectedWebsite){
+        order = '\n\nORDER|website=' + selectedWebsite.plan
+          + '|monthly=' + (selectedMonthly ? selectedMonthly.plan : '')
+          + '|ai=' + (typeof aiOn !== 'undefined' && aiOn ? '1' : '0');
+      }
+    }catch(e){}
+
+    const { error } = await SB.from('edit_requests').insert({
+      user_id: null,
+      page: 'WEBSITE ENQUIRY',
+      edit_type: '\u2709\uFE0F Enquiry \u2014 ' + (biz || name),
+      message: 'Name: ' + name
+        + '\nBusiness: ' + (biz || '\u2014')
+        + '\nEmail: ' + email
+        + '\nPhone: ' + (phone || 'Not given')
+        + '\n\nMessage:\n' + note
+        + order,
+      status: 'inquiry'
+    });
+
+    btn.textContent = 'Send message \u2192';
+    btn.disabled = false;
+
+    if (error){
+      fail('That didn\'t go through. Please email techBros4yeshua.web.design@gmail.com '
+           + 'and we\'ll pick it up from there.');
+      return;
+    }
+
+    document.getElementById('cf-form').style.display = 'none';
+    document.getElementById('cf-done').style.display = 'block';
+    document.getElementById('cf-done').scrollIntoView({ behavior:'smooth', block:'center' });
+  };
+})();
+</script>
+
+
+<!-- ═══ DEMO ASSISTANT ═══ -->
+<button id="da-open" aria-label="See how the AI assistant works">
+  <span>💬</span><i class="da-ping"></i>
+</button>
+
+<div id="da-panel" role="dialog" aria-label="AI assistant preview">
+  <div class="da-top">
+    <div class="da-av">💬</div>
+    <div style="flex:1;min-width:0;">
+      <b>AI Assistant</b>
+      <small>Preview — this is what sits on your site</small>
+    </div>
+    <button class="da-x" onclick="daToggle()" aria-label="Close">×</button>
+  </div>
+
+  <div id="da-body"></div>
+
+  <div id="da-chips" class="da-chips"></div>
+
+  <div class="da-input">
+    <input id="da-in" placeholder="Ask anything…" onkeydown="if(event.key==='Enter')daSend()">
+    <button onclick="daSend()" aria-label="Send">→</button>
+  </div>
+
+  <div class="da-foot">
+    <a href="#contact" onclick="daToggle()">Want one on your site? Get a free prototype →</a>
+  </div>
+</div>
+
+
+<script>
+// ── DEMO ASSISTANT ──
+// Scripted on purpose: it must never fail on the page that sells it.
+// EDIT THE ANSWERS BELOW — `k` is the keywords that trigger it.
+(function(){
+
+  const QA = [
+    { q: "How much does a website cost?",
+      k: ["cost","price","much","expensive","pricing","afford","cheap","fee","charge","$"],
+      a: "Sites start at $500 as a one-time build, then $55 a month for hosting, security and edits. There's a full breakdown further up this page — and you see your site before paying anything." },
+
+    { q: "How long does it take?",
+      k: ["long","time","fast","quick","when","soon","turnaround","days","week","deadline"],
+      a: "You'll have a prototype to look at within about 7 days. Once you approve it, going live usually takes another few days." },
+
+    { q: "Do I own the site?",
+      k: ["own","ownership","mine","keep","files","code","transfer","buy out","buyout"],
+      a: "We build and host it for you — that's what the monthly covers. If you'd rather own the files outright, that's a separate arrangement; just ask and Nathan will talk it through." },
+
+    { q: "What if I need changes later?",
+      k: ["change","edit","update","revision","modify","add","fix","maintain","maintenance"],
+      a: "That's what the monthly plan is for. Basic includes 5 edits a month, Standard 10, and Full Coverage is unlimited. Send a request from your portal and it's usually done in 3–5 days." },
+
+    { q: "Can I see an example?",
+      k: ["example","portfolio","see","work","demo","sample","previous","built","show"],
+      a: "Yes — there's a real one linked at the top of this page. It's a taco truck site with a live schedule, menu and catering booking. Have a click around, it works exactly as a customer would see it." },
+
+    { q: "What is this assistant?",
+      k: ["assistant","chatbot","bot","ai","chat","you","this"],
+      a: "I'm a preview of the assistant we can put on your site. The real one knows your hours, prices and services, answers your customers day or night, and passes their details straight to you. It's $25 a month, or included with Full Coverage." },
+
+    { q: "Do you do hosting?",
+      k: ["host","hosting","server","domain","ssl","secure","uptime","live"],
+      a: "Yes, hosting and SSL are part of every monthly plan — you don't need to arrange anything separately. If you already own a domain we'll point it at your new site." },
+
+    { q: "What kind of businesses do you work with?",
+      k: ["business","who","industry","trade","restaurant","church","shop","plumber","small"],
+      a: "Small businesses mostly — trades, food, churches, local services. If you've got customers and no decent website, that's the sweet spot." }
+  ];
+
+  // Small talk — handled before keyword matching so a greeting never
+  // gets the "ask Nathan" fallback.
+  const SMALL = [
+    { k:["hi","hello","hey","yo","howdy","hiya","good morning","good afternoon","good evening","sup"],
+      a:"Hey! Ask me anything about how this works — pricing, timescales, what's included. Or tap one of the questions above." },
+    { k:["thanks","thank you","thx","cheers","appreciate","ta "],
+      a:"Any time. Anything else you want to know?" },
+    { k:["bye","goodbye","see ya","later","cya"],
+      a:"Take care. If you'd like a free mockup of your site, the form just below takes about a minute." },
+    { k:["yes","yeah","yep","sure","ok","okay","cool","nice","great","awesome"],
+      a:"Good stuff. What else can I tell you?" },
+    { k:["no","nope","nah","not really"],
+      a:"No problem. If anything comes up, I'm here — or drop Nathan a line through the form below." },
+    { k:["help","what can you do","what do you do","options"],
+      a:"I can tell you about pricing, how long a build takes, what's included each month, who we work with, and show you a site we've made. What would be useful?" },
+    { k:["who are you","your name","are you real","are you human","bot?"],
+      a:"I'm a preview of the assistant we build into client sites — scripted for this demo. The real one on your site would know your hours, prices and services, and answer your customers properly." }
+  ];
+
+  const FALLBACK =
+    "Good question — that one's better answered by Nathan directly. " +
+    "Send it through the form just below and he'll come back to you within 24 hours.";
+
+  const body  = () => document.getElementById('da-body');
+  const chips = () => document.getElementById('da-chips');
+  let started = false;
+
+  window.daToggle = function(){
+    const p = document.getElementById('da-panel');
+    p.classList.toggle('on');
+    if (p.classList.contains('on')){
+      if (!started){
+        started = true;
+        say('a', "Hi! I'm a preview of the assistant we build into client sites. Ask me anything — or tap one of these.");
+        showChips();
+      }
+      setTimeout(()=>document.getElementById('da-in')?.focus(), 150);
+    }
+  };
+  document.getElementById('da-open').onclick = window.daToggle;
+
+  function say(who, text){
+    const d = document.createElement('div');
+    d.className = 'da-m ' + who;
+    d.innerHTML = '<div class="da-b"></div>';
+    d.querySelector('.da-b').textContent = text;
+    body().appendChild(d);
+    body().scrollTop = body().scrollHeight;
+  }
+
+  function typing(on){
+    if (!on){ document.getElementById('da-t')?.remove(); return; }
+    const d = document.createElement('div');
+    d.className = 'da-m a'; d.id = 'da-t';
+    d.innerHTML = '<div class="da-b"><span class="da-t"><i></i><i></i><i></i></span></div>';
+    body().appendChild(d);
+    body().scrollTop = body().scrollHeight;
+  }
+
+  function showChips(){
+    const asked = new Set([...body().querySelectorAll('.da-m.u .da-b')].map(e=>e.textContent));
+    const left = QA.filter(x=>!asked.has(x.q)).slice(0,3);
+    chips().innerHTML = left.map(x =>
+      '<button class="da-chip" data-i="'+QA.indexOf(x)+'">'+x.q+'</button>').join('');
+    chips().querySelectorAll('.da-chip').forEach(btn=>{
+      btn.onclick = () => { reply(QA[+btn.dataset.i].q, QA[+btn.dataset.i].a); };
+    });
+  }
+
+  // greetings and one-word replies, matched on whole words
+  function smallTalk(text){
+    const t = ' ' + text.toLowerCase().replace(/[^a-z\s]/g,' ').replace(/\s+/g,' ') + ' ';
+    for (const item of SMALL){
+      for (const w of item.k){
+        if (t.includes(' ' + w.trim() + ' ')) return item.a;
+      }
+    }
+    return null;
+  }
+
+  // score a typed question against the keyword lists
+  function match(text){
+    const t = text.toLowerCase();
+    let best = null, bestScore = 0;
+    QA.forEach(item=>{
+      let score = 0;
+      item.k.forEach(word=>{ if (t.includes(word)) score += word.length; });
+      if (score > bestScore){ bestScore = score; best = item; }
+    });
+    return bestScore >= 3 ? best : null;
+  }
+
+  function reply(question, answer){
+    chips().innerHTML = '';
+    say('u', question);
+    typing(true);
+    setTimeout(()=>{
+      typing(false);
+      say('a', answer);
+      setTimeout(showChips, 300);
+    }, 650 + Math.random()*450);
+  }
+
+  window.daSend = function(){
+    const inp = document.getElementById('da-in');
+    const text = inp.value.trim();
+    if (!text) return;
+    inp.value = '';
+    const chat = smallTalk(text);
+    if (chat){ reply(text, chat); return; }
+    const hit = match(text);
+    reply(text, hit ? hit.a : FALLBACK);
+  };
+})();
+</script>
+
 </body>
 </html>

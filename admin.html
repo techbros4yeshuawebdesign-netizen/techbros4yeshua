@@ -738,8 +738,12 @@ async function loadInquiries(){
   if(!data||!data.length){c.innerHTML='<div class="empty">No inquiries yet.</div>';return;}
 
   c.innerHTML = data.map(r=>{
-    const name = r.profiles?.full_name||'Unknown';
-    const email = r.profiles?.email||'—';
+    // enquiries from the public form have no account, so read from the message
+    const grab = (k) => { const m = new RegExp(k + ': *(.+)').exec(r.message||''); 
+                          return m ? m[1].trim() : ''; };
+    const name  = r.profiles?.full_name || grab('Name')  || 'Unnamed enquiry';
+    const email = r.profiles?.email     || grab('Email') || '—';
+    const noAccount = !r.profiles;
     const initials = (name.trim().split(' ').map(w=>w[0]||'').join('').substring(0,2)||'?').toUpperCase();
     return `
     <div class="account-card" id="inq-${r.id}">
@@ -750,7 +754,7 @@ async function loadInquiries(){
           <div class="account-email">📧 <a href="mailto:${email}" style="color:var(--lime);text-decoration:none;">${email}</a></div>
           <div class="account-meta">Submitted ${fmtShort(r.created_at)}</div>
         </div>
-        <span class="badge pending"><span class="badge-dot"></span>New Inquiry</span>
+        <span class="badge ${noAccount?'new':'pending'}"><span class="badge-dot"></span>${noAccount?'From website':'Portal'}</span>
       </div>
       <div class="inquiry-box">
         <div class="inquiry-field"><span class="inquiry-label">Details</span><span class="inquiry-value" style="white-space:pre-wrap;">${(r.message||'—').replace(/\n\nORDER\|.*$/,'')}</span></div>

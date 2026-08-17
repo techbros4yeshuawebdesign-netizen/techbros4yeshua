@@ -1,0 +1,2562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Taco Michael — Mesquite-Grilled Street Tacos on Wheels</title>
+<meta name="description" content="Taco Michael is a family-run taco truck serving mesquite-grilled street tacos, hand-pressed tortillas and fresh salsas. Find today's stop, see the menu, book the truck.">
+<meta property="og:title" content="Taco Michael — Street Tacos on Wheels">
+<meta property="og:description" content="Mesquite grill. Hand-pressed tortillas. Salsa made every morning. Find the truck.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Alfa+Slab+One&family=Karla:wght@400;500;600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#170B1B;
+  --ink-2:#2A1233;
+  --chile:#FF4B1F;
+  --chile-dk:#B01B4C;
+  --hibiscus:#D8135E;
+  --marigold:#FFC02E;
+  --marigold-dk:#E08A0B;
+  --nopal:#0A6B54;
+  --jade:#17C79A;
+  --masa:#FFF1DC;
+  --masa-dim:rgba(255,241,220,.72);
+  --line:rgba(23,11,27,.14);
+  --sh-lift:0 22px 44px -14px rgba(11,4,14,.62),0 6px 14px -6px rgba(11,4,14,.5);
+  --sh-deep:0 40px 80px -24px rgba(11,4,14,.78),0 10px 24px -10px rgba(11,4,14,.6);
+  --bevel:inset 0 1px 0 rgba(255,255,255,.28),inset 0 -2px 0 rgba(0,0,0,.22);
+  --wrap:1200px;
+  --ease:cubic-bezier(.22,1,.36,1);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--masa);color:var(--ink);
+  font-family:'Karla',system-ui,-apple-system,sans-serif;font-size:17px;line-height:1.62;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+body.locked{overflow:hidden}
+img{max-width:100%;display:block}
+a{color:inherit}
+button{font-family:inherit}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 24px;position:relative}
+::selection{background:var(--marigold);color:var(--ink)}
+:focus-visible{outline:3px solid var(--marigold);outline-offset:3px}
+.skip{position:absolute;left:-9999px}
+.skip:focus{position:fixed;left:24px;top:10px;z-index:9999;background:var(--marigold);color:var(--ink);padding:11px 16px;font-weight:800;border-radius:3px}
+
+body::after{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:9000;opacity:.055;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ===== LOADER ===== */
+#loader{position:fixed;inset:0;z-index:9500;background:var(--ink);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:26px;transition:opacity .6s var(--ease),visibility .6s}
+#loader.gone{opacity:0;visibility:hidden}
+.load-mark{font-family:'Bungee',cursive;font-size:clamp(26px,7vw,58px);color:var(--masa);letter-spacing:.02em;display:flex;overflow:hidden}
+.load-mark span{display:inline-block;transform:translateY(110%);animation:letterUp .7s var(--ease) forwards}
+.load-mark span.acc{color:var(--marigold)}
+@keyframes letterUp{to{transform:translateY(0)}}
+.load-bar{width:min(260px,60vw);height:3px;background:rgba(255,241,220,.18);overflow:hidden;border-radius:99px}
+.load-bar i{display:block;height:100%;width:0;background:var(--chile);animation:loadFill 1.15s var(--ease) .25s forwards}
+@keyframes loadFill{to{width:100%}}
+
+#progress{position:fixed;top:0;left:0;height:3px;width:0;background:linear-gradient(90deg,var(--chile),var(--marigold));z-index:8000;transition:width .1s linear}
+
+/* ===== HEADER ===== */
+header{position:fixed;top:0;left:0;right:0;z-index:7000;transition:background .45s var(--ease),box-shadow .45s var(--ease)}
+header.solid{background:rgba(23,11,27,.94);backdrop-filter:blur(14px);box-shadow:0 10px 34px rgba(0,0,0,.28)}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:20px;max-width:var(--wrap);margin:0 auto;padding:18px 24px;transition:padding .45s var(--ease)}
+header.solid .nav{padding:11px 24px}
+.mark{font-family:'Bungee',cursive;font-size:20px;color:var(--marigold);text-decoration:none;line-height:1;white-space:nowrap}
+.mark b{color:var(--masa);font-weight:400}
+.navlinks{display:flex;gap:30px;list-style:none;margin:0;padding:0;font-weight:600;font-size:13px;letter-spacing:.11em;text-transform:uppercase;color:var(--masa)}
+.navlinks a{text-decoration:none;position:relative;padding-bottom:4px}
+.navlinks a::after{content:"";position:absolute;left:0;bottom:0;height:2px;width:0;background:var(--marigold);transition:width .35s var(--ease)}
+.navlinks a:hover::after,.navlinks a:focus::after{width:100%}
+.navcta{display:flex;align-items:center;gap:12px}
+.pill{background:var(--chile);color:#fff;padding:11px 20px;border-radius:99px;text-decoration:none;font-weight:800;font-size:13px;letter-spacing:.06em;text-transform:uppercase;transition:transform .3s var(--ease),background .3s,color .3s;white-space:nowrap}
+.pill:hover{background:var(--marigold);color:var(--ink);transform:translateY(-2px)}
+.burger{display:none;width:44px;height:40px;border:0;background:transparent;cursor:pointer;padding:10px 8px}
+.burger i{display:block;height:2px;background:var(--masa);margin:5px 0;transition:transform .4s var(--ease),opacity .3s}
+.burger.on i:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.burger.on i:nth-child(2){opacity:0}
+.burger.on i:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+@media(max-width:960px){.navlinks{display:none}.burger{display:block}}
+#drawer{position:fixed;inset:0;z-index:6900;background:var(--ink);display:flex;flex-direction:column;justify-content:center;gap:6px;padding:0 32px;clip-path:circle(0% at calc(100% - 44px) 34px);transition:clip-path .7s var(--ease)}
+#drawer.open{clip-path:circle(150% at calc(100% - 44px) 34px)}
+#drawer a{font-family:'Alfa Slab One',serif;font-size:clamp(28px,8.4vw,52px);color:var(--masa);text-decoration:none;line-height:1.26;opacity:0;transform:translateY(22px);transition:opacity .5s var(--ease),transform .5s var(--ease),color .25s}
+#drawer.open a{opacity:1;transform:none}
+#drawer.open a:nth-child(1){transition-delay:.16s}
+#drawer.open a:nth-child(2){transition-delay:.22s}
+#drawer.open a:nth-child(3){transition-delay:.28s}
+#drawer.open a:nth-child(4){transition-delay:.34s}
+#drawer.open a:nth-child(5){transition-delay:.40s}
+#drawer a:hover{color:var(--marigold)}
+
+/* ===== PAPEL PICADO ===== */
+.papel{position:relative;height:40px;overflow:hidden;z-index:5}
+.papel__run{display:flex;width:400%;animation:drift 40s linear infinite}
+.flag{width:52px;height:40px;flex:0 0 52px;clip-path:polygon(0 0,100% 0,100% 52%,50% 100%,0 52%);transform-origin:top center;animation:sway 3.4s ease-in-out infinite}
+@keyframes drift{to{transform:translateX(-50%)}}
+@keyframes sway{0%,100%{transform:rotate(-1.6deg)}50%{transform:rotate(1.6deg)}}
+
+/* ===== HERO ===== */
+.hero{position:relative;background:var(--ink);color:var(--masa);padding-top:100px;overflow:hidden}
+#embers{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
+.hero::before{content:"";position:absolute;left:50%;top:-10%;width:120vw;height:80vh;transform:translateX(-50%);background:radial-gradient(ellipse at center,rgba(255,75,31,.30),transparent 62%);filter:blur(30px);z-index:0;animation:pulseGlow 9s ease-in-out infinite}
+@keyframes pulseGlow{0%,100%{opacity:.75;transform:translateX(-50%) scale(1)}50%{opacity:1;transform:translateX(-50%) scale(1.08)}}
+.hero__grid{position:relative;z-index:2;display:grid;grid-template-columns:1.1fr .9fr;gap:52px;align-items:center;padding:34px 0 0}
+@media(max-width:980px){.hero__grid{grid-template-columns:1fr;gap:34px}}
+.hero .eyebrow{font-family:'Bungee',cursive;font-size:12px;letter-spacing:.2em;color:var(--marigold);margin:0 0 18px;display:flex;align-items:center;gap:12px}
+.hero .eyebrow::before{content:"";width:44px;height:2px;background:var(--chile)}
+h1.big{font-family:'Bungee',cursive;font-size:clamp(44px,8.6vw,110px);line-height:.9;margin:0;letter-spacing:-.015em}
+h1.big .line{display:block;overflow:hidden}
+h1.big .line i{display:block;font-style:normal;transform:translateY(105%);opacity:0;animation:riseIn .95s var(--ease) forwards}
+h1.big .line:nth-child(2) i{animation-delay:.11s}
+h1.big .line:nth-child(3) i{animation-delay:.22s;color:var(--marigold)}
+@keyframes riseIn{to{transform:translateY(0);opacity:1}}
+.hero .lede{max-width:47ch;font-size:19px;color:var(--masa-dim);margin:24px 0 0;opacity:0;animation:fadeUp .8s var(--ease) .5s forwards}
+.hero__btns{display:flex;gap:14px;flex-wrap:wrap;margin-top:32px;opacity:0;animation:fadeUp .8s var(--ease) .64s forwards}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.btn-lg{padding:16px 30px;border-radius:99px;text-decoration:none;font-weight:800;font-size:14px;letter-spacing:.08em;text-transform:uppercase;transition:transform .3s var(--ease),background .3s,color .3s,border-color .3s;display:inline-block}
+.btn-fill{background:var(--marigold);color:var(--ink)}
+.btn-fill:hover{background:#fff;transform:translateY(-3px)}
+.btn-out{border:2px solid rgba(255,241,220,.4);color:var(--masa)}
+.btn-out:hover{border-color:var(--marigold);color:var(--marigold);transform:translateY(-3px)}
+
+.board{background:linear-gradient(160deg,var(--chile),var(--chile-dk));border:5px solid var(--marigold);padding:26px 28px 28px;position:relative;color:#fff;box-shadow:0 26px 60px rgba(0,0,0,.42);transform:rotate(-1.1deg);opacity:0;animation:boardIn 1s var(--ease) .7s forwards}
+@keyframes boardIn{from{opacity:0;transform:rotate(-1.1deg) translateY(30px) scale(.96)}to{opacity:1;transform:rotate(-1.1deg) translateY(0) scale(1)}}
+.board::after{content:"";position:absolute;inset:6px;border:1px dashed rgba(255,255,255,.34);pointer-events:none}
+.livedot{display:inline-flex;align-items:center;gap:8px;font-family:'Bungee',cursive;font-size:11px;letter-spacing:.16em;color:var(--marigold)}
+.livedot i{width:9px;height:9px;border-radius:99px;background:var(--marigold);animation:blip 1.7s ease-in-out infinite}
+.livedot.closed i{background:rgba(255,255,255,.5);animation:none}
+@keyframes blip{0%,100%{box-shadow:0 0 0 0 rgba(255,192,46,.7)}70%{box-shadow:0 0 0 11px rgba(255,192,46,0)}}
+.board__where{font-family:'Alfa Slab One',serif;font-size:clamp(24px,3.6vw,36px);line-height:1.08;margin:14px 0 0}
+.board__meta{margin:14px 0 0;font-weight:600;line-height:1.6;font-size:16px}
+.board__meta span{display:block}
+.board__note{margin:16px 0 0;font-size:13.5px;color:rgba(255,255,255,.85);border-top:1px solid rgba(255,255,255,.34);padding-top:13px}
+.countdown{font-family:'Bungee',cursive;font-size:14px;color:var(--marigold);letter-spacing:.06em;margin-top:10px;display:block}
+
+.truckwrap{position:relative;z-index:2;margin:6px auto -6px;max-width:1000px;padding:0 24px}
+.truck{width:100%;height:auto;overflow:visible}
+.smoke{transform-origin:center bottom;animation:smoke 5s ease-in-out infinite}
+.smoke.s2{animation-delay:1.2s}
+.smoke.s3{animation-delay:2.5s}
+@keyframes smoke{0%{opacity:0;transform:translateY(0) scale(.6)}25%{opacity:.5}100%{opacity:0;transform:translateY(-70px) scale(1.5)}}
+.wheel{transform-origin:center;transform-box:fill-box;animation:roll 3.2s linear infinite}
+@keyframes roll{to{transform:rotate(360deg)}}
+.windowglow{animation:flick 4.5s ease-in-out infinite}
+@keyframes flick{0%,100%{opacity:1}45%{opacity:.7}70%{opacity:1}}
+.scrollcue{display:flex;justify-content:center;padding:8px 0 26px;position:relative;z-index:3}
+.scrollcue span{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--masa-dim);font-weight:600;display:flex;align-items:center;gap:10px}
+.scrollcue span::after{content:"";width:1px;height:26px;background:var(--marigold);animation:cue 1.9s ease-in-out infinite}
+@keyframes cue{0%,100%{transform:scaleY(.3);opacity:.4}50%{transform:scaleY(1);opacity:1}}
+
+/* ===== MARQUEE ===== */
+.marquee{background:var(--marigold);color:var(--ink);padding:15px 0;overflow:hidden;border-top:4px solid var(--ink);border-bottom:4px solid var(--ink)}
+.marquee__run{display:flex;gap:40px;width:max-content;animation:mrun 30s linear infinite;font-family:'Bungee',cursive;font-size:15px;letter-spacing:.1em;white-space:nowrap;align-items:center}
+.marquee__run em{font-style:normal;color:var(--chile)}
+@keyframes mrun{to{transform:translateX(-50%)}}
+
+/* ===== SECTIONS ===== */
+section{padding:96px 0;position:relative}
+.eyebrow{font-family:'Bungee',cursive;font-size:12px;letter-spacing:.2em;color:var(--chile);margin:0 0 12px;display:flex;align-items:center;gap:12px}
+.eyebrow::before{content:"";width:40px;height:2px;background:currentColor}
+h2{font-family:'Alfa Slab One',serif;font-size:clamp(31px,5.4vw,56px);line-height:1.03;margin:0 0 20px;letter-spacing:-.015em}
+.sub{max-width:58ch;margin:0 0 44px;font-size:18px;color:rgba(23,11,27,.78)}
+.rv{opacity:0;transform:translateY(34px);transition:opacity .85s var(--ease),transform .85s var(--ease)}
+.rv.in{opacity:1;transform:none}
+.rv[data-d="1"]{transition-delay:.09s}
+.rv[data-d="2"]{transition-delay:.18s}
+.rv[data-d="3"]{transition-delay:.27s}
+.rv[data-d="4"]{transition-delay:.36s}
+.rv[data-d="5"]{transition-delay:.45s}
+
+/* ===== MENU ===== */
+#menu{background:var(--nopal);color:var(--masa)}
+#menu::before{content:"";position:absolute;inset:0;opacity:.14;pointer-events:none;background-image:radial-gradient(circle at 1px 1px,var(--masa) 1px,transparent 0);background-size:26px 26px}
+#menu .eyebrow{color:var(--marigold)}
+#menu .sub{color:var(--masa-dim)}
+.menuhead{display:flex;justify-content:space-between;align-items:flex-end;gap:26px;flex-wrap:wrap;position:relative;z-index:2}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 34px;position:relative;z-index:2}
+.tab{border:2px solid rgba(255,241,220,.28);background:transparent;color:var(--masa);padding:10px 18px;border-radius:99px;font-weight:800;font-size:13px;letter-spacing:.09em;text-transform:uppercase;cursor:pointer;transition:background .3s var(--ease),border-color .3s,color .3s}
+.tab:hover{border-color:var(--marigold)}
+.tab.on{background:var(--marigold);border-color:var(--marigold);color:var(--ink)}
+.menu__cols{display:grid;grid-template-columns:1fr 1fr;gap:8px 60px;position:relative;z-index:2}
+@media(max-width:900px){.menu__cols{grid-template-columns:1fr}}
+.group{border-top:3px solid var(--marigold);padding-top:16px;margin-bottom:34px}
+.group.hide{display:none}
+.group h3{font-family:'Bungee',cursive;font-size:14px;letter-spacing:.13em;color:var(--marigold);margin:0 0 4px}
+.group .note{font-size:14px;color:var(--masa-dim);margin:0 0 12px}
+.row{display:flex;align-items:baseline;gap:10px;padding:12px 0;border-bottom:1px dashed rgba(255,241,220,.2);transition:padding-left .3s var(--ease)}
+.row:last-child{border-bottom:0}
+.row:hover{padding-left:9px}
+.row .name{font-family:'Alfa Slab One',serif;font-size:19.5px;line-height:1.22;transition:color .25s}
+.row:hover .name{color:var(--marigold)}
+.row .desc{display:block;font-family:'Karla',sans-serif;font-size:14px;font-weight:400;color:var(--masa-dim);margin-top:3px}
+.row .dots{flex:1;border-bottom:2px dotted rgba(255,241,220,.26);transform:translateY(-6px);min-width:26px}
+.row .price{font-family:'Alfa Slab One',serif;font-size:19.5px;color:var(--marigold);white-space:nowrap}
+.tagv{display:inline-block;font-family:'Karla',sans-serif;font-size:10px;font-weight:800;letter-spacing:.1em;background:var(--marigold);color:var(--ink);padding:2px 7px;border-radius:99px;margin-left:8px;vertical-align:middle}
+.ownerbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+.btn{font-weight:800;font-size:13px;letter-spacing:.07em;text-transform:uppercase;border:2px solid var(--marigold);background:transparent;color:var(--marigold);padding:10px 18px;border-radius:99px;cursor:pointer;transition:background .3s var(--ease),color .3s,border-color .3s}
+.btn:hover{background:var(--marigold);color:var(--ink)}
+.btn--solid{background:var(--marigold);color:var(--ink)}
+.btn--solid:hover{background:#fff;border-color:#fff}
+.status{font-size:14px;font-weight:600;color:var(--masa-dim)}
+[contenteditable="true"]{outline:2px dashed var(--marigold);outline-offset:4px;background:rgba(255,241,220,.07);border-radius:3px}
+
+/* ===== STOPS ===== */
+#stops{background:var(--masa)}
+.stopwrap{display:grid;grid-template-columns:300px 1fr;border:3px solid var(--ink);background:var(--ink)}
+@media(max-width:860px){.stopwrap{grid-template-columns:1fr}}
+.daylist{display:flex;flex-direction:column}
+.daybtn{display:flex;justify-content:space-between;align-items:center;gap:12px;text-align:left;background:var(--ink);color:var(--masa);border:0;border-bottom:1px solid rgba(255,241,220,.14);padding:17px 22px;cursor:pointer;font-weight:800;font-size:14px;letter-spacing:.13em;text-transform:uppercase;transition:background .3s var(--ease),color .3s,padding-left .3s var(--ease)}
+.daybtn:hover{background:rgba(255,192,46,.14);padding-left:28px}
+.daybtn.on{background:var(--marigold);color:var(--ink)}
+.daybtn small{font-family:'Karla',sans-serif;font-size:11px;letter-spacing:.06em;opacity:.72;text-transform:none}
+.daypanel{background:var(--chile);color:#fff;padding:44px;display:flex;flex-direction:column;justify-content:center;min-height:330px;position:relative;overflow:hidden}
+.daypanel::before{content:"";position:absolute;right:-70px;bottom:-70px;width:280px;height:280px;border-radius:50%;background:rgba(255,255,255,.07)}
+.daypanel .k{font-family:'Bungee',cursive;font-size:12px;letter-spacing:.2em;color:var(--marigold);margin:0 0 12px;position:relative}
+.daypanel .place{font-family:'Alfa Slab One',serif;font-size:clamp(27px,4.6vw,44px);line-height:1.06;margin:0 0 14px;position:relative}
+.daypanel .hrs{font-size:20px;font-weight:800;margin:0 0 6px;position:relative}
+.daypanel .addr{font-size:16px;color:rgba(255,255,255,.86);margin:0 0 20px;position:relative}
+.daypanel .tip{font-size:14.5px;color:rgba(255,255,255,.82);border-left:3px solid var(--marigold);padding-left:14px;margin:0;position:relative}
+.fadein{animation:panelIn .5s var(--ease)}
+@keyframes panelIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+/* ===== CATERING ===== */
+#catering{background:var(--ink);color:var(--masa)}
+#catering .eyebrow{color:var(--marigold)}
+#catering .sub{color:var(--masa-dim)}
+.cater__grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start}
+@media(max-width:900px){.cater__grid{grid-template-columns:1fr;gap:44px}}
+.pkg{display:block;width:100%;text-align:left;color:inherit;border:2px solid rgba(255,241,220,.2);padding:24px;margin-bottom:14px;cursor:pointer;background:transparent;border-radius:4px;transition:border-color .35s var(--ease),background .35s,transform .35s var(--ease)}
+.pkg:hover{border-color:var(--marigold);transform:translateX(7px)}
+.pkg.on{border-color:var(--marigold);background:rgba(255,192,46,.1)}
+.pkg h3{font-family:'Alfa Slab One',serif;font-size:22px;margin:0 0 6px}
+.pkg p{margin:0;font-size:15px;color:var(--masa-dim)}
+.pkg .from{font-family:'Bungee',cursive;font-size:12.5px;color:var(--marigold);display:block;margin-top:10px;letter-spacing:.08em}
+.calc{background:rgba(255,241,220,.06);border:2px solid rgba(255,241,220,.18);padding:26px;border-radius:4px;margin-top:26px}
+.calc h4{font-family:'Bungee',cursive;font-size:12px;letter-spacing:.16em;color:var(--marigold);margin:0 0 16px}
+.calc input[type=range]{width:100%;accent-color:var(--chile);margin:8px 0 4px;padding:0;border:0;background:transparent}
+.est{font-family:'Alfa Slab One',serif;font-size:clamp(32px,6vw,50px);color:var(--marigold);line-height:1;margin:10px 0 4px}
+.fine{font-size:13.5px;color:var(--masa-dim);margin:0}
+form{display:grid;gap:16px}
+label{font-weight:800;font-size:12px;letter-spacing:.11em;text-transform:uppercase;display:block;margin-bottom:6px;color:var(--masa-dim)}
+input,textarea,select{width:100%;font-family:'Karla',sans-serif;font-size:16px;padding:13px 14px;border:2px solid rgba(255,241,220,.24);background:rgba(255,241,220,.05);color:var(--masa);border-radius:3px;transition:border-color .3s}
+input::placeholder,textarea::placeholder{color:rgba(255,241,220,.4)}
+input:focus,textarea:focus,select:focus{border-color:var(--marigold);outline:none}
+select option{background:var(--ink);color:var(--masa)}
+textarea{min-height:112px;resize:vertical}
+.formrow{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:620px){.formrow{grid-template-columns:1fr}}
+.submit{background:var(--chile);color:#fff;border:0;font-family:'Bungee',cursive;font-size:15px;padding:17px;cursor:pointer;border-radius:99px;letter-spacing:.06em;transition:background .3s,color .3s,transform .3s var(--ease)}
+.submit:hover{background:var(--marigold);color:var(--ink);transform:translateY(-2px)}
+
+/* ===== REVIEWS ===== */
+#reviews{background:var(--marigold);color:var(--ink);overflow:hidden}
+.revbox{position:relative;min-height:250px}
+.slide{position:absolute;inset:0;opacity:0;transform:translateY(20px);transition:opacity .65s var(--ease),transform .65s var(--ease);pointer-events:none;margin:0}
+.slide.on{opacity:1;transform:none;pointer-events:auto}
+.slide blockquote{font-family:'Alfa Slab One',serif;font-size:clamp(21px,3.4vw,33px);line-height:1.34;margin:0 0 20px;max-width:24ch}
+@media(max-width:760px){.slide blockquote{max-width:none}}
+.slide cite{font-style:normal;font-weight:800;font-size:13px;letter-spacing:.13em;text-transform:uppercase}
+.stars{color:var(--chile);letter-spacing:.16em;font-size:20px;margin-bottom:16px}
+.dots-nav{display:flex;gap:9px;margin-top:26px;position:relative;z-index:3}
+.dot{width:11px;height:11px;border-radius:99px;border:2px solid var(--ink);background:transparent;cursor:pointer;padding:0;transition:background .3s,transform .3s}
+.dot.on{background:var(--ink);transform:scale(1.25)}
+
+/* ===== ABOUT ===== */
+#about{background:var(--masa)}
+.about__grid{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center}
+@media(max-width:900px){.about__grid{grid-template-columns:1fr;gap:34px}}
+.quote{font-family:'Alfa Slab One',serif;font-size:clamp(21px,3.2vw,31px);line-height:1.32;border-left:6px solid var(--chile);padding-left:24px;margin:0}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--line);border:1px solid var(--line);margin-top:44px}
+@media(max-width:560px){.stats{grid-template-columns:1fr}}
+.stat{background:var(--masa);padding:26px 20px;text-align:center}
+.stat b{display:block;font-family:'Bungee',cursive;font-size:clamp(27px,4.6vw,40px);color:var(--chile);line-height:1}
+.stat span{font-size:12.5px;letter-spacing:.11em;text-transform:uppercase;font-weight:800;color:rgba(23,11,27,.66);margin-top:8px;display:block}
+
+/* ===== FOOTER ===== */
+footer{background:var(--ink);color:var(--masa);padding:74px 0 32px;position:relative;overflow:hidden}
+.foot{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:36px}
+@media(max-width:860px){.foot{grid-template-columns:1fr 1fr;gap:30px}}
+@media(max-width:520px){.foot{grid-template-columns:1fr}}
+footer h4{font-family:'Bungee',cursive;font-size:11.5px;letter-spacing:.16em;color:var(--marigold);margin:0 0 14px}
+footer p,footer li{font-size:15px;color:var(--masa-dim);margin:0 0 8px}
+footer ul{list-style:none;padding:0;margin:0}
+footer a{text-decoration:none;transition:color .25s}
+footer a:hover{color:var(--marigold)}
+.legal{border-top:1px solid rgba(255,241,220,.18);margin-top:46px;padding-top:22px;font-size:13px;color:rgba(255,241,220,.5);display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
+
+
+#toTop{position:fixed;right:22px;bottom:26px;z-index:6700;width:46px;height:46px;border-radius:99px;border:0;background:var(--ink);color:var(--marigold);cursor:pointer;font-size:19px;opacity:0;transform:translateY(14px);transition:opacity .4s var(--ease),transform .4s var(--ease),background .3s,color .3s;box-shadow:0 8px 24px rgba(0,0,0,.28)}
+#toTop.show{opacity:1;transform:none}
+#toTop:hover{background:var(--chile);color:#fff}
+
+
+/* ===================== TACO CHARACTERS ===================== */
+.tk{width:100%;height:auto;overflow:visible;display:block}
+.tk .tk-body{transform-box:fill-box;transform-origin:50% 92%;animation:tkBounce 1.05s ease-in-out infinite;animation-delay:var(--d,0s)}
+.tk .tk-legL{transform-box:fill-box;transform-origin:50% 4%;animation:tkStep 1.05s ease-in-out infinite;animation-delay:var(--d,0s)}
+.tk .tk-legR{transform-box:fill-box;transform-origin:50% 4%;animation:tkStep 1.05s ease-in-out infinite reverse;animation-delay:var(--d,0s)}
+.tk .tk-armL{transform-box:fill-box;transform-origin:90% 10%;animation:tkWaveL 1.05s ease-in-out infinite;animation-delay:var(--d,0s)}
+.tk .tk-armR{transform-box:fill-box;transform-origin:10% 10%;animation:tkWaveR 1.05s ease-in-out infinite;animation-delay:var(--d,0s)}
+@keyframes tkBounce{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-9px) rotate(5deg)}}
+@keyframes tkStep{0%,100%{transform:rotate(-16deg)}50%{transform:rotate(16deg)}}
+@keyframes tkWaveL{0%,100%{transform:rotate(-22deg)}50%{transform:rotate(16deg)}}
+@keyframes tkWaveR{0%,100%{transform:rotate(22deg)}50%{transform:rotate(-16deg)}}
+
+/* hero mascot */
+.mascot{position:absolute;top:-58px;right:-8px;width:112px;z-index:4;pointer-events:none;filter:drop-shadow(0 10px 18px rgba(0,0,0,.45));opacity:0;animation:mascotIn .9s var(--ease) 1.25s forwards}
+@keyframes mascotIn{from{opacity:0;transform:translateY(24px) scale(.7)}to{opacity:1;transform:none}}
+@media(max-width:520px){.mascot{width:80px;top:-42px}}
+
+/* ===================== CONGA BAND ===================== */
+.conga{background:var(--chile);border-bottom:4px solid var(--ink);padding:26px 0 10px;overflow:hidden;position:relative}
+.conga::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(255,241,220,.07) 0 22px,transparent 22px 44px)}
+.conga__run{display:flex;align-items:flex-end;gap:26px;width:max-content;animation:congaGo 22s linear infinite;position:relative}
+.conga__run .tk{width:84px;flex:0 0 84px}
+@keyframes congaGo{to{transform:translateX(-50%)}}
+
+/* ===================== ASSEMBLY (scroll-driven) ===================== */
+#assembly{padding:0;background:var(--ink);color:var(--masa);position:relative}
+.asm-wrap{height:420vh;position:relative}
+.asm-stick{position:sticky;top:0;height:100vh;display:flex;align-items:center;overflow:hidden}
+.asm-stick::before{content:"";position:absolute;left:50%;top:50%;width:900px;height:900px;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(255,75,31,.24),transparent 62%);filter:blur(20px)}
+.asm-grid{display:grid;grid-template-columns:.85fr 1.15fr;gap:40px;align-items:center;width:100%;max-width:var(--wrap);margin:0 auto;padding:0 24px;position:relative;z-index:2}
+@media(max-width:900px){.asm-grid{grid-template-columns:1fr;gap:14px}.asm-wrap{height:360vh}}
+.asm-left{display:flex;gap:22px;align-items:stretch}
+.asm-rail{width:4px;background:rgba(255,241,220,.16);border-radius:99px;overflow:hidden;flex:0 0 4px}
+.asm-rail i{display:block;width:100%;height:0%;background:linear-gradient(180deg,var(--marigold),var(--chile));transition:height .15s linear}
+.asm-kicker{font-family:'Bungee',cursive;font-size:12px;letter-spacing:.2em;color:var(--marigold);margin:0 0 12px}
+.asm-steps{position:relative;min-height:230px}
+.asm-step{position:absolute;inset:0;opacity:0;transform:translateY(26px);transition:opacity .5s var(--ease),transform .5s var(--ease);pointer-events:none}
+.asm-step.on{opacity:1;transform:none}
+.asm-step b{display:block;font-family:'Bungee',cursive;font-size:13px;letter-spacing:.16em;color:var(--chile);margin-bottom:10px}
+.asm-step h3{font-family:'Alfa Slab One',serif;font-size:clamp(26px,4.6vw,44px);line-height:1.06;margin:0 0 12px}
+.asm-step p{margin:0;color:var(--masa-dim);font-size:17px;max-width:34ch}
+@media(max-width:900px){.asm-steps{min-height:190px}}
+.asm-stage{width:100%;max-width:560px;margin:0 auto}
+.asm-stage svg{width:100%;height:auto;overflow:visible}
+.ly{opacity:0;transform:scale(.55) translateY(30px);transform-box:fill-box;transform-origin:50% 70%;transition:opacity .5s var(--ease),transform .65s cubic-bezier(.34,1.56,.64,1)}
+.ly.on{opacity:1;transform:none}
+.steam{opacity:0;transition:opacity .6s}
+.asm-stage.done .steam{opacity:1;animation:steamUp 3.2s ease-in-out infinite}
+.steam.s2{animation-delay:1s}
+.steam.s3{animation-delay:2s}
+@keyframes steamUp{0%{opacity:0;transform:translateY(0) scale(.7)}30%{opacity:.55}100%{opacity:0;transform:translateY(-52px) scale(1.4)}}
+.asm-count{font-family:'Bungee',cursive;font-size:12px;letter-spacing:.18em;color:var(--masa-dim);margin-top:18px}
+
+/* ===================== HORIZONTAL SLIDE-THROUGH ===================== */
+#slidethru{padding:0;background:var(--marigold);color:var(--ink);position:relative}
+.sx-wrap{height:280vh;position:relative}
+.sx-stick{position:sticky;top:0;height:100vh;display:flex;align-items:center;overflow:hidden}
+.sx-track{display:flex;gap:26px;padding:0 6vw;will-change:transform}
+.sx-card{flex:0 0 min(74vw,430px);background:var(--masa);border:4px solid var(--ink);border-radius:6px;padding:34px 30px;min-height:390px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:10px 10px 0 rgba(23,11,27,.9)}
+.sx-card .n{font-family:'Bungee',cursive;font-size:13px;letter-spacing:.2em;color:var(--chile)}
+.sx-card h3{font-family:'Alfa Slab One',serif;font-size:clamp(24px,3.4vw,34px);line-height:1.1;margin:16px 0 12px}
+.sx-card p{margin:0;font-size:16px;color:rgba(23,11,27,.8)}
+.sx-card .tk{width:74px;margin-top:22px}
+.sx-head{position:absolute;top:9vh;left:0;right:0;padding:0 6vw;z-index:3;pointer-events:none}
+.sx-head h2{margin:0}
+.sx-head .eyebrow{color:var(--ink)}
+
+/* ===================== EXTRAS ===================== */
+.zig{height:26px;background-repeat:repeat-x;background-size:44px 26px}
+.zig--ink{background-image:linear-gradient(135deg,var(--ink) 25%,transparent 25%),linear-gradient(225deg,var(--ink) 25%,transparent 25%);background-position:0 0}
+.row.sl{opacity:0;transform:translateX(-38px);transition:opacity .6s var(--ease),transform .6s var(--ease)}
+.row.sr{opacity:0;transform:translateX(38px);transition:opacity .6s var(--ease),transform .6s var(--ease)}
+.row.sl.in,.row.sr.in{opacity:1;transform:none}
+.confetti{position:fixed;z-index:9400;pointer-events:none;width:30px;height:30px}
+.magnet{display:inline-block;transition:transform .25s var(--ease)}
+
+
+/* ===================== LOADER UPGRADE ===================== */
+.load-taco{width:96px;animation:loadSpin 1.6s ease-in-out infinite}
+@keyframes loadSpin{0%,100%{transform:rotate(-14deg) translateY(0)}50%{transform:rotate(14deg) translateY(-14px)}}
+.load-pct{font-family:'Bungee',cursive;font-size:13px;letter-spacing:.22em;color:var(--chile)}
+
+/* ===================== CURSOR TRAIL ===================== */
+.trail{position:fixed;z-index:9300;pointer-events:none;width:26px;opacity:.9;will-change:transform,opacity}
+
+/* ===================== HERO EXTRAS ===================== */
+.truckwrap{animation:driveIn 1.5s cubic-bezier(.2,.8,.3,1) .55s both}
+@keyframes driveIn{from{transform:translateX(-118%)}to{transform:translateX(0)}}
+.plx{will-change:transform;transition:transform .35s cubic-bezier(.22,1,.36,1)}
+.grillband{position:relative;height:56px;margin-top:-14px;z-index:3;pointer-events:none;overflow:hidden}
+.grillband i{position:absolute;bottom:0;width:26px;height:44px;border-radius:50% 50% 42% 42%;background:linear-gradient(180deg,rgba(255,192,46,.95),rgba(255,75,31,.7),transparent);filter:blur(3px);transform-origin:50% 100%;animation:flame 1.5s ease-in-out infinite}
+@keyframes flame{0%,100%{transform:scaleY(.7) scaleX(.9);opacity:.55}50%{transform:scaleY(1.25) scaleX(1.08);opacity:.95}}
+
+/* ===================== SPLIT LETTER REVEAL ===================== */
+.spl{display:inline-block;overflow:hidden;vertical-align:bottom}
+.spl i{display:inline-block;font-style:normal;transform:translateY(108%) rotate(6deg);opacity:0;transition:transform .7s cubic-bezier(.22,1,.36,1),opacity .5s}
+.spl.in i{transform:none;opacity:1}
+
+/* ===================== SCROLL VELOCITY SKEW ===================== */
+.marquee__run,.conga__run{transform-origin:center;will-change:transform}
+.velskew{transition:transform .4s var(--ease)}
+
+/* ===================== DRIP DIVIDERS ===================== */
+.drip{position:relative;height:38px;overflow:hidden}
+.drip::before{content:"";position:absolute;left:0;right:0;top:0;height:16px;background:var(--c)}
+.drip::after{content:"";position:absolute;top:14px;left:-44px;right:-44px;height:30px;
+  background-image:radial-gradient(circle at 22px 0,var(--c) 17px,transparent 18px);
+  background-size:44px 30px;background-repeat:repeat-x;animation:dripSlide 7s linear infinite}
+@keyframes dripSlide{to{transform:translateX(44px)}}
+
+/* ===================== MENU FLIP ===================== */
+.menu__cols{perspective:1400px}
+.group.flip{animation:flipIn .7s cubic-bezier(.22,1,.36,1) both}
+@keyframes flipIn{from{opacity:0;transform:rotateX(-72deg) translateY(28px)}to{opacity:1;transform:none}}
+#board .row{cursor:pointer}
+#board .row:active{transform:scale(.985)}
+
+/* ===================== CRAVING BASKET ===================== */
+.craving{position:relative;display:flex;align-items:center;gap:7px;background:rgba(255,241,220,.1);border:2px solid rgba(255,241,220,.28);color:var(--masa);border-radius:99px;padding:6px 13px 6px 8px;cursor:pointer;transition:border-color .3s,background .3s,transform .3s var(--ease)}
+.craving:hover{border-color:var(--marigold);background:rgba(255,192,46,.16)}
+.craving svg{width:24px;height:24px}
+.craving b{font-family:'Bungee',cursive;font-size:13px;color:var(--marigold);min-width:12px;text-align:center}
+.craving.pop{animation:cravPop .45s cubic-bezier(.34,1.56,.64,1)}
+@keyframes cravPop{0%{transform:scale(1)}40%{transform:scale(1.28) rotate(-7deg)}100%{transform:scale(1)}}
+@media(max-width:420px){.craving{display:none}}
+.flyer{position:fixed;z-index:9350;pointer-events:none;width:44px;will-change:transform,opacity}
+
+/* ===================== REVIEW TILT ===================== */
+.slide{transform-style:preserve-3d}
+.slide.on{animation:revIn .7s cubic-bezier(.22,1,.36,1)}
+@keyframes revIn{from{opacity:0;transform:perspective(900px) rotateY(16deg) translateX(38px)}to{opacity:1;transform:none}}
+
+/* ===================== TACO RAIN ===================== */
+.rainer{position:fixed;top:-70px;z-index:9200;pointer-events:none;width:42px;will-change:transform}
+
+@media (prefers-reduced-motion:reduce){
+  .truckwrap,.load-taco,.grillband i,.drip::after,.group.flip,.slide.on{animation:none!important}
+  .spl i{transform:none;opacity:1}
+}
+
+
+/* ===================== CUSTOM TACO CURSOR ===================== */
+@media (hover:hover) and (pointer:fine){
+  body.cursorized,body.cursorized *{cursor:none!important}
+  #cur{position:fixed;left:0;top:0;width:34px;height:34px;margin:-17px 0 0 -17px;z-index:9600;pointer-events:none;will-change:transform}
+  #cur svg{width:100%;height:100%;animation:curSpin 5s linear infinite}
+  #curRing{position:fixed;left:0;top:0;width:54px;height:54px;margin:-27px 0 0 -27px;border:2px solid var(--marigold);border-radius:99px;z-index:9550;pointer-events:none;opacity:.75;transition:width .3s var(--ease),height .3s var(--ease),margin .3s var(--ease),background .3s,border-color .3s;will-change:transform}
+  #curRing.hot{width:82px;height:82px;margin:-41px 0 0 -41px;background:rgba(255,192,46,.18);border-color:var(--chile)}
+}
+@keyframes curSpin{to{transform:rotate(360deg)}}
+
+/* ===================== LOADER CURTAIN ===================== */
+#curtain{position:fixed;inset:0;z-index:9450;display:flex;pointer-events:none}
+#curtain i{flex:1;background:var(--chile);transform:translateY(0);transition:transform .85s var(--ease)}
+#curtain i:nth-child(2){background:var(--marigold)}
+#curtain i:nth-child(3){background:var(--nopal)}
+#curtain i:nth-child(4){background:var(--marigold)}
+#curtain i:nth-child(5){background:var(--chile)}
+#curtain.up i{transform:translateY(-101%)}
+#curtain.up i:nth-child(2){transition-delay:.08s}
+#curtain.up i:nth-child(3){transition-delay:.16s}
+#curtain.up i:nth-child(4){transition-delay:.24s}
+#curtain.up i:nth-child(5){transition-delay:.32s}
+#curtain.done{display:none}
+
+/* ===================== SPLIT HEADINGS ===================== */
+.sp{display:inline-block;opacity:0;transform:translateY(70%) rotate(9deg)}
+.split.go .sp{animation:spIn .75s var(--ease) forwards}
+@keyframes spIn{to{opacity:1;transform:none}}
+
+/* ===================== SPINNING BADGE ===================== */
+.badge{position:absolute;right:4%;bottom:-46px;width:150px;height:150px;z-index:6;pointer-events:none}
+.badge svg{width:100%;height:100%;animation:badgeSpin 16s linear infinite}
+.badge .core{position:absolute;left:50%;top:50%;width:62px;height:62px;margin:-31px 0 0 -31px;animation:badgePop 2.6s ease-in-out infinite}
+@keyframes badgeSpin{to{transform:rotate(360deg)}}
+@keyframes badgePop{0%,100%{transform:scale(1)}50%{transform:scale(1.12) rotate(-6deg)}}
+@media(max-width:820px){.badge{width:110px;height:110px;right:3%;bottom:-32px}.badge .core{width:44px;height:44px;margin:-22px 0 0 -22px}}
+
+/* ===================== FLAMES ===================== */
+.flame{transform-box:fill-box;transform-origin:50% 100%;animation:flick2 .5s ease-in-out infinite alternate}
+.flame.f2{animation-duration:.36s;animation-delay:.1s}
+.flame.f3{animation-duration:.62s;animation-delay:.2s}
+@keyframes flick2{from{transform:scaleY(.75) scaleX(1.05) translateY(3px)}to{transform:scaleY(1.15) scaleX(.92) translateY(-3px)}}
+
+/* ===================== 3D TILT ===================== */
+.tilt{transform-style:preserve-3d;will-change:transform}
+.cater__grid,.sx-track{perspective:1100px}
+
+/* ===================== SCROLL SKEW ===================== */
+.skewable{will-change:transform}
+
+/* ===================== FLOATING PRODUCE ===================== */
+.produce{position:absolute;pointer-events:none;opacity:.16;z-index:0;will-change:transform}
+.produce svg{width:100%;height:auto}
+
+/* ===================== RIPPLE ===================== */
+.rip{position:absolute;border-radius:99px;background:rgba(255,255,255,.55);transform:scale(0);animation:ripGo .65s var(--ease) forwards;pointer-events:none}
+@keyframes ripGo{to{transform:scale(3.2);opacity:0}}
+.pill,.submit,.btn-lg,.btn,.tab,.pkg,.daybtn{position:relative;overflow:hidden}
+
+/* hero parallax layers */
+.plx{will-change:transform}
+
+@media (hover:none){#cur,#curRing{display:none}}
+
+@media (prefers-reduced-motion:reduce){
+  .tk .tk-body,.tk .tk-legL,.tk .tk-legR,.tk .tk-armL,.tk .tk-armR,.conga__run{animation:none!important}
+  .mascot{opacity:1;animation:none}
+  .row.sl,.row.sr{opacity:1;transform:none}
+  .sp{opacity:1;transform:none}
+  .badge svg,.badge .core,.flame{animation:none}
+  #cur,#curRing{display:none}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+  .rv{opacity:1;transform:none}
+  h1.big .line i{transform:none;opacity:1}
+  .hero .lede,.hero__btns,.board{opacity:1}
+}
+
+/* ==================== DEPTH & DIMENSION LAYER ==================== */
+body{
+  background:
+    radial-gradient(1100px 620px at 12% -6%,rgba(255,192,46,.20),transparent 62%),
+    radial-gradient(900px 560px at 92% 12%,rgba(216,19,94,.14),transparent 60%),
+    radial-gradient(900px 700px at 50% 108%,rgba(23,199,154,.16),transparent 62%),
+    var(--masa);
+  background-attachment:fixed;
+}
+
+/* ---- HERO: layered atmosphere ---- */
+.hero{
+  background:
+    radial-gradient(80% 60% at 50% 0%,rgba(255,75,31,.22),transparent 70%),
+    radial-gradient(60% 50% at 88% 30%,rgba(216,19,94,.26),transparent 68%),
+    radial-gradient(55% 45% at 8% 62%,rgba(23,199,154,.16),transparent 70%),
+    linear-gradient(178deg,var(--ink-2) 0%,var(--ink) 46%,#0E0611 100%);
+}
+.hero::after{
+  content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:radial-gradient(120% 90% at 50% 40%,transparent 46%,rgba(6,2,8,.72) 100%);
+}
+h1.big{
+  color:var(--masa);
+  text-shadow:
+    0 1px 0 #E8B221, 0 2px 0 #D89A18, 0 3px 0 #C2860F,
+    0 4px 0 #A96F0A, 0 5px 0 #8E5A08,
+    0 10px 22px rgba(0,0,0,.55), 0 26px 52px rgba(216,19,94,.34);
+}
+h1.big .line:nth-child(3) i{
+  color:var(--marigold);
+  text-shadow:0 1px 0 #C2185B,0 2px 0 #A81450,0 3px 0 #8E1044,0 4px 0 #740C38,0 12px 26px rgba(0,0,0,.6);
+}
+
+/* ---- extruded section headings ---- */
+h2{text-shadow:0 1px 0 rgba(255,255,255,.42),0 3px 0 rgba(23,11,27,.10),0 12px 26px rgba(23,11,27,.18)}
+#menu h2,#catering h2{text-shadow:0 2px 0 rgba(0,0,0,.42),0 5px 0 rgba(0,0,0,.22),0 18px 34px rgba(0,0,0,.5)}
+.daypanel .place,.pkg h3{text-shadow:0 2px 0 rgba(0,0,0,.3),0 10px 22px rgba(0,0,0,.34)}
+
+/* ---- header glass ---- */
+header.solid{
+  background:linear-gradient(180deg,rgba(42,18,51,.96),rgba(23,11,27,.93));
+  box-shadow:0 14px 40px -10px rgba(6,2,8,.8),inset 0 -1px 0 rgba(255,192,46,.22);
+}
+
+/* ---- TODAY BOARD: raised enamel sign ---- */
+.board{
+  background:
+    radial-gradient(120% 90% at 22% 8%,rgba(255,255,255,.28),transparent 52%),
+    linear-gradient(155deg,#FF6B3A 0%,var(--chile) 38%,var(--hibiscus) 88%);
+  border-color:var(--marigold);
+  box-shadow:
+    var(--sh-deep),
+    0 0 0 3px rgba(23,11,27,.5),
+    0 34px 70px -22px rgba(216,19,94,.7),
+    var(--bevel);
+}
+.board::before{
+  content:"";position:absolute;left:0;right:0;top:0;height:44%;pointer-events:none;
+  background:linear-gradient(180deg,rgba(255,255,255,.26),transparent);
+  border-radius:2px 2px 40% 40%/2px 2px 12% 12%;
+}
+.board__where{text-shadow:0 2px 0 rgba(0,0,0,.32),0 10px 22px rgba(0,0,0,.4)}
+
+/* ---- buttons: molded, pressable ---- */
+.pill,.btn-fill,.submit,.btn--solid,.tab.on,.daybtn.on{
+  box-shadow:0 8px 0 -2px rgba(23,11,27,.45),0 16px 28px -10px rgba(11,4,14,.6),var(--bevel);
+}
+.pill{background:linear-gradient(180deg,#FF6B3A,var(--chile) 55%,#D93A12)}
+.pill:hover{background:linear-gradient(180deg,#FFD76B,#FFC02E 55%,#E08A0B)}
+.btn-fill{background:linear-gradient(180deg,#FFD76B,var(--marigold) 52%,#E08A0B)}
+.submit{background:linear-gradient(180deg,#FF6B3A,var(--chile) 55%,var(--hibiscus))}
+.btn--solid,.tab.on{background:linear-gradient(180deg,#FFD76B,var(--marigold) 55%,#E08A0B)}
+.pill:active,.btn-fill:active,.submit:active,.tab:active{
+  transform:translateY(4px)!important;
+  box-shadow:0 3px 0 -1px rgba(23,11,27,.45),0 6px 14px -6px rgba(11,4,14,.6),var(--bevel);
+}
+.btn-out{background:linear-gradient(180deg,rgba(255,241,220,.10),rgba(255,241,220,.02));box-shadow:inset 0 1px 0 rgba(255,255,255,.18)}
+
+/* ---- MENU: lacquered jade panel ---- */
+#menu{
+  background:
+    radial-gradient(90% 70% at 78% 0%,rgba(23,199,154,.5),transparent 66%),
+    radial-gradient(70% 60% at 6% 96%,rgba(216,19,94,.24),transparent 66%),
+    linear-gradient(168deg,#0E7A62 0%,var(--nopal) 52%,#053C30 100%);
+}
+#menu::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(130% 100% at 50% 40%,transparent 48%,rgba(2,20,16,.6) 100%);
+}
+.group{border-top:0;position:relative;padding-top:20px}
+.group::before{
+  content:"";position:absolute;left:0;right:0;top:0;height:4px;border-radius:99px;
+  background:linear-gradient(90deg,var(--marigold),var(--chile) 55%,var(--hibiscus));
+  box-shadow:0 2px 10px rgba(255,192,46,.5);
+}
+.row{border-radius:6px;padding-left:10px;padding-right:10px}
+.row:hover{
+  background:linear-gradient(90deg,rgba(255,192,46,.16),rgba(255,192,46,0));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.14);
+  padding-left:16px;
+}
+.row .price{text-shadow:0 2px 0 rgba(0,0,0,.35)}
+
+/* ---- STOPS: inset console ---- */
+.stopwrap{
+  border:0;border-radius:8px;overflow:hidden;
+  background:linear-gradient(170deg,var(--ink-2),var(--ink));
+  box-shadow:var(--sh-deep),0 0 0 3px rgba(23,11,27,.9),inset 0 1px 0 rgba(255,255,255,.1);
+}
+.daybtn{background:linear-gradient(180deg,rgba(255,241,220,.05),transparent)}
+.daybtn.on{background:linear-gradient(180deg,#FFD76B,var(--marigold) 60%,#E08A0B)}
+.daypanel{
+  background:
+    radial-gradient(90% 80% at 20% 6%,rgba(255,255,255,.2),transparent 58%),
+    linear-gradient(155deg,#FF6B3A,var(--chile) 42%,var(--hibiscus) 96%);
+  box-shadow:inset 0 0 60px rgba(90,4,38,.5),inset 0 1px 0 rgba(255,255,255,.24);
+}
+
+/* ---- CATERING: deep plum ---- */
+#catering{
+  background:
+    radial-gradient(80% 60% at 88% 4%,rgba(216,19,94,.3),transparent 66%),
+    radial-gradient(70% 60% at 4% 92%,rgba(23,199,154,.18),transparent 66%),
+    linear-gradient(180deg,var(--ink-2),var(--ink) 60%,#0E0611);
+}
+.pkg{background:linear-gradient(180deg,rgba(255,241,220,.06),rgba(255,241,220,.01));box-shadow:inset 0 1px 0 rgba(255,255,255,.1)}
+.pkg.on{
+  background:linear-gradient(180deg,rgba(255,192,46,.2),rgba(216,19,94,.12));
+  box-shadow:var(--sh-lift),inset 0 1px 0 rgba(255,255,255,.28);
+}
+.calc{
+  background:linear-gradient(170deg,rgba(255,241,220,.1),rgba(255,241,220,.02));
+  box-shadow:var(--sh-lift),inset 0 1px 0 rgba(255,255,255,.14);
+}
+.est{text-shadow:0 2px 0 rgba(0,0,0,.4),0 14px 30px rgba(255,192,46,.35)}
+input,textarea,select{background:linear-gradient(180deg,rgba(11,4,14,.42),rgba(255,241,220,.05));box-shadow:inset 0 2px 6px rgba(0,0,0,.4)}
+
+/* ---- REVIEWS: warm amber slab ---- */
+#reviews{
+  background:
+    radial-gradient(70% 60% at 84% 0%,#FFD860,transparent 62%),
+    radial-gradient(60% 60% at 4% 100%,rgba(255,75,31,.5),transparent 62%),
+    linear-gradient(160deg,var(--marigold),#F2A014);
+}
+.stars{text-shadow:0 2px 0 rgba(0,0,0,.18)}
+
+/* ---- SLIDE-THROUGH cards: extruded ---- */
+#slidethru{
+  background:
+    radial-gradient(60% 50% at 10% 0%,#FFD860,transparent 60%),
+    linear-gradient(200deg,var(--marigold),#EE9A12);
+}
+.sx-card{
+  background:linear-gradient(168deg,#FFF7E8,var(--masa) 60%,#F3DDBC);
+  border:0;border-radius:10px;
+  box-shadow:
+    14px 16px 0 rgba(23,11,27,.9),
+    0 34px 60px -22px rgba(11,4,14,.55),
+    inset 0 1px 0 rgba(255,255,255,.9),
+    inset 0 -3px 0 rgba(23,11,27,.1);
+  transform-style:preserve-3d;transition:transform .3s var(--ease),box-shadow .3s var(--ease);
+}
+
+/* ---- STATS: pressed tiles ---- */
+.stats{background:transparent;border:0;gap:14px}
+.stat{
+  border-radius:8px;
+  background:linear-gradient(168deg,#FFF8EA,var(--masa) 70%,#F0D9B6);
+  box-shadow:0 16px 30px -14px rgba(11,4,14,.4),inset 0 1px 0 rgba(255,255,255,.9),inset 0 -3px 0 rgba(23,11,27,.09);
+  transform-style:preserve-3d;transition:transform .3s var(--ease)
+}
+.stat b{text-shadow:0 2px 0 rgba(255,255,255,.7),0 4px 0 rgba(23,11,27,.12)}
+
+/* ---- FOOTER ---- */
+footer{
+  background:
+    radial-gradient(70% 90% at 50% 0%,rgba(216,19,94,.24),transparent 62%),
+    linear-gradient(180deg,var(--ink-2),#0C0510);
+}
+
+/* ---- BANDS ---- */
+.marquee{background:linear-gradient(180deg,#FFD860,var(--marigold) 45%,#E89B10);box-shadow:inset 0 2px 0 rgba(255,255,255,.5),inset 0 -6px 14px rgba(23,11,27,.25)}
+.conga{background:
+  radial-gradient(60% 120% at 20% 100%,rgba(255,192,46,.3),transparent 60%),
+  linear-gradient(180deg,var(--chile),var(--hibiscus));
+  box-shadow:inset 0 3px 0 rgba(255,255,255,.2),inset 0 -10px 24px rgba(60,2,26,.5)}
+
+/* ---- ASSEMBLY glow ---- */
+.asm-stick::before{background:radial-gradient(circle,rgba(255,75,31,.32),rgba(216,19,94,.16) 42%,transparent 66%)}
+.asm-rail i{background:linear-gradient(180deg,var(--marigold),var(--chile) 55%,var(--hibiscus));box-shadow:0 0 14px rgba(255,75,31,.6)}
+
+/* ---- craving chip ---- */
+.craving{background:linear-gradient(180deg,rgba(255,241,220,.16),rgba(255,241,220,.04));box-shadow:0 6px 0 -2px rgba(23,11,27,.5),inset 0 1px 0 rgba(255,255,255,.24)}
+
+/* ---- toTop ---- */
+#toTop{background:linear-gradient(180deg,var(--ink-2),var(--ink));box-shadow:0 10px 0 -3px rgba(11,4,14,.6),0 18px 30px -12px rgba(11,4,14,.7),inset 0 1px 0 rgba(255,255,255,.18)}
+
+
+.row.kapow{animation:kapow .5s cubic-bezier(.34,1.56,.64,1)}
+@keyframes kapow{
+  0%{transform:scale(1)}
+  22%{transform:scale(1.05);background:linear-gradient(90deg,rgba(255,192,46,.5),rgba(255,75,31,.25));box-shadow:0 0 0 0 rgba(255,192,46,.55)}
+  100%{transform:scale(1);box-shadow:0 0 0 26px rgba(255,192,46,0)}
+}
+@media (prefers-reduced-motion:reduce){.row.kapow{animation:none}}
+
+</style>
+</head>
+<body>
+<div style="position:fixed;top:0;left:0;right:0;z-index:99999;background:#0d0f06;
+  border-bottom:1px solid rgba(200,241,53,.3);padding:9px 16px;display:flex;align-items:center;
+  gap:12px;flex-wrap:wrap;justify-content:center;font-family:system-ui,sans-serif;font-size:13px;">
+  <span style="color:rgba(255,255,255,.65);">An example site built by
+    <strong style="color:#c8f135;">Tech Bros for Yeshua</strong></span>
+  <a href="index.html" style="background:#c8f135;color:#080a04;font-weight:700;
+    padding:7px 16px;border-radius:99px;text-decoration:none;font-size:12.5px;">
+    Get one like this &rarr;</a>
+</div>
+<div style="height:44px;"></div>
+
+<a class="skip" href="#menu">Skip to menu</a>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+ <defs>
+  <linearGradient id="gShell" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#FFE08A"/><stop offset=".42" stop-color="#FFC02E"/><stop offset="1" stop-color="#D98209"/>
+  </linearGradient>
+  <linearGradient id="gLimb" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#F0A81B"/><stop offset="1" stop-color="#B96D06"/>
+  </linearGradient>
+  <linearGradient id="gBody" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#FF7A4D"/><stop offset=".45" stop-color="#FF4B1F"/><stop offset="1" stop-color="#B01B4C"/>
+  </linearGradient>
+  <linearGradient id="gCab" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#D8135E"/><stop offset="1" stop-color="#780F38"/>
+  </linearGradient>
+  <linearGradient id="gAwning" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#17C79A"/><stop offset="1" stop-color="#065743"/>
+  </linearGradient>
+  <radialGradient id="gWin" cx=".35" cy=".28" r=".85">
+    <stop offset="0" stop-color="#FFF4C4"/><stop offset=".55" stop-color="#FFC02E"/><stop offset="1" stop-color="#DE8C0C"/>
+  </radialGradient>
+  <linearGradient id="gTortA" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#F0C468"/><stop offset="1" stop-color="#C08A29"/>
+  </linearGradient>
+  <linearGradient id="gTortB" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#FFEFC8"/><stop offset="1" stop-color="#E8CB8C"/>
+  </linearGradient>
+  <linearGradient id="gMeat" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#8E4A2A"/><stop offset="1" stop-color="#4A2013"/>
+  </linearGradient>
+  <linearGradient id="gSalsa" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#FF6B3A"/><stop offset="1" stop-color="#B01B4C"/>
+  </linearGradient>
+ </defs>
+</svg>
+
+<div id="curtain"><i></i><i></i><i></i><i></i><i></i></div>
+<div id="cur" aria-hidden="true"></div><div id="curRing" aria-hidden="true"></div>
+<div id="loader"><div class="load-taco" id="loadTaco"></div><div class="load-mark" id="loadMark"></div><div class="load-bar"><i></i></div><div class="load-pct" id="loadPct">0%</div></div>
+<div id="progress"></div>
+
+<header id="hdr">
+  <nav class="nav">
+    <a class="mark" href="#top">TACO<b>MICHAEL</b></a>
+    <ul class="navlinks">
+      <li><a href="#menu">Menu</a></li>
+      <li><a href="#stops">Find the truck</a></li>
+      <li><a href="#catering">Catering</a></li>
+      <li><a href="#about">Our story</a></li>
+    </ul>
+    <div class="navcta">
+      <button class="craving" id="craving" title="Your craving list"><b id="cravN">0</b></button>
+      <a class="pill" href="tel:+15550000000">Call to order</a>
+      <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false"><i></i><i></i><i></i></button>
+    </div>
+  </nav>
+</header>
+
+<div id="drawer">
+  <a href="#menu">Menu</a>
+  <a href="#stops">Find the truck</a>
+  <a href="#catering">Catering</a>
+  <a href="#about">Our story</a>
+  <a href="tel:+15550000000">Call to order</a>
+</div>
+
+<div id="top" class="hero">
+  <div class="papel" aria-hidden="true"><div class="papel__run" id="papel"></div></div>
+
+  <div class="wrap hero__grid">
+    <div>
+      <p class="eyebrow">FAMILY RUN &middot; MESQUITE GRILLED</p>
+      <h1 class="big plx" data-plx="14">
+        <span class="line"><i>Street</i></span>
+        <span class="line"><i>tacos on</i></span>
+        <span class="line"><i>wheels.</i></span>
+      </h1>
+      <p class="lede">Hand-pressed tortillas, meat off the mesquite grill, salsa made fresh every morning. We park, we cook, we sell out. Come find us.</p>
+      <div class="hero__btns">
+        <a class="btn-lg btn-fill" href="#menu">See the menu</a>
+        <a class="btn-lg btn-out" href="#stops">Where's the truck?</a>
+      </div>
+    </div>
+
+    <div class="plx" data-plx="-22"><div class="board">
+      <span class="livedot" id="liveDot"><i></i><span id="liveTxt">OPEN NOW</span></span>
+      <p class="board__where" id="todayPlace">Riverside Plaza</p>
+      <p class="board__meta">
+        <span id="todayTime">11:00 AM &ndash; 8:00 PM</span>
+        <span>Cash &amp; card &middot; Order at the window</span>
+      </p>
+      <span class="countdown" id="countdown"></span>
+      <p class="board__note">The stop changes daily. Michael updates this board himself each morning.</p>
+    </div></div>
+  </div>
+
+  <canvas id="embers" aria-hidden="true"></canvas>
+
+  <div class="badge" aria-hidden="true" id="badge"></div>
+  <div class="truckwrap" aria-hidden="true"><div class="plx" data-plx="8">
+    <svg class="truck" viewBox="0 0 960 400" xmlns="http://www.w3.org/2000/svg">
+      <circle class="smoke" cx="700" cy="128" r="15" fill="#FFF1DC" opacity=".3"/>
+      <circle class="smoke s2" cx="716" cy="128" r="11" fill="#FFF1DC" opacity=".25"/>
+      <circle class="smoke s3" cx="686" cy="128" r="9" fill="#FFF1DC" opacity=".2"/>
+      <g>
+        <path class="flame" d="M701 128 q-13 -22 0 -40 q4 14 12 18 q10 6 6 22 q-3 12 -18 0 Z" fill="#FF4B1F" opacity=".9"/>
+        <path class="flame f2" d="M701 128 q-8 -15 1 -27 q3 10 8 13 q7 5 4 15 q-2 8 -13 -1 Z" fill="#FFC02E"/>
+        <path class="flame f3" d="M701 126 q-4 -8 1 -14 q2 6 4 7 q4 3 2 8 q-1 4 -7 -1 Z" fill="#FFF1DC" opacity=".85"/>
+      </g>
+      <rect x="688" y="126" width="26" height="34" rx="4" fill="#35203A"/>
+      <rect x="682" y="118" width="38" height="12" rx="5" fill="#452A4A"/>
+      <ellipse cx="480" cy="352" rx="380" ry="17" fill="#000" opacity=".38"/>
+      <rect x="150" y="152" width="600" height="168" rx="16" fill="url(#gBody)" stroke="#FFC02E" stroke-width="6"/>
+      <rect x="162" y="164" width="576" height="52" rx="10" fill="#FFF1DC" opacity=".14"/>
+      <path d="M750 200 L836 200 L888 254 L888 320 L750 320 Z" fill="url(#gCab)" stroke="#FFC02E" stroke-width="6" stroke-linejoin="round"/>
+      <path d="M766 214 L830 214 L866 250 L766 250 Z" fill="#123244" opacity=".9"/>
+      <path d="M766 214 L800 214 L800 250 L766 250 Z" fill="#2E5E7E" opacity=".55"/>
+      <path d="M186 152 L520 152 L556 108 L222 108 Z" fill="url(#gAwning)" stroke="#FFC02E" stroke-width="5" stroke-linejoin="round"/>
+      <path d="M258 152 L294 108 L330 108 L294 152 Z" fill="#FFF1DC" opacity=".85"/>
+      <path d="M366 152 L402 108 L438 108 L402 152 Z" fill="#FFF1DC" opacity=".85"/>
+      <path d="M474 152 L510 108 L546 108 L510 152 Z" fill="#FFF1DC" opacity=".85"/>
+      <rect class="windowglow" x="212" y="176" width="286" height="104" rx="8" fill="url(#gWin)"/>
+      <rect x="212" y="176" width="286" height="104" rx="8" fill="none" stroke="#170B1B" stroke-width="6"/>
+      <rect x="212" y="262" width="286" height="18" fill="#170B1B" opacity=".2"/>
+      <rect x="196" y="276" width="318" height="13" rx="5" fill="#FFF1DC"/>
+      <circle cx="292" cy="220" r="20" fill="#35203A"/>
+      <path d="M264 262 Q292 232 320 262 Z" fill="#35203A"/>
+      <rect x="272" y="196" width="40" height="11" rx="5" fill="#FFF1DC"/>
+      <circle cx="410" cy="226" r="16" fill="#35203A" opacity=".7"/>
+      <path d="M388 262 Q410 240 432 262 Z" fill="#35203A" opacity=".7"/>
+      <text x="540" y="212" font-family="Bungee, sans-serif" font-size="40" fill="#FFF1DC">TACO</text>
+      <text x="540" y="250" font-family="Bungee, sans-serif" font-size="27" fill="#FFC02E">MICHAEL</text>
+      <text x="540" y="282" font-family="Karla, sans-serif" font-size="13" letter-spacing="3" fill="#FFF1DC" opacity=".78">MESQUITE GRILL</text>
+      <path d="M690 268 q22 -6 26 16 q4 26 -20 30 q-24 4 -22 -18 q2 -22 16 -28 Z" fill="#FFC02E"/>
+      <path d="M690 268 q-4 -14 8 -18" stroke="#0A6B54" stroke-width="6" stroke-linecap="round" fill="none"/>
+      <circle cx="290" cy="322" r="44" fill="#170B1B"/>
+      <circle class="wheel" cx="290" cy="322" r="22" fill="#FFF1DC"/>
+      <circle cx="290" cy="322" r="9" fill="#35203A"/>
+      <circle cx="798" cy="322" r="44" fill="#170B1B"/>
+      <circle class="wheel" cx="798" cy="322" r="22" fill="#FFF1DC"/>
+      <circle cx="798" cy="322" r="9" fill="#35203A"/>
+      <rect x="60" y="366" width="840" height="3" rx="2" fill="#FFF1DC" opacity=".16"/>
+    </svg>
+  </div></div>
+
+  <div class="grillband" id="grillband" aria-hidden="true"></div>
+  <div class="scrollcue"><span>Scroll</span></div>
+</div>
+
+<div class="marquee" aria-hidden="true"><div class="marquee__run" id="mq"></div></div>
+
+<div class="conga" aria-hidden="true"><div class="conga__run" id="conga"></div></div>
+<div class="zig zig--ink" aria-hidden="true"></div>
+
+<section id="menu">
+  <div class="wrap">
+    <div class="menuhead rv">
+      <div>
+        <p class="eyebrow">THE BOARD</p>
+        <h2>Menu &amp; prices</h2>
+        <p class="sub">Everything made to order. Tacos come with onion, cilantro and lime &mdash; ask for the works and we'll load them up.</p>
+      </div>
+      <div class="ownerbar">
+        <button class="btn" id="editToggle" type="button">Owner: edit menu</button>
+        <button class="btn btn--solid" id="saveBtn" type="button" hidden>Save changes</button>
+        <span class="status" id="status" role="status"></span>
+      </div>
+    </div>
+
+    <div class="tabs rv" data-d="1">
+      <button class="tab on" data-cat="all">Everything</button>
+      <button class="tab" data-cat="tacos">Tacos</button>
+      <button class="tab" data-cat="plates">Burritos &amp; Plates</button>
+      <button class="tab" data-cat="sides">Sides</button>
+      <button class="tab" data-cat="drinks">Drinks &amp; Sweet</button>
+    </div>
+
+    <div class="menu__cols" id="board">
+      <div>
+        <div class="group rv" data-cat="tacos" data-d="1">
+          <h3>TACOS</h3>
+          <p class="note">Corn tortilla, double-stacked. Flour on request.</p>
+          <div class="row"><span class="name">Al Pastor<span class="desc">Marinated pork off the trompo, grilled pineapple</span></span><span class="dots"></span><span class="price">$3.50</span></div>
+          <div class="row"><span class="name">Carne Asada<span class="desc">Mesquite-grilled steak, chopped fine</span></span><span class="dots"></span><span class="price">$3.75</span></div>
+          <div class="row"><span class="name">Carnitas<span class="desc">Slow-braised pork, crisped on the flat top</span></span><span class="dots"></span><span class="price">$3.50</span></div>
+          <div class="row"><span class="name">Pollo Asado<span class="desc">Citrus-marinated chicken thigh</span></span><span class="dots"></span><span class="price">$3.25</span></div>
+          <div class="row"><span class="name">Lengua<span class="desc">Braised beef tongue, salsa roja</span></span><span class="dots"></span><span class="price">$3.75</span></div>
+          <div class="row"><span class="name">Nopal &amp; Queso<span class="desc">Grilled cactus, melted Oaxaca cheese</span><span class="tagv">VEG</span></span><span class="dots"></span><span class="price">$3.25</span></div>
+        </div>
+
+        <div class="group rv" data-cat="plates" data-d="2">
+          <h3>BURRITOS &amp; PLATES</h3>
+          <p class="note">Served with rice, beans and salsa verde.</p>
+          <div class="row"><span class="name">Asada Burrito<span class="desc">Steak, rice, beans, cheese, guacamole</span></span><span class="dots"></span><span class="price">$11.00</span></div>
+          <div class="row"><span class="name">California Burrito<span class="desc">Steak, fries, cheese, crema</span></span><span class="dots"></span><span class="price">$12.00</span></div>
+          <div class="row"><span class="name">Three-Taco Plate<span class="desc">Any three tacos, rice and beans</span></span><span class="dots"></span><span class="price">$13.50</span></div>
+          <div class="row"><span class="name">Quesabirria Trio<span class="desc">Three dipped tacos, consomm&eacute; on the side</span></span><span class="dots"></span><span class="price">$14.00</span></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="group rv" data-cat="sides" data-d="3">
+          <h3>SIDES</h3>
+          <div class="row"><span class="name">Loaded Nachos<span class="desc">Choice of meat, queso, jalape&ntilde;o, crema</span></span><span class="dots"></span><span class="price">$9.00</span></div>
+          <div class="row"><span class="name">Elote<span class="desc">Grilled corn, mayo, cotija, chile lime</span></span><span class="dots"></span><span class="price">$4.50</span></div>
+          <div class="row"><span class="name">Chips &amp; Guacamole<span class="desc">Mashed fresh every morning</span></span><span class="dots"></span><span class="price">$6.00</span></div>
+          <div class="row"><span class="name">Rice &amp; Beans<span class="desc">Side portion</span></span><span class="dots"></span><span class="price">$3.50</span></div>
+        </div>
+
+        <div class="group rv" data-cat="drinks" data-d="4">
+          <h3>DRINKS</h3>
+          <div class="row"><span class="name">Agua Fresca<span class="desc">Horchata, jamaica or tamarindo</span></span><span class="dots"></span><span class="price">$3.50</span></div>
+          <div class="row"><span class="name">Mexican Coke<span class="desc">Glass bottle, real sugar</span></span><span class="dots"></span><span class="price">$3.00</span></div>
+          <div class="row"><span class="name">Bottled Water<span class="desc">Ice cold</span></span><span class="dots"></span><span class="price">$1.50</span></div>
+        </div>
+
+        <div class="group rv" data-cat="drinks" data-d="5">
+          <h3>SWEET</h3>
+          <div class="row"><span class="name">Churros<span class="desc">Order of three, cinnamon sugar</span></span><span class="dots"></span><span class="price">$5.00</span></div>
+          <div class="row"><span class="name">Flan<span class="desc">Made in-house, caramel top</span></span><span class="dots"></span><span class="price">$4.50</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="drip" style="--c:var(--nopal);background:var(--ink)" aria-hidden="true"></div>
+<section id="assembly">
+  <div class="asm-wrap" id="asmWrap">
+    <div class="asm-stick">
+      <div class="asm-grid">
+
+        <div class="asm-left">
+          <div class="asm-rail"><i id="asmRail"></i></div>
+          <div style="flex:1">
+            <p class="asm-kicker">HOW ONE GETS BUILT</p>
+            <div class="asm-steps">
+              <div class="asm-step on" data-i="0">
+                <b>STEP 01</b><h3>The tortilla</h3>
+                <p>Corn masa pressed on the truck and hit on the flat top until it puffs. Never from a bag.</p>
+              </div>
+              <div class="asm-step" data-i="1">
+                <b>STEP 02</b><h3>Off the mesquite</h3>
+                <p>Meat comes off the grill, gets chopped on the block and goes straight in. No holding trays.</p>
+              </div>
+              <div class="asm-step" data-i="2">
+                <b>STEP 03</b><h3>Onion &amp; cilantro</h3>
+                <p>Diced fine, both raw, both this morning. This is where a taco stops tasting like a restaurant.</p>
+              </div>
+              <div class="asm-step" data-i="3">
+                <b>STEP 04</b><h3>Salsa, your call</h3>
+                <p>Verde is bright, roja will get your attention, habanero we only give you if you ask twice.</p>
+              </div>
+              <div class="asm-step" data-i="4">
+                <b>STEP 05</b><h3>Lime, and go</h3>
+                <p>Squeeze it before you walk away. Fifteen seconds from the window is the best it will ever be.</p>
+              </div>
+            </div>
+            <p class="asm-count" id="asmCount">01 &mdash; 05</p>
+          </div>
+        </div>
+
+        <div class="asm-stage" id="asmStage">
+          <svg viewBox="0 0 560 380" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="280" cy="330" rx="205" ry="20" fill="#000" opacity=".34"/>
+            <g class="steam"><ellipse cx="250" cy="120" rx="15" ry="19" fill="#FFF1DC" opacity=".34"/></g>
+            <g class="steam s2"><ellipse cx="288" cy="112" rx="12" ry="16" fill="#FFF1DC" opacity=".3"/></g>
+            <g class="steam s3"><ellipse cx="318" cy="122" rx="10" ry="14" fill="#FFF1DC" opacity=".26"/></g>
+
+            <!-- 1 tortilla / shell -->
+            <g class="ly" data-i="0">
+              <path d="M108 150 C 112 320, 448 320, 452 150" fill="none" stroke="url(#gTortA)" stroke-width="46" stroke-linecap="round"/>
+              <path d="M108 150 C 112 320, 448 320, 452 150" fill="none" stroke="url(#gTortB)" stroke-width="30" stroke-linecap="round"/>
+              <circle cx="180" cy="252" r="7" fill="#D8B267" opacity=".7"/>
+              <circle cx="286" cy="290" r="8" fill="#D8B267" opacity=".7"/>
+              <circle cx="380" cy="248" r="6" fill="#D8B267" opacity=".7"/>
+            </g>
+
+            <!-- 2 meat -->
+            <g class="ly" data-i="1">
+              <path d="M150 196 C 168 268, 392 268, 410 196" fill="none" stroke="url(#gMeat)" stroke-width="44" stroke-linecap="round"/>
+              <path d="M168 200 C 186 254, 374 254, 392 200" fill="none" stroke="#9C5330" stroke-width="22" stroke-linecap="round"/>
+              <circle cx="214" cy="234" r="9" fill="#57271A"/>
+              <circle cx="280" cy="248" r="10" fill="#57271A"/>
+              <circle cx="346" cy="232" r="9" fill="#57271A"/>
+            </g>
+
+            <!-- 3 onion + cilantro -->
+            <g class="ly" data-i="2">
+              <circle cx="192" cy="196" r="11" fill="#FFF7E6"/>
+              <circle cx="240" cy="212" r="10" fill="#FFF7E6"/>
+              <circle cx="300" cy="216" r="11" fill="#FFF7E6"/>
+              <circle cx="356" cy="200" r="10" fill="#FFF7E6"/>
+              <circle cx="216" cy="182" r="9" fill="#17C79A"/>
+              <circle cx="268" cy="196" r="10" fill="#0A6B54"/>
+              <circle cx="330" cy="192" r="9" fill="#17C79A"/>
+              <circle cx="382" cy="184" r="8" fill="#0A6B54"/>
+            </g>
+
+            <!-- 4 salsa -->
+            <g class="ly" data-i="3">
+              <path d="M168 172 C 200 226, 360 226, 392 172" fill="none" stroke="url(#gSalsa)" stroke-width="15" stroke-linecap="round"/>
+              <path d="M196 160 C 226 202, 336 202, 366 160" fill="none" stroke="#B01B4C" stroke-width="9" stroke-linecap="round" opacity=".85"/>
+            </g>
+
+            <!-- 5 lime + face -->
+            <g class="ly" data-i="4">
+              <g transform="translate(438,196) rotate(-18)">
+                <path d="M0 0 A46 46 0 0 1 46 46 L0 46 Z" fill="#7FC93F"/>
+                <path d="M6 8 A38 38 0 0 1 40 42 L6 42 Z" fill="#DCF08E"/>
+                <path d="M6 42 L40 8" stroke="#7FC93F" stroke-width="3"/>
+                <path d="M6 24 L24 42" stroke="#7FC93F" stroke-width="3"/>
+                <path d="M22 8 L40 26" stroke="#7FC93F" stroke-width="3"/>
+              </g>
+              <circle cx="238" cy="272" r="13" fill="#FFF7E6"/><circle cx="240" cy="274" r="6.5" fill="#170B1B"/>
+              <circle cx="316" cy="272" r="13" fill="#FFF7E6"/><circle cx="318" cy="274" r="6.5" fill="#170B1B"/>
+              <path d="M254 296 q23 22 46 0" fill="none" stroke="#170B1B" stroke-width="6" stroke-linecap="round"/>
+              <ellipse cx="204" cy="288" rx="14" ry="9" fill="#FF4B1F" opacity=".35"/>
+              <ellipse cx="352" cy="288" rx="14" ry="9" fill="#FF4B1F" opacity=".35"/>
+            </g>
+          </svg>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="drip" style="--c:var(--ink);background:var(--masa)" aria-hidden="true"></div>
+<section id="stops">
+  <div class="wrap">
+    <div class="rv">
+      <p class="eyebrow">WHERE WE PARK</p>
+      <h2>This week's stops</h2>
+      <p class="sub">Same truck, different corner. Hours shift with the weather and with how fast the carnitas go &mdash; the board at the top of this page is always the live one.</p>
+    </div>
+    <div class="stopwrap rv" data-d="1">
+      <div class="daylist" id="daylist"></div>
+      <div class="daypanel" id="daypanel"></div>
+    </div>
+  </div>
+</section>
+
+<div class="drip" style="--c:var(--masa);background:var(--marigold)" aria-hidden="true"></div>
+<section id="slidethru">
+  <div class="sx-wrap" id="sxWrap">
+    <div class="sx-stick">
+      <div class="sx-head">
+        <p class="eyebrow">THE TRUCK RULES</p>
+        <h2>Five things we don't bend on</h2>
+      </div>
+      <div class="sx-track" id="sxTrack">
+        <div class="sx-card">
+          <div><span class="n">01</span><h3>Masa, pressed here</h3><p>Tortillas get made on the truck all day. If we run out of masa, we close early. It has happened.</p></div>
+          <div class="tkslot"></div>
+        </div>
+        <div class="sx-card">
+          <div><span class="n">02</span><h3>Mesquite, not gas</h3><p>Real wood on the grill. It is slower, it is more work, and you can taste the difference from the sidewalk.</p></div>
+          <div class="tkslot"></div>
+        </div>
+        <div class="sx-card">
+          <div><span class="n">03</span><h3>Salsa made at 6 AM</h3><p>Four salsas, roasted and blended every morning. Whatever is left at close gets thrown out.</p></div>
+          <div class="tkslot"></div>
+        </div>
+        <div class="sx-card">
+          <div><span class="n">04</span><h3>Order goes on the grill</h3><p>Nothing sits in a warmer. You wait a few minutes because it is being cooked for you, right then.</p></div>
+          <div class="tkslot"></div>
+        </div>
+        <div class="sx-card">
+          <div><span class="n">05</span><h3>We sell out, we sell out</h3><p>We would rather hand you a sign than a taco we are not proud of. Come back tomorrow, we will be there.</p></div>
+          <div class="tkslot"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="drip" style="--c:var(--marigold);background:var(--ink)" aria-hidden="true"></div>
+<section id="catering">
+  <div class="wrap">
+    <div class="rv">
+      <p class="eyebrow">BOOK THE TRUCK</p>
+      <h2>We'll park at your party</h2>
+      <p class="sub">Weddings, quincea&ntilde;eras, church events, job sites, birthdays. We bring the truck, the grill and the crew. You bring the people.</p>
+    </div>
+
+    <div class="cater__grid">
+      <div class="rv" data-d="1">
+        <button class="pkg on" type="button" data-rate="16" data-min="400" data-name="Taco Bar">
+          <h3>Taco Bar</h3>
+          <p>Three meats, all the fixings, rice and beans, served straight from the window.</p>
+          <span class="from">$16 PER GUEST &middot; 25 GUEST MINIMUM</span>
+        </button>
+        <button class="pkg" type="button" data-rate="22" data-min="1400" data-name="Full Truck Buyout">
+          <h3>Full Truck Buyout</h3>
+          <p>Whole menu available, we stay four hours, you set the guest count.</p>
+          <span class="from">$22 PER GUEST &middot; $1,400 MINIMUM</span>
+        </button>
+        <button class="pkg" type="button" data-rate="11" data-min="240" data-name="Drop-Off Trays">
+          <h3>Drop-Off Trays</h3>
+          <p>Pans of meat, tortillas, salsas and sides. You serve, we deliver.</p>
+          <span class="from">$11 PER GUEST &middot; $240 MINIMUM</span>
+        </button>
+
+        <div class="calc">
+          <h4>ESTIMATE YOUR EVENT</h4>
+          <label for="guestRange">Guests: <span id="guestVal">50</span></label>
+          <input type="range" id="guestRange" min="10" max="400" step="5" value="50">
+          <p class="est" id="estOut">$800</p>
+          <p class="fine">Ballpark only &mdash; final quote depends on distance, hours and menu. Tax and gratuity not included.</p>
+        </div>
+      </div>
+
+      <div class="rv" data-d="2">
+        <h3 style="font-family:'Alfa Slab One',serif;font-size:26px;margin:0 0 20px">Request a date</h3>
+        <form id="cateringForm" novalidate>
+          <div class="formrow">
+            <div><label for="cname">Your name</label><input id="cname" placeholder="Maria Reyes"></div>
+            <div><label for="cphone">Phone</label><input id="cphone" type="tel" placeholder="(555) 000-0000"></div>
+          </div>
+          <div><label for="cemail">Email</label><input id="cemail" type="email" placeholder="you@email.com"></div>
+          <div class="formrow">
+            <div><label for="cdate">Event date</label><input id="cdate" type="date"></div>
+            <div><label for="cguests">Guests</label><input id="cguests" type="number" min="1" placeholder="50"></div>
+          </div>
+          <div>
+            <label for="cpackage">Package</label>
+            <select id="cpackage">
+              <option>Taco Bar</option>
+              <option>Full Truck Buyout</option>
+              <option>Drop-Off Trays</option>
+              <option>Not sure yet</option>
+            </select>
+          </div>
+          <div><label for="cnotes">Where, and anything else we should know</label><textarea id="cnotes" placeholder="Address, parking, power access, dietary needs"></textarea></div>
+          <button class="submit" type="submit">Send request</button>
+          <p id="formMsg" role="status" style="margin:0;font-weight:700;color:#FFC02E"></p>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="reviews">
+  <div class="wrap">
+    <div class="rv">
+      <p class="eyebrow" style="color:var(--ink)">FROM THE LINE</p>
+      <h2>What people say</h2>
+    </div>
+    <div class="revbox rv" data-d="1" id="revbox"></div>
+    <div class="dots-nav" id="revdots"></div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="wrap">
+    <div class="about__grid">
+      <div class="rv">
+        <p class="eyebrow">SINCE DAY ONE</p>
+        <h2>One truck, one family</h2>
+        <p>Taco Michael started with a flat top, a propane tank and a recipe handed down through the family. We cook the way we cook at home: nothing frozen, salsas made fresh every morning, tortillas pressed on the truck.</p>
+        <p>You'll usually find Michael at the window taking the order and calling it back to the grill. If the line is long, it's worth it. If we sell out early, come back tomorrow &mdash; we will.</p>
+      </div>
+      <div class="rv" data-d="2">
+        <p class="quote">&ldquo;If it isn't good enough for my own table, it doesn't go out the window.&rdquo;</p>
+        <p style="margin-top:16px;font-weight:800;letter-spacing:.11em;font-size:13px;text-transform:uppercase;color:rgba(23,11,27,.7)">&mdash; Michael, owner</p>
+      </div>
+    </div>
+
+    <div class="stats rv" data-d="3">
+      <div class="stat"><b data-count="6">0</b><span>Days a week</span></div>
+      <div class="stat"><b data-count="19">0</b><span>Menu items</span></div>
+      <div class="stat"><b data-count="1200" data-suffix="+">0</b><span>Tacos a week</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="drip" style="--c:var(--masa);background:var(--ink)" aria-hidden="true"></div>
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div>
+        <a class="mark" href="#top" style="font-size:24px">TACO<b>MICHAEL</b></a>
+        <p style="margin-top:14px">Mesquite-grilled street tacos, made to order. Find the truck, order at the window.</p>
+      </div>
+      <div>
+        <h4>ORDER &amp; BOOK</h4>
+        <ul>
+          <li><a href="tel:+15550000000">(555) 000-0000</a></li>
+          <li><a href="mailto:hello@tacomichael.com">hello@tacomichael.com</a></li>
+          <li><a href="#catering">Catering requests</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>TODAY</h4>
+        <ul>
+          <li id="footPlace">Riverside Plaza</li>
+          <li id="footTime">11:00 AM &ndash; 8:00 PM</li>
+          <li>Closed Sundays</li>
+        </ul>
+      </div>
+      <div>
+        <h4>FOLLOW</h4>
+        <ul>
+          <li><a href="#">Instagram</a></li>
+          <li><a href="#">Facebook</a></li>
+          <li><a href="#">Google reviews</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="legal">
+      <span>&copy; <span id="yr"></span> Taco Michael. All rights reserved.</span>
+      <span>Site by Tech Bros for Yeshua</span>
+    </div>
+  </div>
+</footer>
+
+<button id="toTop" aria-label="Back to top">&#8593;</button>
+
+<script>
+(function(){
+'use strict';
+var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* loader */
+(function(){
+  var word='TACO MICHAEL', el=document.getElementById('loadMark'), h='';
+  for(var i=0;i<word.length;i++){
+    var c = word.charAt(i)===' ' ? '&nbsp;' : word.charAt(i);
+    h+='<span class="'+(i>4?'acc':'')+'" style="animation-delay:'+(i*0.045)+'s">'+c+'</span>';
+  }
+  el.innerHTML=h;
+  function hide(){document.getElementById('loader').classList.add('gone');}
+  window.addEventListener('load',function(){setTimeout(hide,reduce?80:1250);});
+  setTimeout(hide,3200);
+})();
+
+/* papel picado */
+(function(){
+  var colors=['#FF4B1F','#FFC02E','#0A6B54','#FFF1DC','#FF4B1F','#17C79A','#FFC02E','#FFF1DC'],h='';
+  for(var i=0;i<160;i++){
+    h+='<div class="flag" style="background:'+colors[i%colors.length]+';animation-delay:'+((i%7)*0.22)+'s"></div>';
+  }
+  document.getElementById('papel').innerHTML=h;
+})();
+
+/* marquee */
+(function(){
+  var items=['MESQUITE GRILLED','HAND-PRESSED TORTILLAS','SALSA MADE DAILY','CASH &amp; CARD','WE CATER','FAMILY RUN'];
+  var one=items.map(function(t){return '<span>'+t+'</span><em>&#9670;</em>';}).join('');
+  document.getElementById('mq').innerHTML=one+one;
+})();
+
+/* embers */
+(function(){
+  if(reduce) return;
+  var cv=document.getElementById('embers');
+  if(!cv||!cv.getContext) return;
+  var ctx=cv.getContext('2d'),parts=[];
+  function boot(){
+    var r=cv.getBoundingClientRect();
+    if(!r.width||!r.height) return;
+    var dpr=window.devicePixelRatio||1;
+    cv.width=r.width*dpr; cv.height=r.height*dpr;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    parts=[];
+    var n=Math.min(70,Math.round(r.width/22));
+    for(var i=0;i<n;i++){
+      parts.push({x:Math.random()*r.width,y:Math.random()*r.height,
+        r:Math.random()*2.1+.6,s:Math.random()*.42+.14,d:Math.random()*Math.PI*2,
+        o:Math.random()*.55+.2,c:Math.random()>.55?'255,192,46':'255,75,31'});
+    }
+  }
+  function tick(){
+    var r=cv.getBoundingClientRect();
+    ctx.clearRect(0,0,r.width,r.height);
+    for(var i=0;i<parts.length;i++){
+      var p=parts[i];
+      p.y-=p.s; p.d+=0.012; p.x+=Math.sin(p.d)*0.34;
+      if(p.y<-12){p.y=r.height+12;p.x=Math.random()*r.width;}
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle='rgba('+p.c+','+p.o+')';
+      ctx.shadowBlur=9; ctx.shadowColor='rgba('+p.c+',.55)';
+      ctx.fill();
+    }
+    ctx.shadowBlur=0;
+    requestAnimationFrame(tick);
+  }
+  boot(); tick();
+  var t; window.addEventListener('resize',function(){clearTimeout(t);t=setTimeout(boot,180);});
+})();
+
+/* header, progress, toTop */
+(function(){
+  var hdr=document.getElementById('hdr'),pb=document.getElementById('progress'),
+      top=document.getElementById('toTop');
+  function onScroll(){
+    var y=window.pageYOffset||document.documentElement.scrollTop;
+    hdr.classList.toggle('solid',y>70);
+    var h=document.documentElement.scrollHeight-window.innerHeight;
+    pb.style.width=(h>0?(y/h)*100:0)+'%';
+    top.classList.toggle('show',y>620);
+  }
+  window.addEventListener('scroll',onScroll,{passive:true}); onScroll();
+  top.addEventListener('click',function(){window.scrollTo({top:0,behavior:reduce?'auto':'smooth'});});
+})();
+
+/* drawer */
+(function(){
+  var b=document.getElementById('burger'),d=document.getElementById('drawer');
+  function close(){b.classList.remove('on');d.classList.remove('open');document.body.classList.remove('locked');b.setAttribute('aria-expanded','false');}
+  b.addEventListener('click',function(){
+    var open=!d.classList.contains('open');
+    b.classList.toggle('on',open); d.classList.toggle('open',open);
+    document.body.classList.toggle('locked',open); b.setAttribute('aria-expanded',String(open));
+  });
+  Array.prototype.forEach.call(d.querySelectorAll('a'),function(a){a.addEventListener('click',close);});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close();});
+})();
+
+/* reveals */
+(function(){
+  var els=document.querySelectorAll('.rv');
+  if(!('IntersectionObserver' in window)){Array.prototype.forEach.call(els,function(e){e.classList.add('in');});return;}
+  var io=new IntersectionObserver(function(en){
+    en.forEach(function(x){if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target);}});
+  },{threshold:.14,rootMargin:'0px 0px -8% 0px'});
+  Array.prototype.forEach.call(els,function(e){io.observe(e);});
+})();
+
+/* counters */
+(function(){
+  var nums=document.querySelectorAll('[data-count]');
+  if(!nums.length||!('IntersectionObserver' in window))return;
+  var io=new IntersectionObserver(function(en){
+    en.forEach(function(x){
+      if(!x.isIntersecting)return;
+      var el=x.target,target=parseInt(el.getAttribute('data-count'),10),
+          suf=el.getAttribute('data-suffix')||'',t0=null;
+      function step(ts){
+        if(!t0)t0=ts;
+        var p=Math.min((ts-t0)/1400,1),e=1-Math.pow(1-p,3);
+        el.textContent=Math.round(target*e).toLocaleString()+suf;
+        if(p<1)requestAnimationFrame(step);
+      }
+      if(reduce){el.textContent=target.toLocaleString()+suf;}else{requestAnimationFrame(step);}
+      io.unobserve(el);
+    });
+  },{threshold:.5});
+  Array.prototype.forEach.call(nums,function(n){io.observe(n);});
+})();
+
+/* schedule */
+var SCHEDULE=[
+  {d:'SUN',place:'Closed',open:null,close:null,addr:'Family day',tip:'We rest, we prep, and we are back Monday morning.'},
+  {d:'MON',place:'Riverside Plaza',open:11,close:20,addr:'4th &amp; Main',tip:'Lunch rush hits around noon. Come at 11:30 and walk right up.'},
+  {d:'TUE',place:'Fairgrounds Lot',open:11,close:20,addr:'West gate entrance',tip:'Plenty of parking and picnic tables on the grass.'},
+  {d:'WED',place:'Industrial Park',open:10.5,close:15,addr:'Building C parking',tip:'Half day only. Call ahead for orders over ten tacos.'},
+  {d:'THU',place:'Riverside Plaza',open:11,close:20,addr:'4th &amp; Main',tip:'Quesabirria night. It goes fast.'},
+  {d:'FRI',place:'Brewery Row',open:16,close:22,addr:'Front lot, by the patio',tip:'Bring your pint out to the truck. They let you.'},
+  {d:'SAT',place:'Farmers Market',open:8,close:14,addr:'Center aisle',tip:'Breakfast burritos until 11. Only day we make them.'}
+];
+function fmt(h){
+  if(h===null)return '';
+  var hh=Math.floor(h),mm=Math.round((h-hh)*60),ap=hh>=12?'PM':'AM',d=hh%12||12;
+  return d+':'+(mm<10?'0'+mm:mm)+' '+ap;
+}
+
+/* day selector */
+(function(){
+  var list=document.getElementById('daylist'),panel=document.getElementById('daypanel'),
+      todayIdx=new Date().getDay(),h='';
+  SCHEDULE.forEach(function(s,i){
+    h+='<button class="daybtn'+(i===todayIdx?' on':'')+'" type="button" data-i="'+i+'">'+s.d+
+       '<small>'+(s.open===null?'Closed':fmt(s.open)+'–'+fmt(s.close))+'</small></button>';
+  });
+  list.innerHTML=h;
+  function render(i){
+    var s=SCHEDULE[i];
+    panel.className='daypanel fadein';
+    panel.innerHTML='<p class="k">'+(i===todayIdx?'TODAY':s.d)+'</p>'+
+      '<p class="place">'+s.place+'</p>'+
+      (s.open===null?'':'<p class="hrs">'+fmt(s.open)+' &ndash; '+fmt(s.close)+'</p>')+
+      '<p class="addr">'+s.addr+'</p><p class="tip">'+s.tip+'</p>';
+    setTimeout(function(){panel.className='daypanel';},520);
+  }
+  list.addEventListener('click',function(e){
+    var b=e.target;
+    while(b&&b!==list&&b.className.indexOf('daybtn')===-1){b=b.parentNode;}
+    if(!b||b===list)return;
+    Array.prototype.forEach.call(list.querySelectorAll('.daybtn'),function(x){x.classList.remove('on');});
+    b.classList.add('on');
+    render(parseInt(b.getAttribute('data-i'),10));
+  });
+  render(todayIdx);
+})();
+
+/* live open/closed */
+(function(){
+  var s=SCHEDULE[new Date().getDay()],
+      dot=document.getElementById('liveDot'),txt=document.getElementById('liveTxt'),
+      cd=document.getElementById('countdown'),
+      place=document.getElementById('todayPlace'),time=document.getElementById('todayTime');
+  place.innerHTML=s.place+(s.open===null?'':' &mdash; '+s.addr);
+  time.innerHTML=s.open===null?'Closed today':fmt(s.open)+' &ndash; '+fmt(s.close);
+  document.getElementById('footPlace').innerHTML=place.innerHTML;
+  document.getElementById('footTime').innerHTML=time.innerHTML;
+  function upd(){
+    var now=new Date(),h=now.getHours()+now.getMinutes()/60,open=false;
+    if(s.open!==null&&h>=s.open&&h<s.close)open=true;
+    txt.textContent=open?'OPEN NOW':'CLOSED';
+    dot.classList.toggle('closed',!open);
+    if(open){
+      var left=(s.close-h)*60,hrs=Math.floor(left/60),min=Math.round(left%60);
+      cd.textContent='CLOSING IN '+(hrs?hrs+'H ':'')+min+'M';
+    }else if(s.open!==null&&h<s.open){
+      var till=(s.open-h)*60,hh=Math.floor(till/60),mm=Math.round(till%60);
+      cd.textContent='OPENS IN '+(hh?hh+'H ':'')+mm+'M';
+    }else{cd.textContent='';}
+  }
+  upd(); setInterval(upd,60000);
+})();
+
+/* menu tabs */
+(function(){
+  var tabs=document.querySelectorAll('.tab'),groups=document.querySelectorAll('#board .group');
+  Array.prototype.forEach.call(tabs,function(t){
+    t.addEventListener('click',function(){
+      Array.prototype.forEach.call(tabs,function(x){x.classList.remove('on');});
+      t.classList.add('on');
+      var c=t.getAttribute('data-cat');
+      Array.prototype.forEach.call(document.querySelectorAll('#board .group'),function(g){
+        var show=(c==='all'||g.getAttribute('data-cat')===c);
+        g.classList.toggle('hide',!show);
+        if(show){g.classList.remove('in');void g.offsetWidth;g.classList.add('in');}
+      });
+    });
+  });
+})();
+
+/* owner edit mode */
+(function(){
+  var KEY='tacomichael.menu.v2',
+      board=document.getElementById('board'),
+      toggle=document.getElementById('editToggle'),
+      save=document.getElementById('saveBtn'),
+      status=document.getElementById('status'),
+      editing=false;
+  function fields(){return board.querySelectorAll('.row .price, .row .name, .group h3, .group .note');}
+  function say(m){status.textContent=m;}
+  try{
+    var stored=localStorage.getItem(KEY);
+    if(stored){
+      board.innerHTML=stored;
+      say('Showing your saved menu.');
+      Array.prototype.forEach.call(board.querySelectorAll('.group'),function(g){g.classList.add('in');});
+    }
+  }catch(e){}
+  toggle.addEventListener('click',function(){
+    editing=!editing;
+    Array.prototype.forEach.call(fields(),function(el){el.setAttribute('contenteditable',editing?'true':'false');});
+    toggle.textContent=editing?'Done editing':'Owner: edit menu';
+    save.hidden=!editing;
+    say(editing?'Click any name, description or price to change it.':'');
+    if(editing){var f=board.querySelector('.price');if(f)f.focus();}
+  });
+  save.addEventListener('click',function(){
+    Array.prototype.forEach.call(fields(),function(el){el.setAttribute('contenteditable','false');});
+    editing=false; toggle.textContent='Owner: edit menu'; save.hidden=true;
+    try{
+      localStorage.setItem(KEY,board.innerHTML);
+      say('Menu saved. Customers see the new prices now.');
+    }catch(e){
+      say('Saved for this visit. Connect the menu database to make it permanent.');
+    }
+  });
+})();
+
+/* catering calculator */
+(function(){
+  var pkgs=document.querySelectorAll('.pkg'),
+      range=document.getElementById('guestRange'),
+      gval=document.getElementById('guestVal'),
+      out=document.getElementById('estOut'),
+      sel=document.getElementById('cpackage'),
+      rate=16,min=400,cur=800;
+  function animate(to){
+    if(reduce){out.textContent='$'+to.toLocaleString();cur=to;return;}
+    var from=cur,t0=null;
+    function step(ts){
+      if(!t0)t0=ts;
+      var p=Math.min((ts-t0)/500,1),e=1-Math.pow(1-p,3),v=Math.round(from+(to-from)*e);
+      out.textContent='$'+v.toLocaleString();
+      if(p<1)requestAnimationFrame(step); else cur=to;
+    }
+    requestAnimationFrame(step);
+  }
+  function calc(){
+    var g=parseInt(range.value,10);
+    gval.textContent=g;
+    animate(Math.max(g*rate,min));
+  }
+  Array.prototype.forEach.call(pkgs,function(p){
+    p.addEventListener('click',function(){
+      Array.prototype.forEach.call(pkgs,function(x){x.classList.remove('on');});
+      p.classList.add('on');
+      rate=parseFloat(p.getAttribute('data-rate'));
+      min=parseFloat(p.getAttribute('data-min'));
+      sel.value=p.getAttribute('data-name');
+      calc();
+    });
+  });
+  range.addEventListener('input',calc);
+  calc();
+})();
+
+/* reviews */
+(function(){
+  var data=[
+    {q:'Best al pastor I have had outside of Mexico City. The pineapple is grilled, not canned. That is the whole difference.',n:'Rosa M. &middot; Regular since 2021'},
+    {q:'We booked the truck for our church picnic. Ninety people fed in under an hour, and everybody asked who the taco guy was.',n:'Pastor Dan W. &middot; Catering client'},
+    {q:'I drive twenty minutes on my lunch break for these. The line moves fast and Michael remembers your order.',n:'Tony R. &middot; Google review'},
+    {q:'The quesabirria on Thursday is worth planning your week around. Bring napkins.',n:'Alicia F. &middot; Google review'}
+  ];
+  var box=document.getElementById('revbox'),nav=document.getElementById('revdots'),i=0,timer;
+  box.innerHTML=data.map(function(d,k){
+    return '<figure class="slide'+(k===0?' on':'')+'"><div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>'+
+      '<blockquote>&ldquo;'+d.q+'&rdquo;</blockquote><cite>'+d.n+'</cite></figure>';
+  }).join('');
+  nav.innerHTML=data.map(function(d,k){
+    return '<button class="dot'+(k===0?' on':'')+'" data-k="'+k+'" aria-label="Review '+(k+1)+'"></button>';
+  }).join('');
+  var slides=box.querySelectorAll('.slide'),dots=nav.querySelectorAll('.dot');
+  function go(k){
+    i=k;
+    Array.prototype.forEach.call(slides,function(s,x){s.classList.toggle('on',x===k);});
+    Array.prototype.forEach.call(dots,function(d,x){d.classList.toggle('on',x===k);});
+  }
+  function loop(){timer=setInterval(function(){go((i+1)%data.length);},6000);}
+  nav.addEventListener('click',function(e){
+    if(e.target.className.indexOf('dot')===-1)return;
+    clearInterval(timer); go(parseInt(e.target.getAttribute('data-k'),10)); loop();
+  });
+  if(!reduce)loop();
+})();
+
+/* catering form */
+(function(){
+  var form=document.getElementById('cateringForm'),msg=document.getElementById('formMsg');
+  form.addEventListener('submit',function(e){
+    e.preventDefault();
+    var req=[['cname','your name'],['cphone','a phone number'],['cemail','an email'],['cdate','an event date']];
+    for(var i=0;i<req.length;i++){
+      var el=document.getElementById(req[i][0]);
+      if(!el.value.trim()){
+        msg.textContent='Add '+req[i][1]+' so we can get back to you.';
+        el.focus(); return;
+      }
+    }
+    msg.textContent='Request sent. Michael calls back within one day.';
+    if(typeof tacoBurst==='function'){tacoBurst(window.innerWidth/2,window.innerHeight/2,26);}
+    form.reset();
+  });
+})();
+
+
+
+/* ===================== LOADER CURTAIN ===================== */
+(function(){
+  var c=document.getElementById('curtain');
+  function lift(){
+    c.classList.add('up');
+    setTimeout(function(){c.classList.add('done');},1400);
+  }
+  window.addEventListener('load',function(){setTimeout(lift,reduce?60:1350);});
+  setTimeout(lift,3300);
+})();
+
+/* ===================== CUSTOM TACO CURSOR ===================== */
+(function(){
+  if(reduce||!window.matchMedia('(hover:hover) and (pointer:fine)').matches)return;
+  var dot=document.getElementById('cur'),ring=document.getElementById('curRing');
+  document.body.classList.add('cursorized');
+  var mx=innerWidth/2,my=innerHeight/2,rx=mx,ry=my;
+  window.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY;});
+  (function loop(){
+    rx+=(mx-rx)*.16; ry+=(my-ry)*.16;
+    dot.style.transform='translate('+mx+'px,'+my+'px)';
+    ring.style.transform='translate('+rx+'px,'+ry+'px)';
+    requestAnimationFrame(loop);
+  })();
+  var hot='a,button,input,textarea,select,.pkg,.row,.daybtn,.sx-card';
+  document.addEventListener('mouseover',function(e){
+    var t=e.target;
+    while(t&&t!==document.body){
+      if(t.matches&&t.matches(hot)){ring.classList.add('hot');return;}
+      t=t.parentNode;
+    }
+    ring.classList.remove('hot');
+  });
+})();
+
+/* ===================== SPLIT HEADING REVEALS ===================== */
+(function(){
+  if(reduce)return;
+  var hs=document.querySelectorAll('h2');
+  Array.prototype.forEach.call(hs,function(h){
+    var txt=h.textContent,out='';
+    for(var i=0;i<txt.length;i++){
+      var c=txt.charAt(i);
+      out+= c===' ' ? '<span class="sp" style="animation-delay:'+(i*0.026)+'s">&nbsp;</span>'
+                    : '<span class="sp" style="animation-delay:'+(i*0.026)+'s">'+c.replace('&','&amp;')+'</span>';
+    }
+    h.innerHTML=out; h.classList.add('split');
+  });
+  if(!('IntersectionObserver' in window)){Array.prototype.forEach.call(hs,function(h){h.classList.add('go');});return;}
+  var io=new IntersectionObserver(function(en){
+    en.forEach(function(x){if(x.isIntersecting){x.target.classList.add('go');io.unobserve(x.target);}});
+  },{threshold:.35});
+  Array.prototype.forEach.call(hs,function(h){io.observe(h);});
+})();
+
+/* ===================== HERO MOUSE PARALLAX ===================== */
+(function(){
+  if(reduce||window.matchMedia('(hover:none)').matches)return;
+  var hero=document.querySelector('.hero');
+  if(!hero)return;
+  var layers=[
+    {el:document.querySelector('.hero h1.big'),f:14},
+    {el:document.querySelector('.board'),f:-22},
+    {el:document.querySelector('.truckwrap'),f:26},
+    {el:document.querySelector('.badge'),f:-34}
+  ];
+  hero.addEventListener('mousemove',function(e){
+    var r=hero.getBoundingClientRect(),
+        x=(e.clientX-r.width/2)/r.width, y=(e.clientY-r.height/2)/r.height;
+    layers.forEach(function(l){
+      if(!l.el)return;
+      l.el.classList.add('plx');
+      l.el.style.transform='translate3d('+(x*l.f)+'px,'+(y*l.f*.55)+'px,0)'+
+        (l.el.classList.contains('board')?' rotate(-1.1deg)':'');
+    });
+  });
+  hero.addEventListener('mouseleave',function(){
+    layers.forEach(function(l){if(l.el)l.el.style.transform=l.el.classList.contains('board')?'rotate(-1.1deg)':'';});
+  });
+})();
+
+/* ===================== SPINNING BADGE ===================== */
+(function(){
+  var b=document.getElementById('badge');
+  if(!b)return;
+  b.innerHTML='<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">'+
+    '<defs><path id="badgePath" d="M100,100 m-72,0 a72,72 0 1,1 144,0 a72,72 0 1,1 -144,0"/></defs>'+
+    '<circle cx="100" cy="100" r="92" fill="#170B1B"/>'+
+    '<circle cx="100" cy="100" r="86" fill="none" stroke="#FFC02E" stroke-width="2" stroke-dasharray="4 7"/>'+
+    '<text font-family="Bungee, sans-serif" font-size="17" fill="#FFC02E" letter-spacing="3">'+
+    '<textPath href="#badgePath" xlink:href="#badgePath">MESQUITE GRILLED &#9670; MADE TO ORDER &#9670; SINCE DAY ONE &#9670; </textPath></text></svg>'+
+    '<div class="core">'+tacoSVG(0)+'</div>';
+})();
+
+/* ===================== 3D TILT CARDS ===================== */
+(function(){
+  if(reduce||window.matchMedia('(hover:none)').matches)return;
+  var els=document.querySelectorAll('.pkg,.sx-card,.stat,.calc');
+  Array.prototype.forEach.call(els,function(el){
+    el.classList.add('tilt');
+    el.addEventListener('mousemove',function(e){
+      var r=el.getBoundingClientRect(),
+          x=(e.clientX-(r.left+r.width/2))/(r.width/2),
+          y=(e.clientY-(r.top+r.height/2))/(r.height/2);
+      el.style.transform='perspective(900px) rotateY('+(x*7)+'deg) rotateX('+(-y*7)+'deg) translateZ(14px)';
+    });
+    el.addEventListener('mouseleave',function(){el.style.transform='';});
+  });
+})();
+
+/* ===================== SCROLL-VELOCITY SKEW ===================== */
+(function(){
+  if(reduce)return;
+  var targets=[document.getElementById('mq'),document.getElementById('conga')].filter(Boolean);
+  var last=window.pageYOffset,cur=0,tgt=0;
+  window.addEventListener('scroll',function(){
+    var y=window.pageYOffset;
+    tgt=Math.max(-9,Math.min(9,(y-last)*0.32));
+    last=y;
+  },{passive:true});
+  (function loop(){
+    tgt*=0.9; cur+=(tgt-cur)*0.14;
+    targets.forEach(function(t){t.style.transform='skewY('+cur.toFixed(2)+'deg)';});
+    requestAnimationFrame(loop);
+  })();
+})();
+
+/* ===================== TACO EYES FOLLOW CURSOR ===================== */
+(function(){
+  if(reduce||window.matchMedia('(hover:none)').matches)return;
+  var mx=0,my=0,queued=false;
+  function move(){
+    queued=false;
+    var eyes=document.querySelectorAll('.mascot .tk-eye, .sx-card .tk-eye, .badge .tk-eye');
+    Array.prototype.forEach.call(eyes,function(p){
+      var r=p.getBoundingClientRect(),
+          dx=mx-(r.left+r.width/2), dy=my-(r.top+r.height/2),
+          d=Math.sqrt(dx*dx+dy*dy)||1,
+          lim=Math.min(d/26,2.6);
+      p.setAttribute('transform','translate('+((dx/d)*lim).toFixed(2)+','+((dy/d)*lim).toFixed(2)+')');
+    });
+  }
+  window.addEventListener('mousemove',function(e){
+    mx=e.clientX;my=e.clientY;
+    if(!queued){queued=true;requestAnimationFrame(move);}
+  },{passive:true});
+})();
+
+/* ===================== FLYING TACO ON MENU HOVER ===================== */
+(function(){
+  if(reduce||window.matchMedia('(hover:none)').matches)return;
+  var busy=0;
+  document.addEventListener('mouseover',function(e){
+    var t=e.target;
+    while(t&&t!==document.body&&!(t.classList&&t.classList.contains('row'))){t=t.parentNode;}
+    if(!t||t===document.body)return;
+    var now=Date.now(); if(now-busy<260)return; busy=now;
+    var r=t.getBoundingClientRect();
+    var d=document.createElement('div');
+    d.className='confetti'; d.style.width='26px';
+    d.style.left=(r.right-30)+'px'; d.style.top=(r.top+6)+'px';
+    d.innerHTML=tacoSVG(0);
+    document.body.appendChild(d);
+    var t0=null;
+    (function step(ts){
+      if(!t0)t0=ts;
+      var p=Math.min((ts-t0)/850,1);
+      d.style.transform='translate('+(p*54)+'px,'+(-p*70)+'px) rotate('+(p*300)+'deg) scale('+(1-p*.4)+')';
+      d.style.opacity=String(1-p);
+      if(p<1)requestAnimationFrame(step); else if(d.parentNode)d.parentNode.removeChild(d);
+    })(performance.now());
+  });
+})();
+
+/* ===================== CLICK RIPPLE ===================== */
+(function(){
+  var sel='.pill,.submit,.btn-lg,.btn,.tab,.pkg,.daybtn';
+  document.addEventListener('click',function(e){
+    var t=e.target;
+    while(t&&t!==document.body&&!(t.matches&&t.matches(sel))){t=t.parentNode;}
+    if(!t||t===document.body)return;
+    var r=t.getBoundingClientRect(),size=Math.max(r.width,r.height);
+    var i=document.createElement('span');
+    i.className='rip';
+    i.style.width=i.style.height=size+'px';
+    i.style.left=(e.clientX-r.left-size/2)+'px';
+    i.style.top=(e.clientY-r.top-size/2)+'px';
+    t.appendChild(i);
+    setTimeout(function(){if(i.parentNode)i.parentNode.removeChild(i);},680);
+  });
+})();
+
+/* ===================== FLOATING PRODUCE PARALLAX ===================== */
+(function(){
+  if(reduce)return;
+  var lime='<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="#7FC93F"/><circle cx="50" cy="50" r="37" fill="#DCF08E"/><g stroke="#7FC93F" stroke-width="4"><path d="M50 13 L50 87"/><path d="M13 50 L87 50"/><path d="M24 24 L76 76"/><path d="M76 24 L24 76"/></g></svg>';
+  var chile='<svg viewBox="0 0 100 100"><path d="M40 26 q30 -8 36 22 q6 34 -26 40 q-32 6 -30 -24 q2 -28 20 -38 Z" fill="#FF4B1F"/><path d="M40 26 q-6 -18 12 -22" stroke="#0A6B54" stroke-width="9" fill="none" stroke-linecap="round"/></svg>';
+  var onion='<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" fill="#FFF7E6"/><circle cx="50" cy="50" r="30" fill="none" stroke="#E6D6BC" stroke-width="5"/><circle cx="50" cy="50" r="16" fill="none" stroke="#E6D6BC" stroke-width="5"/></svg>';
+  var spots=[
+    {sec:'#stops',svg:lime,   css:'left:2%;top:12%;width:96px',f:.16},
+    {sec:'#stops',svg:chile,  css:'right:3%;top:64%;width:120px',f:-.22},
+    {sec:'#about',svg:onion,  css:'left:4%;top:18%;width:86px',f:.19},
+    {sec:'#about',svg:chile,  css:'right:5%;top:8%;width:104px',f:-.14},
+    {sec:'#reviews',svg:lime, css:'right:6%;top:20%;width:110px',f:.24}
+  ];
+  var made=[];
+  spots.forEach(function(sp){
+    var sec=document.querySelector(sp.sec);
+    if(!sec)return;
+    var d=document.createElement('div');
+    d.className='produce'; d.setAttribute('aria-hidden','true');
+    d.setAttribute('style',sp.css); d.innerHTML=sp.svg;
+    sec.appendChild(d); made.push({el:d,f:sp.f,sec:sec});
+  });
+  var queued=false;
+  function paint(){
+    queued=false;
+    made.forEach(function(m){
+      var r=m.sec.getBoundingClientRect();
+      var off=(r.top-window.innerHeight/2)*m.f;
+      m.el.style.transform='translateY('+off.toFixed(1)+'px) rotate('+(off*.35).toFixed(1)+'deg)';
+    });
+  }
+  window.addEventListener('scroll',function(){if(!queued){queued=true;requestAnimationFrame(paint);}},{passive:true});
+  paint();
+})();
+
+/* ===================== TACO CHARACTER FACTORY ===================== */
+function tacoSVG(delay,scaleClass){
+  return '<svg class="tk '+(scaleClass||'')+'" viewBox="0 0 120 122" style="--d:'+delay+'s" xmlns="http://www.w3.org/2000/svg">'+
+    '<g class="tk-legL"><rect x="43" y="82" width="9" height="23" rx="4.5" fill="url(#gLimb)"/><ellipse cx="47" cy="108" rx="10" ry="5" fill="#170B1B"/></g>'+
+    '<g class="tk-legR"><rect x="68" y="82" width="9" height="23" rx="4.5" fill="url(#gLimb)"/><ellipse cx="72" cy="108" rx="10" ry="5" fill="#170B1B"/></g>'+
+    '<g class="tk-body">'+
+      '<circle cx="32" cy="64" r="10" fill="#0A6B54"/>'+
+      '<circle cx="48" cy="54" r="11" fill="#FF4B1F"/>'+
+      '<circle cx="62" cy="50" r="12" fill="#6E3320"/>'+
+      '<circle cx="76" cy="55" r="11" fill="#17C79A"/>'+
+      '<circle cx="90" cy="64" r="10" fill="#FF4B1F"/>'+
+      '<path d="M18 86 A42 42 0 0 1 102 86 Z" fill="url(#gShell)" stroke="#C77E05" stroke-width="4"/>'+'<path d="M26 80 A34 34 0 0 1 60 46" fill="none" stroke="#FFF1DC" stroke-width="6" stroke-linecap="round" opacity=".45"/>'+'<path d="M22 86 A38 38 0 0 0 98 86 Z" fill="#8A5504" opacity=".22"/>'+
+      '<path d="M28 86 A32 32 0 0 1 92 86" fill="none" stroke="#E08A0B" stroke-width="5" opacity=".45"/>'+
+      '<ellipse cx="34" cy="79" rx="7" ry="4.5" fill="#FF4B1F" opacity=".4"/>'+
+      '<ellipse cx="88" cy="79" rx="7" ry="4.5" fill="#FF4B1F" opacity=".4"/>'+
+      '<circle cx="48" cy="71" r="8" fill="#FFF7E6"/><circle class="tk-eye" cx="49.5" cy="72" r="4" fill="#170B1B"/>'+
+      '<circle cx="74" cy="71" r="8" fill="#FFF7E6"/><circle class="tk-eye" cx="75.5" cy="72" r="4" fill="#170B1B"/>'+
+      '<path d="M54 82 q7 8 15 0" fill="none" stroke="#170B1B" stroke-width="3.4" stroke-linecap="round"/>'+
+      '<g class="tk-armL"><path d="M22 76 q-15 5 -17 18" fill="none" stroke="url(#gLimb)" stroke-width="7" stroke-linecap="round"/></g>'+
+      '<g class="tk-armR"><path d="M98 76 q15 -7 19 -18" fill="none" stroke="url(#gLimb)" stroke-width="7" stroke-linecap="round"/></g>'+
+    '</g></svg>';
+}
+
+/* hero mascot */
+(function(){
+  var board=document.querySelector('.board');
+  if(!board)return;
+  var d=document.createElement('div');
+  d.className='mascot'; d.setAttribute('aria-hidden','true');
+  d.innerHTML=tacoSVG(0);
+  board.appendChild(d);
+})();
+
+/* conga line */
+(function(){
+  var el=document.getElementById('conga');
+  if(!el)return;
+  var one='';
+  for(var i=0;i<11;i++){one+=tacoSVG((i%6)*0.16);}
+  el.innerHTML=one+one;
+})();
+
+/* tacos inside the slide-through cards */
+(function(){
+  var slots=document.querySelectorAll('.tkslot');
+  Array.prototype.forEach.call(slots,function(sl,i){sl.innerHTML=tacoSVG(i*0.2);});
+})();
+
+/* ===================== SCROLL-DRIVEN ASSEMBLY ===================== */
+(function(){
+  var wrap=document.getElementById('asmWrap');
+  if(!wrap)return;
+  var stage=document.getElementById('asmStage'),
+      rail=document.getElementById('asmRail'),
+      count=document.getElementById('asmCount'),
+      layers=stage.querySelectorAll('.ly'),
+      steps=wrap.querySelectorAll('.asm-step'),
+      total=layers.length,queued=false,last=-1;
+
+  function paint(){
+    queued=false;
+    var r=wrap.getBoundingClientRect(),
+        span=wrap.offsetHeight-window.innerHeight;
+    if(span<=0)span=1;
+    var p=Math.min(Math.max(-r.top/span,0),1);
+    rail.style.height=(p*100)+'%';
+    var idx=Math.min(Math.floor(p*total*1.06),total-1);
+    if(idx!==last){
+      last=idx;
+      Array.prototype.forEach.call(layers,function(l,i){l.classList.toggle('on',i<=idx);});
+      Array.prototype.forEach.call(steps,function(st,i){st.classList.toggle('on',i===idx);});
+      count.innerHTML='0'+(idx+1)+' &mdash; 0'+total;
+      stage.classList.toggle('done',idx>=total-1);
+    }
+  }
+  function onScroll(){if(!queued){queued=true;requestAnimationFrame(paint);}}
+  window.addEventListener('scroll',onScroll,{passive:true});
+  window.addEventListener('resize',onScroll);
+  paint();
+})();
+
+/* ===================== HORIZONTAL SLIDE-THROUGH ===================== */
+(function(){
+  var wrap=document.getElementById('sxWrap'),track=document.getElementById('sxTrack');
+  if(!wrap||!track)return;
+  var queued=false;
+  function paint(){
+    queued=false;
+    var r=wrap.getBoundingClientRect(),
+        span=wrap.offsetHeight-window.innerHeight;
+    if(span<=0)span=1;
+    var p=Math.min(Math.max(-r.top/span,0),1),
+        dist=Math.max(track.scrollWidth-window.innerWidth,0);
+    track.style.transform='translate3d('+(-p*dist)+'px,0,0)';
+  }
+  function onScroll(){if(!queued){queued=true;requestAnimationFrame(paint);}}
+  window.addEventListener('scroll',onScroll,{passive:true});
+  window.addEventListener('resize',onScroll);
+  paint();
+})();
+
+/* ===================== MENU ROWS SLIDE IN ===================== */
+(function(){
+  if(reduce||!('IntersectionObserver' in window))return;
+  var rows=document.querySelectorAll('#board .row');
+  Array.prototype.forEach.call(rows,function(r,i){r.classList.add(i%2?'sr':'sl');});
+  var io=new IntersectionObserver(function(en){
+    en.forEach(function(x){
+      if(!x.isIntersecting)return;
+      var el=x.target,d=(el.parentNode?Array.prototype.indexOf.call(el.parentNode.children,el):0);
+      setTimeout(function(){el.classList.add('in');},Math.min(d,8)*55);
+      io.unobserve(el);
+    });
+  },{threshold:.2});
+  Array.prototype.forEach.call(rows,function(r){io.observe(r);});
+})();
+
+/* ===================== TACO CONFETTI ===================== */
+function tacoBurst(x,y,n){
+  if(reduce)return;
+  n=n||16;
+  for(var i=0;i<n;i++){
+    (function(i){
+      var d=document.createElement('div');
+      d.className='confetti';
+      d.style.left=x+'px'; d.style.top=y+'px';
+      d.style.width=(16+Math.random()*20)+'px';
+      d.innerHTML=tacoSVG(0);
+      document.body.appendChild(d);
+      var ang=(Math.PI*2)*(i/n)+Math.random()*.5,
+          vel=140+Math.random()*230,
+          dx=Math.cos(ang)*vel, dy=Math.sin(ang)*vel-160,
+          rot=(Math.random()*720-360), t0=null, dur=900+Math.random()*500;
+      function step(ts){
+        if(!t0)t0=ts;
+        var p=Math.min((ts-t0)/dur,1);
+        var px=dx*p, py=dy*p+520*p*p;
+        d.style.transform='translate('+px+'px,'+py+'px) rotate('+(rot*p)+'deg)';
+        d.style.opacity=String(1-p*p);
+        if(p<1){requestAnimationFrame(step);}else if(d.parentNode){d.parentNode.removeChild(d);}
+      }
+      requestAnimationFrame(step);
+    })(i);
+  }
+}
+(function(){
+  var btns=document.querySelectorAll('.btn-fill, .submit, .pill');
+  Array.prototype.forEach.call(btns,function(b){
+    b.addEventListener('click',function(e){
+      var r=b.getBoundingClientRect();
+      tacoBurst(r.left+r.width/2,r.top+r.height/2,14);
+    });
+  });
+})();
+
+/* ===================== MAGNETIC BUTTONS ===================== */
+(function(){
+  if(reduce||window.matchMedia('(hover:none)').matches)return;
+  var els=document.querySelectorAll('.btn-lg, .pill, .submit, .tab');
+  Array.prototype.forEach.call(els,function(el){
+    el.classList.add('magnet');
+    el.addEventListener('mousemove',function(e){
+      var r=el.getBoundingClientRect();
+      var mx=(e.clientX-(r.left+r.width/2))/r.width,
+          my=(e.clientY-(r.top+r.height/2))/r.height;
+      el.style.transform='translate('+(mx*10)+'px,'+(my*7)+'px)';
+    });
+    el.addEventListener('mouseleave',function(){el.style.transform='';});
+  });
+})();
+
+
+
+/* ===================== LOADER: taco + percent ===================== */
+(function(){
+  var t=document.getElementById('loadTaco'),pct=document.getElementById('loadPct');
+  if(t)t.innerHTML=tacoSVG(0);
+  if(!pct)return;
+  var t0=null;
+  function step(ts){
+    if(!t0)t0=ts;
+    var p=Math.min((ts-t0)/1300,1);
+    pct.textContent=Math.round(p*100)+'%';
+    if(p<1)requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+})();
+
+/* ===================== GRILL FLAMES ===================== */
+(function(){
+  var g=document.getElementById('grillband');
+  if(!g)return;
+  var h='';
+  for(var i=0;i<40;i++){
+    h+='<i style="left:'+(i*2.6)+'%;animation-delay:'+(Math.random()*1.5).toFixed(2)+'s;height:'+(28+Math.random()*30)+'px"></i>';
+  }
+  g.innerHTML=h;
+})();
+
+/* ===================== HERO MOUSE PARALLAX ===================== */
+(function(){
+  if(reduce||window.matchMedia('(hover:none)').matches)return;
+  var hero=document.getElementById('top');
+  if(!hero)return;
+  var els=hero.querySelectorAll('.plx');
+  hero.addEventListener('mousemove',function(e){
+    var r=hero.getBoundingClientRect(),
+        mx=(e.clientX-(r.left+r.width/2))/r.width,
+        my=(e.clientY-(r.top+r.height/2))/r.height;
+    Array.prototype.forEach.call(els,function(el){
+      var f=parseFloat(el.getAttribute('data-plx'))||10;
+      el.style.transform='translate3d('+(mx*f)+'px,'+(my*f*.6)+'px,0)';
+    });
+  });
+  hero.addEventListener('mouseleave',function(){
+    Array.prototype.forEach.call(els,function(el){el.style.transform='';});
+  });
+})();
+
+/* ===================== CURSOR TACO TRAIL ===================== */
+(function(){
+  if(reduce||window.matchMedia('(hover:none)').matches)return;
+  var last=0;
+  document.addEventListener('mousemove',function(e){
+    var now=Date.now();
+    if(now-last<95)return;
+    last=now;
+    var d=document.createElement('div');
+    d.className='trail';
+    d.style.left=(e.clientX-13)+'px';
+    d.style.top=(e.clientY-13)+'px';
+    d.innerHTML=tacoSVG(0);
+    document.body.appendChild(d);
+    var t0=null,rot=Math.random()*160-80;
+    function step(ts){
+      if(!t0)t0=ts;
+      var p=Math.min((ts-t0)/620,1);
+      d.style.transform='translateY('+(p*26)+'px) scale('+(1-p*.7)+') rotate('+(rot*p)+'deg)';
+      d.style.opacity=String(.85*(1-p));
+      if(p<1)requestAnimationFrame(step);
+      else if(d.parentNode)d.parentNode.removeChild(d);
+    }
+    requestAnimationFrame(step);
+  });
+})();
+
+/* ===================== SPLIT LETTER HEADINGS ===================== */
+(function(){
+  if(reduce||!('IntersectionObserver' in window))return;
+  var heads=document.querySelectorAll('h2');
+  var io=new IntersectionObserver(function(en){
+    en.forEach(function(x){if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target);}});
+  },{threshold:.3});
+  Array.prototype.forEach.call(heads,function(h){
+    var txt=h.textContent,out='',i,ch;
+    for(i=0;i<txt.length;i++){
+      ch=txt.charAt(i);
+      if(ch===' '){out+=' ';continue;}
+      out+='<span class="spl"><i style="transition-delay:'+(i*0.028).toFixed(3)+'s">'+
+           (ch==='&'?'&amp;':ch)+'</i></span>';
+    }
+    h.innerHTML=out;
+    h.classList.add('spl-host');
+    io.observe(h);
+  });
+  var st=document.createElement('style');
+  st.textContent='h2.in .spl i{transform:none;opacity:1}';
+  document.head.appendChild(st);
+})();
+
+/* ===================== SCROLL VELOCITY SKEW ===================== */
+(function(){
+  if(reduce)return;
+  var runs=document.querySelectorAll('.marquee__run,.conga__run'),
+      lastY=window.pageYOffset,vel=0,queued=false;
+  function paint(){
+    queued=false;
+    var y=window.pageYOffset;
+    vel=Math.max(-14,Math.min(14,(y-lastY)*0.4));
+    lastY=y;
+    Array.prototype.forEach.call(runs,function(r){
+      r.style.setProperty('--sk',vel.toFixed(2)+'deg');
+      r.style.filter=Math.abs(vel)>7?'blur(1px)':'none';
+    });
+    document.documentElement.style.setProperty('--vel',vel.toFixed(2)+'deg');
+  }
+  window.addEventListener('scroll',function(){if(!queued){queued=true;requestAnimationFrame(paint);}},{passive:true});
+  var st=document.createElement('style');
+  st.textContent='.marquee,.conga{transform:skewY(calc(var(--vel,0deg) * .12));transition:transform .35s cubic-bezier(.22,1,.36,1)}';
+  document.head.appendChild(st);
+})();
+
+/* ===================== MENU TAB 3D FLIP ===================== */
+(function(){
+  var tabs=document.querySelectorAll('.tab');
+  Array.prototype.forEach.call(tabs,function(t){
+    t.addEventListener('click',function(){
+      if(reduce)return;
+      var vis=document.querySelectorAll('#board .group:not(.hide)');
+      Array.prototype.forEach.call(vis,function(g,i){
+        g.classList.remove('flip'); void g.offsetWidth;
+        g.style.animationDelay=(i*0.08)+'s';
+        g.classList.add('flip');
+      });
+    });
+  });
+})();
+
+
+/* ===================== 100-TACO EXPLOSION ENGINE ===================== */
+function tacoMini(){
+  return '<svg viewBox="0 0 40 34" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block">'+
+    '<circle cx="12" cy="14" r="6" fill="#17C79A"/>'+
+    '<circle cx="20" cy="11" r="6.5" fill="#6E3320"/>'+
+    '<circle cx="28" cy="14" r="6" fill="#FF4B1F"/>'+
+    '<path d="M4 26 A16 16 0 0 1 36 26 Z" fill="url(#gShell)" stroke="#C77E05" stroke-width="2"/></svg>';
+}
+var BOOM={list:[],layer:null,running:false,last:0};
+function boomLayer(){
+  if(!BOOM.layer){
+    var d=document.createElement('div');
+    d.style.cssText='position:fixed;inset:0;pointer-events:none;z-index:9350;overflow:hidden';
+    document.body.appendChild(d);
+    BOOM.layer=d;
+  }
+  return BOOM.layer;
+}
+function boomTick(ts){
+  if(!BOOM.last)BOOM.last=ts;
+  var dt=Math.min((ts-BOOM.last)/1000,0.05);
+  BOOM.last=ts;
+  var keep=[],i,pt;
+  for(i=0;i<BOOM.list.length;i++){
+    pt=BOOM.list[i];
+    pt.t+=dt;
+    pt.vy+=1450*dt;
+    pt.vx*=0.995;
+    pt.x+=pt.vx*dt;
+    pt.y+=pt.vy*dt;
+    pt.r+=pt.vr*dt;
+    var life=pt.t/pt.life;
+    if(life>=1||pt.y>window.innerHeight+140){
+      if(pt.el.parentNode)pt.el.parentNode.removeChild(pt.el);
+      continue;
+    }
+    pt.el.style.transform='translate3d('+pt.x+'px,'+pt.y+'px,0) rotate('+pt.r+'deg)';
+    if(life>0.7)pt.el.style.opacity=String(1-(life-0.7)/0.3);
+    keep.push(pt);
+  }
+  BOOM.list=keep;
+  if(BOOM.list.length){requestAnimationFrame(boomTick);}
+  else{BOOM.running=false;BOOM.last=0;}
+}
+function tacoExplode(x,y,n){
+  if(reduce)return;
+  n=n||100;
+  if(BOOM.list.length>460)n=Math.max(0,460-BOOM.list.length);
+  if(!n)return;
+  var layer=boomLayer(),frag=document.createDocumentFragment(),i;
+  for(i=0;i<n;i++){
+    var ang=Math.random()*Math.PI*2,
+        pow=180+Math.random()*640,
+        sz=13+Math.random()*26,
+        el=document.createElement('div');
+    el.style.cssText='position:absolute;left:0;top:0;width:'+sz.toFixed(0)+'px;will-change:transform,opacity';
+    el.innerHTML=tacoMini();
+    frag.appendChild(el);
+    BOOM.list.push({
+      el:el,x:x-sz/2,y:y-sz/2,
+      vx:Math.cos(ang)*pow,
+      vy:Math.sin(ang)*pow-320-Math.random()*260,
+      r:Math.random()*360,vr:Math.random()*900-450,
+      t:0,life:1.4+Math.random()*1.2
+    });
+  }
+  layer.appendChild(frag);
+  if(!BOOM.running){BOOM.running=true;BOOM.last=0;requestAnimationFrame(boomTick);}
+}
+
+/* ===================== CRAVING BASKET + FLYING TACOS ===================== */
+(function(){
+  var chip=document.getElementById('craving'),num=document.getElementById('cravN');
+  if(!chip)return;
+  chip.insertAdjacentHTML('afterbegin',tacoSVG(0));
+  var count=0;
+  function fly(from){
+    var to=chip.getBoundingClientRect();
+    var d=document.createElement('div');
+    d.className='flyer';
+    d.innerHTML=tacoSVG(0);
+    d.style.left=from.x+'px'; d.style.top=from.y+'px';
+    document.body.appendChild(d);
+    var dx=(to.left+to.width/2)-from.x, dy=(to.top+to.height/2)-from.y,
+        t0=null,rot=Math.random()*540-270;
+    function step(ts){
+      if(!t0)t0=ts;
+      var p=Math.min((ts-t0)/760,1),e=1-Math.pow(1-p,2.2);
+      var x=dx*e, y=dy*e-Math.sin(Math.PI*p)*170;
+      d.style.transform='translate('+x+'px,'+y+'px) rotate('+(rot*p)+'deg) scale('+(1-p*.45)+')';
+      d.style.opacity=String(1-Math.pow(p,4));
+      if(p<1)requestAnimationFrame(step);
+      else{
+        if(d.parentNode)d.parentNode.removeChild(d);
+        count++; num.textContent=count;
+        chip.classList.remove('pop'); void chip.offsetWidth; chip.classList.add('pop');
+      }
+    }
+    requestAnimationFrame(step);
+  }
+  document.getElementById('board').addEventListener('click',function(e){
+    if(document.querySelector('#board [contenteditable="true"]'))return;
+    var r=e.target;
+    while(r&&r.id!=='board'&&r.className.indexOf('row')===-1){r=r.parentNode;}
+    if(!r||r.id==='board')return;
+    if(reduce){count++;num.textContent=count;return;}
+    var b=r.getBoundingClientRect();
+    var ox=Math.max(Math.min(e.clientX,window.innerWidth-10),10),
+        oy=Math.max(Math.min(e.clientY,window.innerHeight-10),10);
+    tacoExplode(ox,oy,100);
+    r.classList.remove('kapow'); void r.offsetWidth; r.classList.add('kapow');
+    fly({x:b.left+Math.min(b.width*.3,180),y:b.top});
+  });
+  chip.addEventListener('click',function(){
+    if(count>0&&typeof tacoBurst==='function'){
+      var r=chip.getBoundingClientRect();
+      tacoBurst(r.left+r.width/2,r.top+r.height/2,Math.min(count*2+6,28));
+    }
+    count=0; num.textContent='0';
+    chip.classList.remove('pop'); void chip.offsetWidth; chip.classList.add('pop');
+  });
+})();
+
+/* ===================== TACO RAIN EASTER EGG ===================== */
+(function(){
+  var logo=document.querySelector('header .mark');
+  if(!logo)return;
+  var hits=0,timer;
+  function rain(){
+    if(reduce)return;
+    for(var i=0;i<64;i++){
+      (function(i){
+        setTimeout(function(){
+          var d=document.createElement('div');
+          d.className='rainer';
+          d.style.left=(Math.random()*100)+'vw';
+          d.style.width=(24+Math.random()*34)+'px';
+          d.innerHTML=tacoSVG(0);
+          document.body.appendChild(d);
+          var t0=null,dur=2200+Math.random()*1800,
+              rot=Math.random()*900-450,drift=Math.random()*160-80,
+              fall=window.innerHeight+160;
+          function step(ts){
+            if(!t0)t0=ts;
+            var p=Math.min((ts-t0)/dur,1);
+            d.style.transform='translate('+(drift*p)+'px,'+(fall*p)+'px) rotate('+(rot*p)+'deg)';
+            if(p<1)requestAnimationFrame(step);
+            else if(d.parentNode)d.parentNode.removeChild(d);
+          }
+          requestAnimationFrame(step);
+        },i*45);
+      })(i);
+    }
+  }
+  logo.addEventListener('click',function(e){
+    hits++;
+    clearTimeout(timer);
+    timer=setTimeout(function(){hits=0;},900);
+    if(hits>=3){hits=0;e.preventDefault();rain();}
+  });
+})();
+
+
+/* ===================== 3D TILT ON CARDS ===================== */
+(function(){
+  if(reduce||window.matchMedia('(hover:none)').matches)return;
+  var els=document.querySelectorAll('.sx-card,.stat,.pkg,.calc');
+  Array.prototype.forEach.call(els,function(el){
+    el.addEventListener('mousemove',function(e){
+      var r=el.getBoundingClientRect(),
+          mx=(e.clientX-(r.left+r.width/2))/r.width,
+          my=(e.clientY-(r.top+r.height/2))/r.height;
+      el.style.transform='perspective(1000px) rotateY('+(mx*11)+'deg) rotateX('+(-my*11)+'deg) translateZ(14px)';
+    });
+    el.addEventListener('mouseleave',function(){el.style.transform='';});
+  });
+})();
+
+document.getElementById('yr').textContent=new Date().getFullYear();
+})();
+</script>
+<style>
+#da-open{position:fixed;right:20px;bottom:20px;z-index:99998;width:58px;height:58px;
+  border-radius:50%;border:0;cursor:pointer;background:#ffc02e;color:#1a1410;
+  font-size:24px;box-shadow:0 8px 26px rgba(0,0,0,.4);transition:transform .25s;}
+#da-open:hover{transform:scale(1.08);}
+.da-ping{position:absolute;top:2px;right:2px;width:13px;height:13px;border-radius:50%;
+  background:#28c76f;border:2px solid #1a1410;}
+#da-panel{position:fixed;right:20px;bottom:88px;z-index:99999;
+  width:min(360px,calc(100vw - 40px));max-height:min(560px,calc(100vh - 130px));
+  background:#1a1410;border:1.5px solid rgba(255,192,46,.3);border-radius:16px;
+  display:none;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.6);}
+#da-panel.on{display:flex;}
+.da-top{display:flex;align-items:center;gap:11px;padding:13px 15px;
+  background:rgba(255,192,46,.07);border-bottom:1px solid rgba(255,192,46,.18);}
+.da-av{width:34px;height:34px;border-radius:50%;background:rgba(255,192,46,.14);
+  display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+.da-top b{font-family:'Bungee',cursive;font-size:14px;display:block;}
+.da-top small{font-size:11px;color:var(--mid);}
+.da-x{margin-left:auto;background:none;border:0;color:rgba(255,255,255,.45);
+  font-size:21px;cursor:pointer;line-height:1;}
+#da-body{flex:1;overflow-y:auto;padding:15px;min-height:190px;}
+.da-m{margin-bottom:10px;display:flex;}
+.da-m.u{justify-content:flex-end;}
+.da-b{max-width:85%;padding:10px 14px;border-radius:14px;font-size:14px;line-height:1.55;
+  white-space:pre-wrap;}
+.da-m.a .da-b{background:rgba(255,255,255,.06);border-bottom-left-radius:4px;}
+.da-m.u .da-b{background:rgba(255,192,46,.16);border:1px solid rgba(255,192,46,.25);
+  border-bottom-right-radius:4px;}
+.da-t{display:inline-flex;gap:4px;padding:3px 0;}
+.da-t i{width:6px;height:6px;border-radius:50%;background:#ffc02e;animation:daB 1.2s infinite;}
+.da-t i:nth-child(2){animation-delay:.2s;} .da-t i:nth-child(3){animation-delay:.4s;}
+@keyframes daB{0%,60%,100%{opacity:.3;}30%{opacity:1;}}
+.da-chips{display:flex;gap:7px;flex-wrap:wrap;padding:0 15px 12px;}
+.da-chip{background:rgba(255,192,46,.08);border:1px solid rgba(255,192,46,.25);
+  color:#ffc02e;font-size:12.5px;padding:7px 13px;border-radius:99px;cursor:pointer;
+  transition:background .2s;font-family:'Karla',system-ui,sans-serif;}
+.da-chip:hover{background:rgba(255,192,46,.18);}
+.da-foot{padding:11px 15px;border-top:1px solid rgba(255,255,255,.08);text-align:center;}
+.da-foot a{color:#ffc02e;font-size:12.5px;text-decoration:none;
+  font-family:'Bungee',cursive;font-weight:700;}
+.da-foot a:hover{text-decoration:underline;}
+
+
+.da-input{display:flex;gap:8px;padding:0 15px 12px;}
+.da-input input{flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);
+  border-radius:99px;padding:11px 16px;color:#fff;font-size:14px;outline:none;
+  font-family:'Karla',system-ui,sans-serif;}
+.da-input input:focus{border-color:#ffc02e;}
+.da-input input::placeholder{color:rgba(255,255,255,.25);}
+
+/* keep the widget above and unaffected by the host site's animations */
+#da-panel, #da-panel *{opacity:1 !important;transform:none !important;
+  animation:none !important;filter:none !important;}
+#da-panel{background:#171009 !important;backdrop-filter:none !important;}
+#da-panel .da-t i{animation:daB 1.2s infinite !important;}
+#da-open{opacity:1 !important;}
+
+.da-input button{background:#ffc02e;border:0;border-radius:50%;width:40px;height:40px;
+  font-size:16px;cursor:pointer;color:#1a1410;flex-shrink:0;}
+</style>
+<!-- ═══ DEMO ASSISTANT ═══ -->
+<button id="da-open" aria-label="See how the AI assistant works">
+  <span>🌮</span><i class="da-ping"></i>
+</button>
+
+<div id="da-panel" role="dialog" aria-label="AI assistant preview">
+  <div class="da-top">
+    <div class="da-av">🌮</div>
+    <div style="flex:1;min-width:0;">
+      <b>Taco Michael</b>
+      <small>Ask about hours, the menu, or catering</small>
+    </div>
+    <button class="da-x" onclick="daToggle()" aria-label="Close">×</button>
+  </div>
+
+  <div id="da-body"></div>
+
+  <div id="da-chips" class="da-chips"></div>
+
+  <div class="da-input">
+    <input id="da-in" placeholder="Ask anything…" onkeydown="if(event.key==='Enter')daSend()">
+    <button onclick="daSend()" aria-label="Send">→</button>
+  </div>
+
+  <div class="da-foot">
+    <a href="index.html#contact">Want this on your site? Built by Tech Bros for Yeshua →</a>
+  </div>
+</div>
+
+<script>
+// ── DEMO ASSISTANT ──
+// Scripted on purpose: it must never fail on the page that sells it.
+// EDIT THE ANSWERS BELOW — `k` is the keywords that trigger it.
+(function(){
+
+  const QA = [
+    { q: "Where are you today?",
+      k: ["where", "today", "location", "parked", "find", "address", "spot", "now"],
+      a: "Depends on the day! Mon and Thu we're at Riverside Plaza (4th & Main), Tue at the Fairgrounds, Wed at the Industrial Park, Fri at Brewery Row, and Sat at the Farmers Market. Full schedule's on this page." },
+    { q: "What time do you open?",
+      k: ["time", "open", "hours", "close", "closing", "when", "late", "early"],
+      a: "Most days 11am\u20138pm. Wednesday is a half day (10:30\u20133), Friday we're 4\u201310pm at Brewery Row, and Saturday is 8am\u20132pm. Closed Sundays \u2014 family day." },
+    { q: "Do you have vegetarian options?",
+      k: ["veg", "vegetarian", "vegan", "meat free", "meatless", "no meat"],
+      a: "We do \u2014 the Nopal & Queso taco is $3.25, grilled cactus with cheese. The rice and beans are vegetarian too, so you can build a decent plate." },
+    { q: "How much are the tacos?",
+      k: ["price", "cost", "much", "expensive", "cheap", "menu"],
+      a: "Tacos run $3.25 to $3.75 \u2014 Pollo Asado $3.25, Al Pastor and Carnitas $3.50, Carne Asada and Lengua $3.75. Burritos and plates are $11\u2013$14." },
+    { q: "Can you cater my event?",
+      k: ["cater", "catering", "event", "party", "wedding", "quincea", "book", "truck", "private"],
+      a: "Yes! Three options: Taco Bar at $16 a guest (25 minimum), Full Truck Buyout at $22 a guest ($1,400 minimum), or Drop-Off Trays at $11 a guest. There's a request form on this page." },
+    { q: "What's the quesabirria?",
+      k: ["quesabirria", "birria", "special", "best", "recommend", "popular", "famous"],
+      a: "Cheese-stuffed birria tacos with consomm\u00e9 for dipping \u2014 Thursday nights at Riverside Plaza. They go fast, so come early." },
+    { q: "Do you do breakfast?",
+      k: ["breakfast", "morning", "burrito", "eggs"],
+      a: "Saturdays only, at the Farmers Market, until 11am. Breakfast burritos are the one thing we don't make any other day." }
+  ];
+
+  // Small talk — handled before keyword matching so a greeting never
+  // gets the "ask Nathan" fallback.
+  const SMALL = [
+    { k: ["hi", "hello", "hey", "yo", "howdy", "hiya", "sup", "good morning", "good afternoon", "good evening"],
+      a: "Hey! Want to know where we're parked today, what's on the board, or about booking the truck?" },
+    { k: ["thanks", "thank you", "thx", "cheers", "appreciate"],
+      a: "Any time. Come hungry." },
+    { k: ["bye", "goodbye", "see ya", "later", "cya"],
+      a: "See you at the window!" },
+    { k: ["yes", "yeah", "yep", "sure", "ok", "okay", "cool", "nice", "great", "awesome"],
+      a: "Nice. What else can I tell you?" },
+    { k: ["no", "nope", "nah", "not really"],
+      a: "No worries. Shout if you think of something." },
+    { k: ["help", "what can you do", "what do you do", "options"],
+      a: "I can tell you where we're parked, what's on the menu, prices, and how catering works. What do you need?" },
+    { k: ["who are you", "your name", "are you real", "are you human", "bot"],
+      a: "I'm the assistant on Taco Michael's site \u2014 built by Tech Bros for Yeshua. Ask me anything about the truck." }
+  ];
+
+  const FALLBACK =
+    "Good question — Michael would know best. Give him a shout on the number on this page and he'll sort you out.";
+
+  const body  = () => document.getElementById('da-body');
+  const chips = () => document.getElementById('da-chips');
+  let started = false;
+
+  window.daToggle = function(){
+    const p = document.getElementById('da-panel');
+    p.classList.toggle('on');
+    if (p.classList.contains('on')){
+      if (!started){
+        started = true;
+        say('a', "Hey! Thanks for stopping by. Ask me anything — where we are today, what's on the board, booking the truck.");
+        showChips();
+      }
+      setTimeout(()=>document.getElementById('da-in')?.focus(), 150);
+    }
+  };
+  document.getElementById('da-open').onclick = window.daToggle;
+
+  function say(who, text){
+    const d = document.createElement('div');
+    d.className = 'da-m ' + who;
+    d.innerHTML = '<div class="da-b"></div>';
+    d.querySelector('.da-b').textContent = text;
+    body().appendChild(d);
+    body().scrollTop = body().scrollHeight;
+  }
+
+  function typing(on){
+    if (!on){ document.getElementById('da-t')?.remove(); return; }
+    const d = document.createElement('div');
+    d.className = 'da-m a'; d.id = 'da-t';
+    d.innerHTML = '<div class="da-b"><span class="da-t"><i></i><i></i><i></i></span></div>';
+    body().appendChild(d);
+    body().scrollTop = body().scrollHeight;
+  }
+
+  function showChips(){
+    const asked = new Set([...body().querySelectorAll('.da-m.u .da-b')].map(e=>e.textContent));
+    const left = QA.filter(x=>!asked.has(x.q)).slice(0,3);
+    chips().innerHTML = left.map(x =>
+      '<button class="da-chip" data-i="'+QA.indexOf(x)+'">'+x.q+'</button>').join('');
+    chips().querySelectorAll('.da-chip').forEach(btn=>{
+      btn.onclick = () => { reply(QA[+btn.dataset.i].q, QA[+btn.dataset.i].a); };
+    });
+  }
+
+  // greetings and one-word replies, matched on whole words
+  function smallTalk(text){
+    const t = ' ' + text.toLowerCase().replace(/[^a-z\s]/g,' ').replace(/\s+/g,' ') + ' ';
+    for (const item of SMALL){
+      for (const w of item.k){
+        if (t.includes(' ' + w.trim() + ' ')) return item.a;
+      }
+    }
+    return null;
+  }
+
+  // score a typed question against the keyword lists
+  function match(text){
+    const t = text.toLowerCase();
+    let best = null, bestScore = 0;
+    QA.forEach(item=>{
+      let score = 0;
+      item.k.forEach(word=>{ if (t.includes(word)) score += word.length; });
+      if (score > bestScore){ bestScore = score; best = item; }
+    });
+    return bestScore >= 3 ? best : null;
+  }
+
+  function reply(question, answer){
+    chips().innerHTML = '';
+    say('u', question);
+    typing(true);
+    setTimeout(()=>{
+      typing(false);
+      say('a', answer);
+      setTimeout(showChips, 300);
+    }, 650 + Math.random()*450);
+  }
+
+  window.daSend = function(){
+    const inp = document.getElementById('da-in');
+    const text = inp.value.trim();
+    if (!text) return;
+    inp.value = '';
+    const chat = smallTalk(text);
+    if (chat){ reply(text, chat); return; }
+    const hit = match(text);
+    reply(text, hit ? hit.a : FALLBACK);
+  };
+})();
+</script>
+</body>
+</html>
