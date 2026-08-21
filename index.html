@@ -1743,9 +1743,131 @@ input:focus, select:focus, textarea:focus {
 .da-input button{background:var(--lime);border:0;border-radius:50%;width:40px;height:40px;
   font-size:16px;cursor:pointer;color:#080a04;flex-shrink:0;}
 
+
+/* ══════════ CINEMATIC INTRO ══════════
+   Hidden by default. Only shown once JS confirms it can run and finish,
+   so a script failure can never leave a visitor on a black screen.       */
+#intro{position:fixed;inset:0;z-index:100000;background:#000;
+  display:none;align-items:center;justify-content:center;overflow:hidden;
+  perspective:900px;}
+#intro.run{display:flex;}
+#intro.out{animation:introOut .9s cubic-bezier(.7,0,.3,1) forwards;}
+@keyframes introOut{
+  0%{opacity:1;transform:scale(1);filter:blur(0);}
+  100%{opacity:0;transform:scale(1.12);filter:blur(14px);visibility:hidden;}
+}
+
+/* depth: receding grid + drifting motes */
+.in-grid{position:absolute;inset:-40%;
+  background-image:linear-gradient(rgba(200,241,53,.11) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(200,241,53,.11) 1px,transparent 1px);
+  background-size:64px 64px;
+  transform:rotateX(74deg) translateZ(-190px) translateY(0);
+  animation:gridRun 7s linear infinite;opacity:0;}
+#intro.run .in-grid{animation:gridRun 7s linear infinite, gridFade 1.1s ease forwards;}
+@keyframes gridRun{to{transform:rotateX(74deg) translateZ(-190px) translateY(64px);}}
+@keyframes gridFade{from{opacity:0;}to{opacity:.55;}}
+
+.in-glow{position:absolute;width:120vmax;height:120vmax;border-radius:50%;
+  background:radial-gradient(circle,rgba(200,241,53,.13) 0%,transparent 62%);
+  opacity:0;animation:none;}
+#intro.run .in-glow{animation:glowUp 2.4s ease-out forwards;}
+@keyframes glowUp{0%{opacity:0;transform:scale(.4);}55%{opacity:1;}100%{opacity:.7;transform:scale(1);}}
+
+.in-wrap{position:relative;text-align:center;padding:0 18px;z-index:2;}
+
+.in-line{display:block;font-family:'Syne',system-ui,sans-serif;font-weight:700;
+  line-height:.94;letter-spacing:-.03em;white-space:nowrap;}
+.in-1{font-size:clamp(34px,10vw,92px);color:#fff;}
+.in-2{font-size:clamp(13px,2.6vw,22px);font-weight:400;letter-spacing:.42em;
+  text-transform:uppercase;color:rgba(255,255,255,.42);margin:.5em 0 .35em;}
+.in-3{font-size:clamp(34px,10vw,92px);color:var(--lime);}
+
+/* each letter flies in from alternating sides */
+.in-ch{display:inline-block;opacity:0;transform:translateX(var(--from)) rotateY(38deg) scale(1.5);
+  filter:blur(9px);}
+#intro.run .in-ch{animation:chIn .72s cubic-bezier(.16,1,.28,1) forwards;
+  animation-delay:var(--d);}
+@keyframes chIn{
+  60%{opacity:1;filter:blur(0);}
+  100%{opacity:1;transform:translateX(0) rotateY(0) scale(1);filter:blur(0);}
+}
+
+/* rgb split fires as the words land */
+.in-wrap::before,.in-wrap::after{content:attr(data-t);position:absolute;inset:0;
+  display:none;pointer-events:none;}
+#intro.run .in-glitch .in-3{animation:rgbSplit .34s steps(2) 2;}
+@keyframes rgbSplit{
+  0%{text-shadow:none;transform:translate(0);}
+  25%{text-shadow:-3px 0 #ff0048,3px 0 #00e5ff;transform:translate(2px,-1px);}
+  50%{text-shadow:3px 0 #ff0048,-3px 0 #00e5ff;transform:translate(-2px,1px);}
+  75%{text-shadow:-2px 0 #ff0048,2px 0 #00e5ff;transform:translate(1px,0);}
+  100%{text-shadow:none;transform:translate(0);}
+}
+
+/* single scan sweep */
+.in-scan{position:absolute;left:0;right:0;height:2px;top:50%;
+  background:linear-gradient(90deg,transparent,rgba(200,241,53,.85),transparent);
+  opacity:0;}
+#intro.run .in-scan{animation:scanSweep 1.1s ease-in-out 1.5s;}
+@keyframes scanSweep{
+  0%{opacity:0;transform:translateY(-46vh) scaleX(.2);}
+  35%{opacity:1;transform:translateY(0) scaleX(1);}
+  100%{opacity:0;transform:translateY(46vh) scaleX(.2);}
+}
+
+.in-skip{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);
+  background:none;border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.45);
+  font-family:'DM Sans',system-ui,sans-serif;font-size:12px;padding:8px 20px;
+  border-radius:99px;cursor:pointer;opacity:0;transition:all .2s;z-index:3;}
+#intro.run .in-skip{animation:skipIn .4s ease 1.2s forwards;}
+#intro.run .in-skip:hover{border-color:var(--lime);color:var(--lime);}
+@keyframes skipIn{to{opacity:1;}}
+
+@media(prefers-reduced-motion:reduce){#intro{display:none !important;}}
+
 </style>
+<style>
+/* Runs before anything paints. Keeps the page black and the content
+   unpainted until the intro finishes, so the site never flashes first. */
+html.intro-on{background:#000;}
+html.intro-on body{visibility:hidden !important;}
+html.intro-on #intro,
+html.intro-on #intro *{visibility:visible !important;}
+/* render the overlay from the very first paint, before any script runs */
+html.intro-on #intro{display:flex !important;}
+/* nothing else may sit on top of it */
+html.intro-on body > *:not(#intro){visibility:hidden !important;}
+</style>
+<script>
+(function(){
+  try{
+    var reduced = window.matchMedia &&
+                  window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var seen = sessionStorage.getItem('tb4y_intro') === '1';
+    if (reduced || seen) return;              // straight to the site
+    var h = document.documentElement;
+    h.className += (h.className ? ' ' : '') + 'intro-on';
+    // hard failsafe set here, so it exists even if later scripts never run
+    setTimeout(function(){ h.classList.remove('intro-on'); }, 7000);
+  }catch(e){ /* anything unexpected: show the site normally */ }
+})();
+</script>
 </head>
 <body>
+<div id="intro" aria-hidden="true">
+  <div class="in-grid"></div>
+  <div class="in-glow"></div>
+  <div class="in-scan"></div>
+  <div class="in-wrap" id="in-wrap">
+    <span class="in-line in-1" data-text="Tech Bros"></span>
+    <span class="in-line in-2" data-text="for"></span>
+    <span class="in-line in-3" data-text="Yeshua"></span>
+  </div>
+  <button class="in-skip" onclick="introEnd()">Skip</button>
+</div>
+
+
 
 <!-- BG -->
 <div id="scroll-bar"></div>
@@ -3111,6 +3233,71 @@ function resetPlans(){
     const hit = match(text);
     reply(text, hit ? hit.a : FALLBACK);
   };
+})();
+</script>
+
+<script>
+// ── CINEMATIC INTRO ──
+// The decision to play was already made by the inline script in <head>,
+// which set html.intro-on before anything painted. This just runs the
+// animation and clears up afterwards.
+(function(){
+  const html = document.documentElement;
+  const el   = document.getElementById('intro');
+
+  // head script decided against it (reduced motion, or already seen)
+  if (!el || !html.classList.contains('intro-on')){
+    el?.remove();
+    return;
+  }
+
+  let done = false;
+  window.introEnd = function(){
+    if (done) return;
+    done = true;
+    try { sessionStorage.setItem('tb4y_intro','1'); } catch(e){}
+    html.classList.remove('intro-on');   // content becomes visible
+    el.classList.add('out');
+    document.body.style.overflow = '';
+    setTimeout(()=> el.remove(), 950);
+  };
+
+  // split each line into letters that fly in from alternating sides
+  let delay = 0.15;
+  el.querySelectorAll('.in-line').forEach((line, li)=>{
+    const text = line.dataset.text || '';
+    line.textContent = '';
+    [...text].forEach((ch, i)=>{
+      const sp = document.createElement('span');
+      sp.className = 'in-ch';
+      sp.textContent = ch === ' ' ? '\u00A0' : ch;
+      const from = (i % 2 ? 1 : -1) * (38 + Math.random()*46);
+      sp.style.setProperty('--from', from + 'vw');
+      sp.style.setProperty('--d', delay.toFixed(3) + 's');
+      delay += li === 1 ? 0.022 : 0.038;
+      line.appendChild(sp);
+    });
+    delay += li === 0 ? 0.08 : 0.12;
+  });
+
+  document.body.style.overflow = 'hidden';
+  el.classList.add('run');
+
+  setTimeout(()=> document.getElementById('in-wrap')?.classList.add('in-glitch'),
+             (delay + 0.35) * 1000);
+
+  const timer = setTimeout(introEnd, (delay + 1.9) * 1000);
+
+  el.addEventListener('click', e=>{
+    if (e.target.classList.contains('in-skip')) return;
+    clearTimeout(timer); introEnd();
+  });
+  window.addEventListener('keydown', e=>{
+    if (e.key === 'Escape' || e.key === ' '){ clearTimeout(timer); introEnd(); }
+  }, { once:true });
+
+  // belt and braces on top of the failsafe already set in <head>
+  setTimeout(()=>{ if (!done) introEnd(); }, 6500);
 })();
 </script>
 
