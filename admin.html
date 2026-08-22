@@ -334,6 +334,26 @@ html, body { max-width: 100%; overflow-x: hidden; }
   padding:7px 15px;border-radius:100px;cursor:pointer;}
 .inv-copy:hover{background:rgba(200,241,53,.2);}
 
+
+.own-box{margin-top:12px;padding:12px 15px;border-radius:11px;border:1px solid var(--border);
+  background:rgba(255,255,255,.02);}
+.own-box.own-run{border-color:rgba(79,159,255,.28);background:rgba(79,159,255,.05);}
+.own-box.own-ready{border-color:rgba(200,241,53,.35);background:rgba(200,241,53,.06);}
+.own-row{display:flex;justify-content:space-between;gap:12px;align-items:baseline;flex-wrap:wrap;}
+.own-k{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+  color:rgba(255,255,255,.35);}
+.own-v{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:#fff;}
+.own-run .own-v{color:#8ec5ff;}
+.own-ready .own-v{color:var(--lime);}
+.own-flag{margin-top:7px;font-size:12px;color:#ffb400;}
+.own-flag.done{color:#6dc86d;}
+.own-btns{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px;}
+.own-b{padding:6px 13px;border-radius:99px;font-size:11px;font-family:'Syne',sans-serif;
+  font-weight:700;cursor:pointer;border:1px solid var(--border);
+  background:rgba(255,255,255,.04);color:rgba(255,255,255,.55);transition:all .2s;}
+.own-b:hover{border-color:var(--lime);color:var(--lime);}
+.own-b.go{border-color:rgba(200,241,53,.35);background:rgba(200,241,53,.09);color:var(--lime);}
+
 </style>
 </head>
 <body>
@@ -926,6 +946,84 @@ async function addManualSub(userId){
   alert('✓ Subscription added!');loadClients();
 }
 
+
+// ── OWNERSHIP CLOCK ──
+// 12 months from whenever you start it, per site. Null start = not running.
+
+function ownEligibleAt(site){
+  if (!site.ownership_start) return null;
+  const d = new Date(site.ownership_start);
+  d.setMonth(d.getMonth() + (site.ownership_months || 12));
+  return d;
+}
+
+function ownStatus(site){
+  const due = ownEligibleAt(site);
+  if (!due) return { state:'off', label:'Clock not started' };
+  const now = new Date();
+  if (now >= due) return { state:'ready', label:'Eligible since ' + fmtShort(due), due };
+  const days = Math.ceil((due - now) / 86400000);
+  const months = Math.floor(days / 30);
+  const rem = days % 30;
+  const left = months ? months + 'mo ' + rem + 'd' : days + ' days';
+  return { state:'running', label:left + ' to go \u00b7 ' + fmtShort(due), due, days };
+}
+
+function ownControls(site){
+  const st = ownStatus(site);
+  const cls = { off:'own-off', running:'own-run', ready:'own-ready' }[st.state];
+  const requested = site.files_requested_at && !site.files_sent_at;
+  const sent = site.files_sent_at;
+
+  return '<div class="own-box ' + cls + '">'
+    + '<div class="own-row">'
+    +   '<span class="own-k">Ownership clock</span>'
+    +   '<span class="own-v">' + st.label + '</span>'
+    + '</div>'
+    + (requested ? '<div class="own-flag">\u2709\uFE0F Files requested ' + fmtShort(site.files_requested_at) + '</div>' : '')
+    + (sent ? '<div class="own-flag done">\u2713 Files sent ' + fmtShort(site.files_sent_at) + '</div>' : '')
+    + '<div class="own-btns">'
+    +   (st.state === 'off'
+          ? '<button class="own-b go" onclick="ownStart(\'' + site.id + '\')">Start clock</button>'
+          : '<button class="own-b" onclick="ownStop(\'' + site.id + '\')">Stop clock</button>'
+            + '<button class="own-b" onclick="ownBackdate(\'' + site.id + '\')">Set start date</button>')
+    +   (st.state === 'ready' && !sent
+          ? '<button class="own-b go" onclick="ownMarkSent(\'' + site.id + '\')">Mark files sent</button>'
+          : '')
+    + '</div>'
+    + '</div>';
+}
+
+async function ownStart(id){
+  await sb.from('sites').update({ ownership_start: new Date().toISOString() }).eq('id', id);
+  adminLog('site','Ownership clock started','Site id: ' + id);
+  loadSitesMgmt();
+}
+
+async function ownStop(id){
+  if (!confirm('Stop the ownership clock? The elapsed time will be lost.')) return;
+  await sb.from('sites').update({ ownership_start: null }).eq('id', id);
+  adminLog('site','Ownership clock stopped','Site id: ' + id);
+  loadSitesMgmt();
+}
+
+async function ownBackdate(id){
+  const v = prompt('Start date for the ownership clock (YYYY-MM-DD).\n'
+    + 'Use the date they first went live.');
+  if (!v) return;
+  const d = new Date(v + 'T12:00:00');
+  if (isNaN(d)){ alert('That date did not look right. Use YYYY-MM-DD.'); return; }
+  await sb.from('sites').update({ ownership_start: d.toISOString() }).eq('id', id);
+  adminLog('site','Ownership clock backdated','Start set to ' + v);
+  loadSitesMgmt();
+}
+
+async function ownMarkSent(id){
+  await sb.from('sites').update({ files_sent_at: new Date().toISOString() }).eq('id', id);
+  adminLog('site','Website files sent','Site id: ' + id);
+  loadSitesMgmt();
+}
+
 // ── SITES ──
 async function loadSitesMgmt(){
   const {data:clients}=await sb.from('profiles').select('id,full_name,email').order('full_name');
@@ -954,6 +1052,7 @@ async function loadSitesMgmt(){
           <button onclick="deleteSite('${s.id}')" style="padding:6px 14px;border-radius:100px;font-size:11px;font-family:'Syne',sans-serif;font-weight:600;cursor:pointer;border:1px solid rgba(220,50,50,0.2);background:rgba(220,50,50,0.05);color:#ff8080;">Remove</button>
         </div>
       </div>
+      ${ownControls(s)}
     </div>`).join('');
 }
 

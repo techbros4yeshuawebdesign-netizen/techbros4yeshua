@@ -397,6 +397,25 @@ html, body { max-width: 100%; overflow-x: hidden; }
   border-radius:100px;cursor:pointer;transition:all .2s;}
 .cancel-plan-btn:hover{background:rgba(220,50,50,0.12);}
 
+
+.oc{margin-top:12px;padding:14px 16px;border-radius:12px;
+  background:rgba(79,159,255,.05);border:1px solid rgba(79,159,255,.22);}
+.oc-t{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;color:#8ec5ff;}
+.oc-s{font-size:12.5px;color:var(--mid);line-height:1.6;margin-top:6px;}
+.oc-bar{height:6px;border-radius:99px;background:rgba(255,255,255,.08);
+  overflow:hidden;margin-top:9px;}
+.oc-bar i{display:block;height:100%;border-radius:99px;
+  background:linear-gradient(90deg,#4f9fff,#8ec5ff);transition:width .8s ease;}
+.oc-ready{background:rgba(200,241,53,.07);border-color:rgba(200,241,53,.35);}
+.oc-ready .oc-t{color:var(--lime);}
+.oc-done{background:rgba(109,200,109,.07);border-color:rgba(109,200,109,.3);}
+.oc-done .oc-t{color:#6dc86d;}
+.oc-btn{margin-top:11px;background:linear-gradient(135deg,#c8f135,#d8ff45);color:#080a04;
+  font-family:'Syne',sans-serif;font-weight:700;font-size:13px;padding:10px 22px;
+  border:0;border-radius:99px;cursor:pointer;}
+.oc-btn:hover{box-shadow:0 0 20px rgba(200,241,53,.4);}
+.oc-asked{margin-top:10px;font-size:12.5px;color:#ffb400;}
+
 </style>
 </head>
 <body>
@@ -670,6 +689,7 @@ html, body { max-width: 100%; overflow-x: hidden; }
         <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>How long does an edit take?</span><span>+</span></div><div class="faq-a">Most edits are completed within 3–5 business days. Complex changes may take longer. You'll see your request status update in the Edit Requests tab.</div></div>
         <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>What does maintenance include?</span><span>+</span></div><div class="faq-a">Maintenance covers: security updates, hosting uptime monitoring, SSL certificate renewal, and regular backups. It does NOT include new features, integrations, or redesigns.</div></div>
         <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>How do I approve my prototype?</span><span>+</span></div><div class="faq-a">You have 7 days from when your prototype is ready to review and request changes. On day 7 we proceed with the current version and begin your subscription. Use the Edit Requests tab for any remaining changes.</div></div>
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Can I own my website?</span><span>+</span></div><div class="faq-a">Yes. After twelve months on an active monthly plan you can request your site files — every file your site is built from, plus an export of your data if it stores any. There's no fee, and your plan carries on covering hosting and edits unless you decide otherwise. Just email techBros4yeshua.web.design@gmail.com or send a request from the New Request tab.</div></div>
         <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Can I upgrade my plan?</span><span>+</span></div><div class="faq-a">Yes! Contact Nathan or email techBros4yeshua.web.design@gmail.com to upgrade. Your old plan cancels and the new one starts — no double billing.</div></div>
         <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>What if my site goes down?</span><span>+</span></div><div class="faq-a">Email Nathan immediately at techBros4yeshua.web.design@gmail.com. Hosting issues are treated as urgent and addressed as soon as possible, usually within a few hours.</div></div>
         <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Can I cancel my subscription?</span><span>+</span></div><div class="faq-a">Yes, you can cancel anytime. Your site stays live until the end of your billing period. After cancellation, hosting ends and the site goes offline.</div></div>
@@ -939,6 +959,75 @@ function shortUrl(u){
   }
 }
 
+
+// ── OWNERSHIP COUNTDOWN ──
+function ownDue(site){
+  if (!site.ownership_start) return null;
+  const d = new Date(site.ownership_start);
+  d.setMonth(d.getMonth() + (site.ownership_months || 12));
+  return d;
+}
+
+function ownBlock(site){
+  const due = ownDue(site);
+  if (!due) return '';                       // clock not running — say nothing
+
+  const now = new Date();
+  const sent = site.files_sent_at;
+  const asked = site.files_requested_at && !sent;
+
+  if (sent){
+    return '<div class="oc oc-done"><div class="oc-t">\u2713 Your files have been sent</div>'
+      + '<div class="oc-s">Sent ' + new Date(sent).toLocaleDateString('en-US',
+          {month:'long',day:'numeric',year:'numeric'}) + '. Your plan carries on as normal.</div></div>';
+  }
+
+  if (now >= due){
+    return '<div class="oc oc-ready">'
+      + '<div class="oc-t">\ud83c\udf89 This site is yours to own</div>'
+      + '<div class="oc-s">You\'ve been with us twelve months. Request your files any time — '
+      + 'no charge, and your plan carries on unless you say otherwise.</div>'
+      + (asked
+          ? '<div class="oc-asked">\u2709\uFE0F Requested \u2014 Nathan is putting them together</div>'
+          : '<button class="oc-btn" onclick="requestFiles(\'' + site.id + '\',\''
+            + String(site.site_name).replace(/'/g,"\\'") + '\')">Request my files</button>')
+      + '</div>';
+  }
+
+  const days   = Math.ceil((due - now) / 86400000);
+  const months = Math.floor(days / 30);
+  const rem    = days % 30;
+  const total  = (site.ownership_months || 12) * 30;
+  const pct    = Math.max(0, Math.min(100, ((total - days) / total) * 100));
+  const left   = months > 0 ? months + ' month' + (months>1?'s':'') + (rem ? ' ' + rem + ' days' : '')
+                            : days + ' day' + (days===1?'':'s');
+
+  return '<div class="oc">'
+    + '<div class="oc-t">Yours to own in ' + left + '</div>'
+    + '<div class="oc-bar"><i style="width:' + pct.toFixed(1) + '%"></i></div>'
+    + '<div class="oc-s">After twelve months you can request every file your site is built from. '
+    + 'Eligible ' + due.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}) + '.</div>'
+    + '</div>';
+}
+
+async function requestFiles(siteId, siteName){
+  if (!confirm('Request the files for ' + siteName + '?\n\n'
+    + 'Nathan will put together everything your site needs to run elsewhere. '
+    + 'Your plan carries on as normal unless you tell us otherwise.')) return;
+
+  await sb.from('sites').update({ files_requested_at: new Date().toISOString() }).eq('id', siteId);
+  await sb.from('edit_requests').insert({
+    user_id: currentUser.id,
+    page: 'OWNERSHIP',
+    edit_type: '\ud83d\udce6 Website files requested \u2014 ' + siteName,
+    message: 'Client reached 12 months and has requested their website files for ' + siteName + '.',
+    status: 'pending'
+  });
+  logEvent('other','Requested website files', siteName);
+  showToast('Requested. Nathan will be in touch shortly.');
+  loadSites();
+}
+
 async function loadSites() {
   const {data} = await sb.from('sites').select('*').eq('user_id',currentUser.id).order('created_at',{ascending:false});
   const c = document.getElementById('sites-list');
@@ -955,6 +1044,7 @@ async function loadSites() {
         ${s.site_url?`<a href="${s.site_url}" target="_blank" class="ghost-btn lime-outline">Visit →</a>`:''}
         <button class="ghost-btn" onclick="showTab('new-request')">Request Edit</button>
       </div>
+      ${ownBlock(s)}
     </div>`).join('');
   if (typeof loadDemoApprovals === 'function') loadDemoApprovals();
 }
