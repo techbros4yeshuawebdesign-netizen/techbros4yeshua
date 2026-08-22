@@ -1826,6 +1826,36 @@ input:focus, select:focus, textarea:focus {
 
 @media(prefers-reduced-motion:reduce){#intro{display:none !important;}}
 
+
+.own-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;}
+.own-card{background:rgba(10,12,5,.7);border:1px solid rgba(200,241,53,.14);
+  border-radius:16px;padding:22px 24px;}
+.own-ico{font-size:26px;margin-bottom:10px;}
+.own-card b{display:block;font-family:'Syne',system-ui,sans-serif;font-size:15px;margin-bottom:7px;}
+.own-card p{font-size:13.5px;color:var(--mid);line-height:1.65;margin:0;}
+.own-fine{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);
+  border-radius:14px;padding:18px 22px;margin-top:16px;}
+.own-fine b{display:block;font-size:11px;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:8px;}
+.own-fine p{font-size:13px;color:var(--mid);line-height:1.7;margin:0;}
+
+
+.plan-features li.own-line{color:var(--lime);font-weight:600;margin-top:6px;
+  padding-top:8px;border-top:1px solid rgba(200,241,53,.15);list-style:none;
+  margin-left:-1.1em;}
+
+
+.own-tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+@media(max-width:600px){.own-tiers{grid-template-columns:1fr;}}
+.own-tier{background:rgba(10,12,5,.7);border:1px solid rgba(255,255,255,.09);
+  border-radius:14px;padding:18px 16px;text-align:center;}
+.own-tier.best{border-color:rgba(200,241,53,.4);background:rgba(200,241,53,.06);}
+.own-tier-name{font-size:12px;color:var(--mid);letter-spacing:.03em;}
+.own-tier-time{font-family:'Syne',system-ui,sans-serif;font-weight:700;
+  font-size:clamp(24px,4vw,32px);color:#fff;margin:5px 0 3px;line-height:1;}
+.own-tier.best .own-tier-time{color:var(--lime);}
+.own-tier-sub{font-size:11.5px;color:rgba(255,255,255,.3);}
+
 </style>
 <style>
 /* Runs before anything paints. Keeps the page black and the content
@@ -2023,6 +2053,7 @@ html.intro-on body > *:not(#intro){visibility:hidden !important;}
           <li>Basic SEO</li>
           <li>1 round of revisions</li>
           <li>Built and hosted by us</li>
+          <li class="own-line">Yours to own after 3 years</li>
         </ul>
         <div class="plan-select-indicator">Tap to select →</div>
       </div>
@@ -2041,6 +2072,7 @@ html.intro-on body > *:not(#intro){visibility:hidden !important;}
           <li>2 rounds of revisions</li>
           <li>Payment processing</li>
           <li>Built and hosted by us</li>
+          <li class="own-line">Yours to own after 2 years</li>
         </ul>
         <div class="plan-select-indicator">Tap to select →</div>
       </div>
@@ -2058,6 +2090,7 @@ html.intro-on body > *:not(#intro){visibility:hidden !important;}
           <li>Unlimited revisions</li>
           <li>Payments + subscriptions</li>
           <li>Built and hosted by us</li>
+          <li class="own-line">Yours to own after 1 year</li>
         </ul>
         <div class="plan-select-indicator">Tap to select →</div>
       </div>
@@ -2067,10 +2100,11 @@ html.intro-on body > *:not(#intro){visibility:hidden !important;}
     <div class="ownership-note reveal">
       <div class="ownership-title">About your website</div>
       <p>
-        Built and hosted by us. Your one-time payment covers the build; hosting
-        continues under your monthly plan. File ownership is a separate
-        arrangement — <a href="mailto:techBros4yeshua.web.design@gmail.com">get in touch</a>
-        if you'd like to discuss owning your site outright.
+        Built and hosted by us — your monthly plan keeps it live, secure and up to date.
+        <strong style="color:#fff;">Stay with us and the site becomes yours</strong> — after 3 years
+        on Starter, 2 on Professional, or just 1 year on Premium. Most people never ask; your plan
+        carries on either way.
+        <a href="#ownership">How ownership works &rarr;</a>
       </p>
     </div>
 
@@ -2094,6 +2128,7 @@ html.intro-on body > *:not(#intro){visibility:hidden !important;}
             <li>Uptime monitoring</li>
             <li>5 edits/month</li>
             <li>Email support</li>
+            
           </ul>
           <div class="plan-select-indicator">Tap to select →</div>
         </div>
@@ -2111,6 +2146,7 @@ html.intro-on body > *:not(#intro){visibility:hidden !important;}
             <li>10 edits/month</li>
             <li>Priority support</li>
             <li>Monthly performance report</li>
+            
           </ul>
           <div class="plan-select-indicator">Tap to select →</div>
         </div>
@@ -2130,6 +2166,7 @@ html.intro-on body > *:not(#intro){visibility:hidden !important;}
             <li>24hr priority support</li>
             <li>Monthly performance report</li>
             <li>SEO monitoring</li>
+            
           </ul>
           <div class="plan-select-indicator">Tap to select →</div>
         </div>
@@ -2241,6 +2278,80 @@ html.intro-on body > *:not(#intro){visibility:hidden !important;}
 <div class="section-divider"></div>
 
 <!-- CONTACT / FREE PROTOTYPE -->
+
+
+<!-- OWNERSHIP -->
+<section id="ownership" class="section" style="max-width:820px;margin:0 auto;padding:70px 30px;">
+  <div class="sec-label anim-fade" style="text-align:center;">Ownership</div>
+  <div class="sec-title anim-fade" style="text-align:center;font-size:clamp(26px,4vw,42px);">
+    Stay with us,<br>and the site becomes yours
+  </div>
+  <p style="color:var(--mid);font-size:16px;line-height:1.75;margin:18px auto 34px;
+     max-width:600px;text-align:center;" class="anim-fade">
+    You're not renting your website forever. Stick with us and you can ask for
+    everything your site needs to run somewhere else \u2014 no charge, no argument.
+    The bigger your build, the sooner it happens.
+  </p>
+
+  <div class="own-tiers anim-fade">
+    <div class="own-tier">
+      <div class="own-tier-name">Starter Site</div>
+      <div class="own-tier-time">3 years</div>
+      <div class="own-tier-sub">$500 build</div>
+    </div>
+    <div class="own-tier">
+      <div class="own-tier-name">Professional Site</div>
+      <div class="own-tier-time">2 years</div>
+      <div class="own-tier-sub">$800 build</div>
+    </div>
+    <div class="own-tier best">
+      <div class="own-tier-name">Premium Site</div>
+      <div class="own-tier-time">1 year</div>
+      <div class="own-tier-sub">$1,200 build</div>
+    </div>
+  </div>
+
+  <div class="own-grid anim-fade" style="margin-top:22px;">
+    <div class="own-card">
+      <div class="own-ico">\ud83d\udce6</div>
+      <b>What you get</b>
+      <p>Every file your site is built from \u2014 pages, styling, images and content. If your
+         site stores data, you get an export of that too. Everything needed to host it elsewhere.</p>
+    </div>
+    <div class="own-card">
+      <div class="own-ico">\ud83d\udcc5</div>
+      <b>How it works</b>
+      <p>Your countdown starts the day your site goes live and runs while your monthly plan is
+         active. You can watch it tick down in your client portal.</p>
+    </div>
+    <div class="own-card">
+      <div class="own-ico">\ud83d\udd01</div>
+      <b>What changes</b>
+      <p>Nothing, unless you want it to. Your plan carries on covering hosting, security and
+         edits. Owning the files doesn\'t mean leaving.</p>
+    </div>
+  </div>
+
+  <div class="own-fine anim-fade">
+    <b>Worth knowing</b>
+    <p>The files are your website. Hosting it elsewhere means arranging your own hosting and,
+       if your site uses a database, restoring the export \u2014 straightforward for a developer,
+       but not a one-click job. Anything we run for you, like your client portal or the AI
+       assistant, stays with us and stops working once you move. Your domain stays yours
+       throughout.</p>
+  </div>
+
+  <div style="text-align:center;margin-top:30px;" class="anim-fade">
+    <a href="portal.html" class="btn-primary" style="font-size:15px;padding:16px 34px;">
+      Check your countdown \u2192
+    </a>
+    <p style="font-size:12.5px;color:rgba(255,255,255,.3);margin-top:14px;line-height:1.6;">
+      Already eligible? Request your files from the portal, or
+      <a href="mailto:techBros4yeshua.web.design@gmail.com?subject=Request%20my%20website%20files"
+         style="color:var(--lime);">email Nathan directly</a>.
+    </p>
+  </div>
+</section>
 
 <!-- EXAMPLE WORK -->
 <section class="section" style="max-width:900px;margin:0 auto;padding:70px 30px;">
@@ -3097,7 +3208,7 @@ function resetPlans(){
 
     { q: "Do I own the site?",
       k: ["own","ownership","mine","keep","files","code","transfer","buy out","buyout"],
-      a: "We build and host it for you — that's what the monthly covers. If you'd rather own the files outright, that's a separate arrangement; just ask and Nathan will talk it through." },
+      a: "We build and host it for you — and if you stay with us the site becomes yours. Three years on a Starter build, two on Professional, one on Premium. Then you can request every file, free. There's a section further down explaining it." },
 
     { q: "What if I need changes later?",
       k: ["change","edit","update","revision","modify","add","fix","maintain","maintenance"],

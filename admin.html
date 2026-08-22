@@ -354,6 +354,13 @@ html, body { max-width: 100%; overflow-x: hidden; }
 .own-b:hover{border-color:var(--lime);color:var(--lime);}
 .own-b.go{border-color:rgba(200,241,53,.35);background:rgba(200,241,53,.09);color:var(--lime);}
 
+
+.own-sel{padding:5px 10px;border-radius:99px;font-size:11px;font-family:'Syne',sans-serif;
+  font-weight:700;border:1px solid var(--border);background:rgba(255,255,255,.04);
+  color:rgba(255,255,255,.6);cursor:pointer;outline:none;}
+.own-sel:focus{border-color:var(--lime);}
+.own-sel option{background:#111408;}
+
 </style>
 </head>
 <body>
@@ -432,6 +439,13 @@ html, body { max-width: 100%; overflow-x: hidden; }
           <div class="f-group"><label>Site Name</label><input type="text" id="site-name-add" placeholder="Smith's Auto Repair"></div>
           <div class="f-group"><label>Site URL</label><input type="text" id="site-url-add" placeholder="https://example.com"></div>
           <div class="f-group"><label>Pages</label><input type="number" id="site-pages-add" placeholder="5" min="1"></div>
+          <div class="f-group"><label>Ownership after</label>
+            <select id="site-term-add">
+              <option value="36">3 years — Starter build</option>
+              <option value="24">2 years — Professional build</option>
+              <option value="12">1 year — Premium build</option>
+            </select>
+          </div>
         </div>
         <button class="save-btn" onclick="addSite()">Add Site →</button>
         <span id="add-site-msg" style="font-size:13px;color:var(--lime);margin-left:12px;display:none;">✓ Added!</span>
@@ -983,6 +997,11 @@ function ownControls(site){
     + (requested ? '<div class="own-flag">\u2709\uFE0F Files requested ' + fmtShort(site.files_requested_at) + '</div>' : '')
     + (sent ? '<div class="own-flag done">\u2713 Files sent ' + fmtShort(site.files_sent_at) + '</div>' : '')
     + '<div class="own-btns">'
+    +   '<select class="own-sel" onchange="ownTerm(\'' + site.id + '\', this.value)">'
+    +     [12,24,36].map(m =>
+            '<option value="' + m + '"' + ((site.ownership_months||12) === m ? ' selected' : '') + '>'
+            + (m/12) + ' year' + (m>12?'s':'') + '</option>').join('')
+    +   '</select>'
     +   (st.state === 'off'
           ? '<button class="own-b go" onclick="ownStart(\'' + site.id + '\')">Start clock</button>'
           : '<button class="own-b" onclick="ownStop(\'' + site.id + '\')">Stop clock</button>'
@@ -992,6 +1011,13 @@ function ownControls(site){
           : '')
     + '</div>'
     + '</div>';
+}
+
+
+async function ownTerm(id, months){
+  await sb.from('sites').update({ ownership_months: parseInt(months) }).eq('id', id);
+  adminLog('site','Ownership term changed', months + ' months');
+  loadSitesMgmt();
 }
 
 async function ownStart(id){
@@ -1065,7 +1091,9 @@ async function addSite(){
   // Set 7-day approval deadline from today
   const deadline = new Date();
   deadline.setDate(deadline.getDate() + 7);
-  await sb.from('sites').insert({user_id:userId,site_name:name,site_url:url||null,pages,status:'demo',approval_deadline:deadline.toISOString()});
+  const term = parseInt(document.getElementById('site-term-add')?.value) || 12;
+  await sb.from('sites').insert({user_id:userId,site_name:name,site_url:url||null,pages,status:'demo',
+    approval_deadline:deadline.toISOString(), ownership_months:term});
   document.getElementById('site-name-add').value='';document.getElementById('site-url-add').value='';document.getElementById('site-pages-add').value='';document.getElementById('site-client-id').value='';
   adminLog('site','Site added', name+(url?' · '+url:''), userId);
   const msg=document.getElementById('add-site-msg');msg.style.display='inline';setTimeout(()=>msg.style.display='none',3000);
