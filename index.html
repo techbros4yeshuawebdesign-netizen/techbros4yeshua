@@ -1824,7 +1824,17 @@ input:focus, select:focus, textarea:focus {
 #intro.run .in-skip:hover{border-color:var(--lime);color:var(--lime);}
 @keyframes skipIn{to{opacity:1;}}
 
-@media(prefers-reduced-motion:reduce){#intro{display:none !important;}}
+/* reduced motion: keep the intro, drop the movement */
+html.intro-calm #intro .in-grid,
+html.intro-calm #intro .in-glow,
+html.intro-calm #intro .in-scan{display:none !important;}
+html.intro-calm #intro .in-ch{
+  transform:none !important;filter:none !important;
+  animation:calmIn .5s ease forwards !important;animation-delay:0s !important;}
+html.intro-calm #intro.run .in-glitch .in-3{animation:none !important;}
+html.intro-calm #intro.out{animation:calmOut .5s ease forwards !important;}
+@keyframes calmIn{from{opacity:0;}to{opacity:1;}}
+@keyframes calmOut{from{opacity:1;}to{opacity:0;visibility:hidden;}}
 
 
 .own-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;}
@@ -1872,13 +1882,13 @@ html.intro-on body > *:not(#intro){visibility:hidden !important;}
 <script>
 (function(){
   try{
+    var h = document.documentElement;
     var reduced = window.matchMedia &&
                   window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var seen = sessionStorage.getItem('tb4y_intro') === '1';
-    if (reduced || seen) return;              // straight to the site
-    var h = document.documentElement;
-    h.className += (h.className ? ' ' : '') + 'intro-on';
-    // hard failsafe set here, so it exists even if later scripts never run
+    // The intro plays on every load. Anyone who has asked for less motion
+    // gets a simple fade instead of the letters flying in.
+    h.className += (h.className ? ' ' : '') + 'intro-on' + (reduced ? ' intro-calm' : '');
+    // failsafe set here, so it exists even if later scripts never run
     setTimeout(function(){ h.classList.remove('intro-on'); }, 7000);
   }catch(e){ /* anything unexpected: show the site normally */ }
 })();
@@ -3349,25 +3359,20 @@ function resetPlans(){
 
 <script>
 // ── CINEMATIC INTRO ──
-// The decision to play was already made by the inline script in <head>,
-// which set html.intro-on before anything painted. This just runs the
-// animation and clears up afterwards.
+// The <head> script already added html.intro-on before anything painted,
+// so the page never flashes first. This runs the animation and clears up.
 (function(){
   const html = document.documentElement;
   const el   = document.getElementById('intro');
+  if (!el){ html.classList.remove('intro-on'); return; }
 
-  // head script decided against it (reduced motion, or already seen)
-  if (!el || !html.classList.contains('intro-on')){
-    el?.remove();
-    return;
-  }
+  const calm = html.classList.contains('intro-calm');
 
   let done = false;
   window.introEnd = function(){
     if (done) return;
     done = true;
-    try { sessionStorage.setItem('tb4y_intro','1'); } catch(e){}
-    html.classList.remove('intro-on');   // content becomes visible
+    html.classList.remove('intro-on');
     el.classList.add('out');
     document.body.style.overflow = '';
     setTimeout(()=> el.remove(), 950);
@@ -3394,10 +3399,13 @@ function resetPlans(){
   document.body.style.overflow = 'hidden';
   el.classList.add('run');
 
-  setTimeout(()=> document.getElementById('in-wrap')?.classList.add('in-glitch'),
-             (delay + 0.35) * 1000);
+  if (!calm){
+    setTimeout(()=> document.getElementById('in-wrap')?.classList.add('in-glitch'),
+               (delay + 0.35) * 1000);
+  }
 
-  const timer = setTimeout(introEnd, (delay + 1.9) * 1000);
+  const runFor = calm ? 1400 : (delay + 1.9) * 1000;
+  const timer  = setTimeout(introEnd, runFor);
 
   el.addEventListener('click', e=>{
     if (e.target.classList.contains('in-skip')) return;
@@ -3407,7 +3415,6 @@ function resetPlans(){
     if (e.key === 'Escape' || e.key === ' '){ clearTimeout(timer); introEnd(); }
   }, { once:true });
 
-  // belt and braces on top of the failsafe already set in <head>
   setTimeout(()=>{ if (!done) introEnd(); }, 6500);
 })();
 </script>
