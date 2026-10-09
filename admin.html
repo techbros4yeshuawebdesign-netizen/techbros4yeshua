@@ -798,6 +798,7 @@ function planHTML(p, id){
       <div class="plan-actions">
         ${p.demo_at
           ? `<button class="demo-btn" onclick="previewDemo('${p.id}')">Preview demo homepage</button>
+             ${p.demo_url ? `<button onclick="copyDemoLink('${escHTML(p.demo_url)}')">Copy live link for client</button>` : ''}
              <button onclick="downloadDemo('${p.id}')">Download demo HTML</button>`
           : `<span class="demo-wait">Demo homepage: building next run</span>`}
         <button onclick="copyPlan('${p.id}')">Copy plan</button>
@@ -816,9 +817,17 @@ async function copyPlan(pid){
   if (data) { await navigator.clipboard.writeText(data.plan); showAdminToast('Plan copied','lime'); }
 }
 async function getDemo(pid){
-  const { data, error } = await sb.from('site_plans').select('business,demo_html').eq('id', pid).single();
-  if (error || !data || !data.demo_html) { showAdminToast('Demo not ready yet', 'red'); return null; }
+  const { data, error } = await sb.from('site_plans').select('business,demo_html,demo_url').eq('id', pid).single();
+  if (error || !data) { showAdminToast('Demo not ready yet', 'red'); return null; }
+  if (!data.demo_html && data.demo_url) {
+    try { const r = await fetch(data.demo_url, { cache: 'no-store' }); if (r.ok) data.demo_html = await r.text(); } catch (e) {}
+  }
+  if (!data.demo_html) { showAdminToast('Demo not ready yet', 'red'); return null; }
   return data;
+}
+async function copyDemoLink(url){
+  try { await navigator.clipboard.writeText(url); showAdminToast('Demo link copied', 'lime'); }
+  catch (e) { prompt('Copy this link:', url); }
 }
 async function previewDemo(pid){
   const w = window.open('', '_blank');           // open first so popup blockers allow it
@@ -851,7 +860,7 @@ async function loadInquiries(){
   const c = document.getElementById('inquiries-list');
   const plans = {};
   if (data && data.length) {
-    const { data: pl } = await sb.from('site_plans').select('id,inquiry_id,business,plan,status,created_at,demo_at').in('inquiry_id', data.map(r => r.id));
+    const { data: pl } = await sb.from('site_plans').select('id,inquiry_id,business,plan,status,created_at,demo_at,demo_url').in('inquiry_id', data.map(r => r.id));
     (pl || []).forEach(p => plans[p.inquiry_id] = p);
   }
   if(!data||!data.length){c.innerHTML='<div class="empty">No inquiries yet.</div>';return;}
