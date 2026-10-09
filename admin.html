@@ -74,6 +74,18 @@ body{font-family:'DM Sans',sans-serif;background:#080a04;color:#fff;min-height:1
 .account-name{font-family:'Syne',sans-serif;font-weight:700;font-size:17px;}
 .account-email{font-size:13px;color:var(--mid);}
 .account-meta{font-size:12px;color:rgba(255,255,255,0.3);margin-top:2px;}
+.plan-box{margin-top:12px;border:1px solid rgba(140,120,255,0.25);background:rgba(140,120,255,0.05);border-radius:12px;font-size:13px;overflow:hidden;}
+.plan-wait{padding:10px 16px;color:rgba(255,255,255,0.55);}
+.plan-head{display:flex;gap:10px;align-items:center;padding:10px 16px;cursor:pointer;font-family:'Syne',sans-serif;font-weight:600;}
+.plan-head span:first-child{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.plan-st{font-size:10px;text-transform:uppercase;letter-spacing:.08em;padding:2px 8px;border-radius:100px;background:rgba(140,120,255,0.18);}
+.plan-body{padding:4px 18px 16px;line-height:1.6;color:rgba(255,255,255,0.85);max-height:520px;overflow:auto;overflow-wrap:anywhere;}
+.pl-h1{font-size:17px;font-weight:700;margin:12px 0 4px;color:var(--lime);}
+.pl-h2{font-size:15px;font-weight:700;margin:14px 0 4px;color:var(--lime);}
+.pl-h3{font-weight:700;margin:10px 0 2px;}
+.pl-li{padding-left:12px;}
+.plan-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;}
+.plan-actions button{padding:6px 14px;border-radius:100px;font-size:11px;font-family:'Syne',sans-serif;font-weight:600;cursor:pointer;border:1px solid rgba(140,120,255,0.35);background:rgba(140,120,255,0.1);color:#c9c0ff;}
 .inquiry-box{background:rgba(200,241,53,0.04);border:1px solid rgba(200,241,53,0.1);border-radius:12px;padding:14px 18px;margin-top:12px;}
 .inquiry-field{display:flex;gap:10px;margin-bottom:6px;font-size:13px;}
 .inquiry-label{color:var(--mid);min-width:90px;flex-shrink:0;}
@@ -761,6 +773,47 @@ function copyInvoice(id){
 }
 
 // ── INQUIRIES ──
+function escHTML(t){ return String(t||'').replace(/[&<>"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch])); }
+function mdLite(md){
+  return escHTML(md).split('\n').map(l => {
+    if (/^### /.test(l)) return '<div class="pl-h3">' + l.slice(4) + '</div>';
+    if (/^## /.test(l))  return '<div class="pl-h2">' + l.slice(3) + '</div>';
+    if (/^# /.test(l))   return '<div class="pl-h1">' + l.slice(2) + '</div>';
+    if (/^\s*[-*] /.test(l)) return '<div class="pl-li">• ' + l.replace(/^\s*[-*] /,'') + '</div>';
+    return l.trim() ? '<div>' + l + '</div>' : '<div style="height:8px"></div>';
+  }).join('').replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');
+}
+function planHTML(p, id){
+  if (!p) return '<div class="plan-box plan-wait">🧠 Website plan: queued — written automatically within the hour.</div>';
+  const st = p.status || 'new';
+  return `<div class="plan-box">
+    <div class="plan-head" onclick="togglePlan('${id}')">
+      <span>🧠 Website plan ${p.business ? '— ' + escHTML(p.business) : ''}</span>
+      <span class="plan-st">${st}</span><span id="plan-arrow-${id}">▸</span>
+    </div>
+    <div class="plan-body" id="plan-body-${id}" style="display:none;">
+      ${mdLite(p.plan)}
+      <div class="plan-actions">
+        <button onclick="copyPlan('${p.id}')">Copy</button>
+        <button onclick="setPlanStatus('${p.id}','reviewed')">Mark reviewed</button>
+        <button onclick="setPlanStatus('${p.id}','sent')">Mark sent to client</button>
+      </div>
+    </div>
+  </div>`;
+}
+function togglePlan(id){
+  const b = document.getElementById('plan-body-' + id), a = document.getElementById('plan-arrow-' + id);
+  const open = b.style.display === 'none'; b.style.display = open ? 'block' : 'none'; a.textContent = open ? '▾' : '▸';
+}
+async function copyPlan(pid){
+  const { data } = await sb.from('site_plans').select('plan').eq('id', pid).single();
+  if (data) { await navigator.clipboard.writeText(data.plan); showAdminToast('Plan copied','lime'); }
+}
+async function setPlanStatus(pid, st){
+  await sb.from('site_plans').update({ status: st }).eq('id', pid);
+  loadInquiries();
+}
+
 async function loadInquiries(){
   const {data} = await sb.from('edit_requests')
     .select('*, profiles(full_name,email)')
@@ -769,6 +822,11 @@ async function loadInquiries(){
   
   document.getElementById('s-inquiries').textContent = data?.length||0;
   const c = document.getElementById('inquiries-list');
+  const plans = {};
+  if (data && data.length) {
+    const { data: pl } = await sb.from('site_plans').select('*').in('inquiry_id', data.map(r => r.id));
+    (pl || []).forEach(p => plans[p.inquiry_id] = p);
+  }
   if(!data||!data.length){c.innerHTML='<div class="empty">No inquiries yet.</div>';return;}
 
   c.innerHTML = data.map(r=>{
@@ -794,6 +852,7 @@ async function loadInquiries(){
         <div class="inquiry-field"><span class="inquiry-label">Details</span><span class="inquiry-value" style="white-space:pre-wrap;">${(r.message||'—').replace(/\n\nORDER\|.*$/,'')}</span></div>
       </div>
       ${(() => { const o = parseOrder(r.message); return o ? invoiceHTML(o, r.id) : ''; })()}
+      ${planHTML(plans[r.id], r.id)}
       <div class="action-row">
         <select class="plan-select" id="plan-sel-${r.id}">
           <option value="">Select plan to offer...</option>
@@ -1389,6 +1448,10 @@ function setupRealtime(){
   }).subscribe();
 
   // Profile updated
+  sb.channel('admin-plans').on('postgres_changes',{event:'INSERT',schema:'public',table:'site_plans'},(payload)=>{
+    showAdminToast('🧠 Website plan ready' + (payload.new.business ? ': ' + payload.new.business : ''), 'lime');
+    loadInquiries();
+  }).subscribe();
   sb.channel('admin-profiles-update').on('postgres_changes',{event:'UPDATE',schema:'public',table:'profiles'},()=>{loadClients();}).subscribe();
 
   // Sites updated
