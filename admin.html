@@ -85,6 +85,8 @@ body{font-family:'DM Sans',sans-serif;background:#080a04;color:#fff;min-height:1
 .pl-h3{font-weight:700;margin:10px 0 2px;}
 .pl-li{padding-left:12px;}
 .plan-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;}
+.demo-wait{font-size:11px;color:rgba(255,255,255,0.5);align-self:center;}
+.plan-actions .demo-btn{background:var(--lime);color:#111;border-color:var(--lime);}
 .plan-actions button{padding:6px 14px;border-radius:100px;font-size:11px;font-family:'Syne',sans-serif;font-weight:600;cursor:pointer;border:1px solid rgba(140,120,255,0.35);background:rgba(140,120,255,0.1);color:#c9c0ff;}
 .inquiry-box{background:rgba(200,241,53,0.04);border:1px solid rgba(200,241,53,0.1);border-radius:12px;padding:14px 18px;margin-top:12px;}
 .inquiry-field{display:flex;gap:10px;margin-bottom:6px;font-size:13px;}
@@ -794,7 +796,11 @@ function planHTML(p, id){
     <div class="plan-body" id="plan-body-${id}" style="display:none;">
       ${mdLite(p.plan)}
       <div class="plan-actions">
-        <button onclick="copyPlan('${p.id}')">Copy</button>
+        ${p.demo_at
+          ? `<button class="demo-btn" onclick="previewDemo('${p.id}')">Preview demo homepage</button>
+             <button onclick="downloadDemo('${p.id}')">Download demo HTML</button>`
+          : `<span class="demo-wait">Demo homepage: building next run</span>`}
+        <button onclick="copyPlan('${p.id}')">Copy plan</button>
         <button onclick="setPlanStatus('${p.id}','reviewed')">Mark reviewed</button>
         <button onclick="setPlanStatus('${p.id}','sent')">Mark sent to client</button>
       </div>
@@ -808,6 +814,27 @@ function togglePlan(id){
 async function copyPlan(pid){
   const { data } = await sb.from('site_plans').select('plan').eq('id', pid).single();
   if (data) { await navigator.clipboard.writeText(data.plan); showAdminToast('Plan copied','lime'); }
+}
+async function getDemo(pid){
+  const { data, error } = await sb.from('site_plans').select('business,demo_html').eq('id', pid).single();
+  if (error || !data || !data.demo_html) { showAdminToast('Demo not ready yet', 'red'); return null; }
+  return data;
+}
+async function previewDemo(pid){
+  const w = window.open('', '_blank');           // open first so popup blockers allow it
+  const d = await getDemo(pid);
+  if (!d) { if (w) w.close(); return; }
+  const url = URL.createObjectURL(new Blob([d.demo_html], { type: 'text/html' }));
+  if (w) w.location.href = url; else window.location.href = url;
+}
+async function downloadDemo(pid){
+  const d = await getDemo(pid);
+  if (!d) return;
+  const slug = (d.business || 'demo').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'demo';
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([d.demo_html], { type: 'text/html' }));
+  a.download = slug + '-demo.html';
+  document.body.appendChild(a); a.click(); a.remove();
 }
 async function setPlanStatus(pid, st){
   await sb.from('site_plans').update({ status: st }).eq('id', pid);
@@ -824,7 +851,7 @@ async function loadInquiries(){
   const c = document.getElementById('inquiries-list');
   const plans = {};
   if (data && data.length) {
-    const { data: pl } = await sb.from('site_plans').select('*').in('inquiry_id', data.map(r => r.id));
+    const { data: pl } = await sb.from('site_plans').select('id,inquiry_id,business,plan,status,created_at,demo_at').in('inquiry_id', data.map(r => r.id));
     (pl || []).forEach(p => plans[p.inquiry_id] = p);
   }
   if(!data||!data.length){c.innerHTML='<div class="empty">No inquiries yet.</div>';return;}
@@ -1450,6 +1477,9 @@ function setupRealtime(){
   // Profile updated
   sb.channel('admin-plans').on('postgres_changes',{event:'INSERT',schema:'public',table:'site_plans'},(payload)=>{
     showAdminToast('🧠 Website plan ready' + (payload.new.business ? ': ' + payload.new.business : ''), 'lime');
+    loadInquiries();
+  }).on('postgres_changes',{event:'UPDATE',schema:'public',table:'site_plans'},(payload)=>{
+    if (payload.new.demo_at && !(payload.old && payload.old.demo_at)) showAdminToast('Demo homepage ready' + (payload.new.business ? ': ' + payload.new.business : ''), 'lime');
     loadInquiries();
   }).subscribe();
   sb.channel('admin-profiles-update').on('postgres_changes',{event:'UPDATE',schema:'public',table:'profiles'},()=>{loadClients();}).subscribe();
