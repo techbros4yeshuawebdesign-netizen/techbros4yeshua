@@ -590,34 +590,19 @@ html, body { max-width: 100%; overflow-x: hidden; }
 
         <!-- PLAN SWITCHING -->
         <div id="sub-switch" class="switch-plan-card" style="display:none;margin-top:14px;">
-          <div class="switch-plan-title">Switch or Add a Plan</div>
-          <p style="font-size:13px;color:var(--mid);margin-bottom:16px;">Change your website or maintenance level. Your current plan cancels and the new one starts — no double billing.</p>
+          <div class="switch-plan-title">Switch Plan</div>
+          <p style="font-size:13px;color:var(--mid);margin-bottom:16px;">Move to a different plan. Your current plan cancels and the new one starts, so you are never billed twice.</p>
 
-          <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:8px;">Website Plan</div>
-          <div class="plan-option" id="sw-starter" onclick="selectSwitchPlan('website','starter')">
-            <div><div class="plan-option-name">Starter Site</div><div class="plan-option-price">$500 one-time</div></div>
-            <span class="plan-option-check">✓</span>
-          </div>
-          <div class="plan-option" id="sw-professional" onclick="selectSwitchPlan('website','professional')">
-            <div><div class="plan-option-name">Professional Site</div><div class="plan-option-price">$800 one-time</div></div>
-            <span class="plan-option-check">✓</span>
-          </div>
-          <div class="plan-option" id="sw-premium" onclick="selectSwitchPlan('website','premium')">
-            <div><div class="plan-option-name">Premium Site</div><div class="plan-option-price">$1,200 one-time</div></div>
-            <span class="plan-option-check">✓</span>
-          </div>
-
-          <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin:16px 0 8px;">Monthly Maintenance</div>
           <div class="plan-option" id="sw-m-starter" onclick="selectSwitchPlan('monthly','starter')">
-            <div><div class="plan-option-name">Basic</div><div class="plan-option-price">$55/mo · 5 edits</div></div>
+            <div><div class="plan-option-name">Starter</div><div class="plan-option-price">$40/mo · 1-page site · 2 edits/mo · yours after 3 yrs</div></div>
             <span class="plan-option-check">✓</span>
           </div>
           <div class="plan-option" id="sw-m-professional" onclick="selectSwitchPlan('monthly','professional')">
-            <div><div class="plan-option-name">Standard</div><div class="plan-option-price">$85/mo · 10 edits</div></div>
+            <div><div class="plan-option-name">Professional</div><div class="plan-option-price">$119/mo · Up to 10 pages · 10 edits/mo · yours after 2 yrs</div></div>
             <span class="plan-option-check">✓</span>
           </div>
           <div class="plan-option" id="sw-m-premium" onclick="selectSwitchPlan('monthly','premium')">
-            <div><div class="plan-option-name">Full Coverage</div><div class="plan-option-price">$150/mo · unlimited edits</div></div>
+            <div><div class="plan-option-name">Premium</div><div class="plan-option-price">$199/mo · Unlimited pages · AI assistant · yours after 2 yrs</div></div>
             <span class="plan-option-check">✓</span>
           </div>
 
@@ -673,21 +658,14 @@ html, body { max-width: 100%; overflow-x: hidden; }
           <div class="p-form">
             <div class="form-row2">
               <div class="p-field"><label>Type of Website</label><select id="site-type"><option value="">Select...</option><option>Business / Company site</option><option>Portfolio / Personal brand</option><option>E-commerce / Online store</option><option>Restaurant / Food service</option><option>Church / Nonprofit</option><option>Blog / News</option><option>Landing page</option><option>Booking / Appointment site</option><option>Other</option></select></div>
-              <div class="p-field"><label>Website Package (one-time)</label>
-                <select id="site-plan">
-                  <option value="">Select website...</option>
-                  <option value="starter">Starter Site — $500</option>
-                  <option value="professional">Professional Site — $800</option>
-                  <option value="premium">Premium Site — $1,200</option>
+              <div class="p-field"><label>Plan (monthly, nothing up front)</label>
+                <select id="site-plan" onchange="document.getElementById('site-monthly').value=this.value">
+                  <option value="">Select a plan...</option>
+                  <option value="starter">Starter — $40/mo</option>
+                  <option value="professional">Professional — $119/mo</option>
+                  <option value="premium">Premium — $199/mo</option>
                 </select>
-              </div>
-              <div class="p-field"><label>Monthly Maintenance</label>
-                <select id="site-monthly">
-                  <option value="">Select monthly plan...</option>
-                  <option value="starter">Basic — $55/mo · 5 edits</option>
-                  <option value="professional">Standard — $85/mo · 10 edits</option>
-                  <option value="premium">Full Coverage — $150/mo · unlimited edits</option>
-                </select>
+                <input type="hidden" id="site-monthly" value="">
               </div>
             </div>
             <div class="p-field"><label>Business / Site Name</label><input type="text" id="site-name-input" placeholder="e.g. Smith's Auto Repair"></div>
@@ -704,11 +682,11 @@ html, body { max-width: 100%; overflow-x: hidden; }
       <div class="card">
         <div class="card-label">Frequently Asked Questions</div>
         <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>What counts as an edit request?</span><span>+</span></div><div class="faq-a">An edit is any change to your existing site — text updates, image swaps, color changes, moving sections around, or adding a small new element. New pages or major redesigns are separate requests.</div></div>
-        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>How many edits do I get per month?</span><span>+</span></div><div class="faq-a">Basic: 5 edits/month. Standard: 10 edits/month. Full Coverage: unlimited edits. Extra edits on Basic or Standard are $10 each.</div></div>
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>How many edits do I get per month?</span><span>+</span></div><div class="faq-a">Starter: 2 edits a month. Professional: 10 a month. Premium: unlimited within fair use. Extra edits on Starter or Professional are $10 each.</div></div>
         <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>How long does an edit take?</span><span>+</span></div><div class="faq-a">Most edits are completed within 3–5 business days. Complex changes may take longer. You'll see your request status update in the Edit Requests tab.</div></div>
         <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>What does maintenance include?</span><span>+</span></div><div class="faq-a">Maintenance covers: security updates, hosting uptime monitoring, SSL certificate renewal, and regular backups. It does NOT include new features, integrations, or redesigns.</div></div>
         <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>How do I approve my prototype?</span><span>+</span></div><div class="faq-a">You have 7 days from when your prototype is ready to review and request changes. On day 7 we proceed with the current version and begin your subscription. Use the Edit Requests tab for any remaining changes.</div></div>
-        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Can I own my website?</span><span>+</span></div><div class="faq-a">Yes. How soon depends on your build: 3 years on a Starter site, 2 years on Professional, 1 year on Premium. Your countdown runs while your monthly plan is active and you can watch it on the My Sites tab. When it reaches zero, request your files from there — no fee, and your plan carries on unless you say otherwise.</div></div>
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Can I own my website?</span><span>+</span></div><div class="faq-a">Yes. Starter becomes yours after 3 years, Professional and Premium after 2. Your countdown runs while your plan is active and you can watch it on the My Sites tab. When it reaches zero your price drops to just the care plan ($25, $85 or $150 a month) and you can request your files, free. If you cancel before then the site comes down, or you can buy out the balance and keep it.</div></div>
         <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Can I upgrade my plan?</span><span>+</span></div><div class="faq-a">Yes! Contact Nathan or email techBros4yeshua.web.design@gmail.com to upgrade. Your old plan cancels and the new one starts — no double billing.</div></div>
         <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>What if my site goes down?</span><span>+</span></div><div class="faq-a">Email Nathan immediately at techBros4yeshua.web.design@gmail.com. Hosting issues are treated as urgent and addressed as soon as possible, usually within a few hours.</div></div>
         <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Can I cancel my subscription?</span><span>+</span></div><div class="faq-a">Yes, you can cancel anytime. Your site stays live until the end of your billing period. After cancellation, hosting ends and the site goes offline.</div></div>
@@ -775,9 +753,9 @@ const SKEY = 'sb_publishable_x9BC4b-yBIZAXz67WTVTkQ_v3wOCGhZ';
 const sb = supabase.createClient(SURL, SKEY);
 
 const PLANS = {
-  starter:      {name:'Basic',         price:'$55/month', features:['Hosting + SSL','Security updates','Uptime monitoring','5 edits per month','Email support']},
-  professional: {name:'Standard',      price:'$85/month', features:['Hosting + SSL','Security updates','Uptime monitoring','10 edits per month','Priority support','Monthly performance report']},
-  premium:      {name:'Full Coverage', price:'$150/month', features:['Hosting + SSL','Security updates','Uptime monitoring','Unlimited edits','24hr priority support','Monthly performance report','SEO monitoring']}
+  starter:      {name:'Starter',      price:'$40/month',  features:['Custom one-page website','Hosting + SSL + security','2 edits per month','Email support','Yours after 3 years, then $25/month']},
+  professional: {name:'Professional', price:'$119/month', features:['Up to 10 pages','Hosting + SSL + security','10 edits per month','Priority support','Monthly performance report','Yours after 2 years, then $85/month']},
+  premium:      {name:'Premium',      price:'$199/month', features:['Unlimited pages','AI assistant included','Unlimited edits (fair use)','24hr priority support','SEO monitoring','Yours after 2 years, then $150/month']}
 };
 
 let currentUser = null;
@@ -1040,7 +1018,7 @@ async function requestFiles(siteId, siteName){
     user_id: currentUser.id,
     page: 'OWNERSHIP',
     edit_type: '\ud83d\udce6 Website files requested \u2014 ' + siteName,
-    message: 'Client reached 12 months and has requested their website files for ' + siteName + '.',
+    message: 'Client reached their ownership date and has requested their website files for ' + siteName + '.',
     status: 'pending'
   });
   logEvent('other','Requested website files', siteName);
@@ -1394,13 +1372,12 @@ async function submitRequest(mode) {
     const siteDesc=document.getElementById('site-desc').value.trim();
     const siteDomain=document.getElementById('site-domain').value.trim();
     const m=document.getElementById('new-site-msg');
-    if (!siteType||!sitePlan||!siteMonthly||!siteName||!siteDesc) { m.textContent='Please choose a website package and a monthly plan, and fill in the remaining fields.'; m.className='msg error'; return; }
+    if (!siteType||!sitePlan||!siteName||!siteDesc) { m.textContent='Please choose a plan and fill in the remaining fields.'; m.className='msg error'; return; }
     const btn=document.getElementById('new-site-btn'); btn.textContent='Submitting...'; btn.disabled=true;
-    const {error}=await sb.from('edit_requests').insert({user_id:currentUser.id,page:'NEW WEBSITE',edit_type:'New Website Request — '+siteType,message:'Website: '+sitePlan+' ($'+({starter:500,professional:800,premium:1200}[sitePlan]||'?')+')'
-      +'\nMonthly: '+siteMonthly+' ($'+({starter:55,professional:85,premium:150}[siteMonthly]||'?')+'/mo)'
+    const {error}=await sb.from('edit_requests').insert({user_id:currentUser.id,page:'NEW WEBSITE',edit_type:'New Website Request — '+siteType,message:'Plan: '+sitePlan+' ($'+({starter:40,professional:119,premium:199}[sitePlan]||'?')+'/mo, nothing up front)'
       +'\nSite Name: '+siteName+'\nDomain: '+(siteDomain||'Not provided')+'\n\nVision:\n'+siteDesc,status:'pending'});
     if (error) { m.textContent='Error. Try again.'; m.className='msg error'; btn.textContent='Submit New Site Request →'; btn.disabled=false; }
-    else { m.textContent='✓ Submitted! Nathan will reach out within 24 hours.'; m.className='msg success'; btn.textContent='Submit New Site Request →'; btn.disabled=false; document.getElementById('site-type').value=''; document.getElementById('site-plan').value='';document.getElementById('site-monthly').value=''; document.getElementById('site-name-input').value=''; document.getElementById('site-desc').value=''; document.getElementById('site-domain').value=''; await loadRequests(); setTimeout(()=>showTab('requests'),1500); }
+    else { m.textContent='✓ Submitted! Nathan will reach out within 24 hours.'; m.className='msg success'; btn.textContent='Submit New Site Request →'; btn.disabled=false; document.getElementById('site-type').value=''; document.getElementById('site-plan').value=''; document.getElementById('site-name-input').value=''; document.getElementById('site-desc').value=''; document.getElementById('site-domain').value=''; await loadRequests(); setTimeout(()=>showTab('requests'),1500); }
   } else {
     const page=document.getElementById('req-page').value.trim();
     const type=document.getElementById('req-type').value;
@@ -1503,7 +1480,7 @@ function showToast(msg) {
 
 
 // ── EDIT LIMITS ──
-const EDIT_LIMITS = { starter: 5, professional: 10, premium: Infinity };
+const EDIT_LIMITS = { starter: 2, professional: 10, premium: Infinity };
 const OVERAGE_RATE = 10;
 
 async function loadEditLimit() {
@@ -1586,8 +1563,8 @@ function prefillInquiry() {
 
   if (!plan) return;
 
-  const websiteNames  = { starter:'Starter Site ($500)', professional:'Professional Site ($800)', premium:'Premium Site ($1,200)' };
-  const monthlyNames  = { starter:'Basic Maintenance ($55/mo)', professional:'Standard Maintenance ($85/mo)', premium:'Full Coverage ($150/mo)', none:'No monthly maintenance' };
+  const websiteNames  = { starter:'Starter ($40/mo)', professional:'Professional ($119/mo)', premium:'Premium ($199/mo)' };
+  const monthlyNames  = websiteNames;
   const planSelectNames = { starter:'starter', professional:'professional', premium:'premium' };
 
   const banner  = document.getElementById('inq-plan-banner');
@@ -1599,32 +1576,17 @@ function prefillInquiry() {
   let summaryHTML = '';
   let summaryText = '';
 
-  if (mode === 'onetime' || mode === 'both' || mode) {
-    summaryHTML += `<div>🏠 <strong style="color:#fff;">Website:</strong> ${websiteNames[plan] || plan}</div>`;
-    summaryText += 'Website: ' + (websiteNames[plan] || plan) + '\n';
-  }
-
   const wantsAI = params.get('ai') || sessionStorage.getItem('chosen_ai');
-  if (monthly && monthly !== 'none') {
-    summaryHTML += `<div>📅 <strong style="color:#fff;">Monthly Plan:</strong> ${monthlyNames[monthly] || monthly}</div>`;
-    summaryText += 'Monthly Plan: ' + (monthlyNames[monthly] || monthly) + '\n';
-    if (wantsAI) {
-      const inc = monthly === 'premium';
-      summaryHTML += `<div>🤖 <strong style="color:#fff;">AI Assistant:</strong> ${inc ? 'Included with Full Coverage' : '$25/mo per site'}</div>`;
-      summaryText += 'AI Assistant: ' + (inc ? 'included' : '$25/mo per site') + '\n';
-    }
-  } else if (monthly === 'none') {
-    summaryHTML += `<div>📅 <strong style="color:#fff;">Monthly Plan:</strong> None — self-hosted</div>`;
-    summaryText += 'Monthly Plan: None (self-hosted)\n';
+  const mPrices = { starter: 40, professional: 119, premium: 199 };
+  const aiInc   = plan === 'premium';
+  const perMonth = (mPrices[plan] || 0) + (wantsAI && !aiInc ? 25 : 0);
+  summaryHTML += `<div>🏠 <strong style="color:#fff;">Plan:</strong> ${websiteNames[plan] || plan}</div>`;
+  summaryText += 'Plan: ' + (websiteNames[plan] || plan) + '\n';
+  if (wantsAI) {
+    summaryHTML += `<div>🤖 <strong style="color:#fff;">AI Assistant:</strong> ${aiInc ? 'Included with Premium' : '$25/mo'}</div>`;
+    summaryText += 'AI Assistant: ' + (aiInc ? 'included' : '$25/mo') + '\n';
   }
-
-  if (mode === 'both') {
-    const prices = { starter: 500, professional: 800, premium: 1200 };
-    const mPrices = { starter: 55, professional: 85, premium: 150 };
-    const sitePrice = prices[plan] || 0;
-    const mPrice = monthly && monthly !== 'none' ? (mPrices[monthly] || 0) : 0;
-    summaryHTML += `<div style="margin-top:6px;padding-top:6px;border-top:1px solid rgba(200,241,53,0.15);">💰 <strong style="color:var(--lime);">Total: $${sitePrice.toLocaleString()} one-time${mPrice ? ' + $' + mPrice + '/mo' : ''}</strong></div>`;
-  }
+  summaryHTML += `<div style="margin-top:6px;padding-top:6px;border-top:1px solid rgba(200,241,53,0.15);">💰 <strong style="color:var(--lime);">$${perMonth}/mo, nothing up front</strong></div>`;
 
   summary.innerHTML = summaryHTML;
   banner.style.display = 'block';
@@ -1724,11 +1686,20 @@ async function loadDemoApprovals() {
 }
 
 // ── PAYMENT MODAL ──
-let payState = { siteId: null, siteName: null, website: null, monthly: null };
+const PAY_PLANS = {
+  starter:      { name: 'Starter',      price: 40,  ownYears: 3, after: 25 },
+  professional: { name: 'Professional', price: 119, ownYears: 2, after: 85 },
+  premium:      { name: 'Premium',      price: 199, ownYears: 2, after: 150 }
+};
+const PAY_AI = 25;
+let payState = { siteId: null, siteName: null, website: null, monthly: null, ai: false };
 
 function openPaymentModal(siteId, siteName) {
-  payState = { siteId, siteName, website: null, monthly: null };
+  payState = { siteId, siteName, website: null, monthly: null, ai: false };
   getCheckoutLinks();
+  document.querySelectorAll('#pm-step1 .plan-option').forEach(el => el.classList.remove('selected'));
+  const aiRow = document.getElementById('pm-ai'); if (aiRow) aiRow.style.display = 'none';
+  const nb = document.getElementById('pm-step1-btn'); if (nb) nb.disabled = true;
   document.getElementById('payment-overlay').style.display = 'flex';
   goPayStep(1);
 }
@@ -1744,16 +1715,32 @@ function goPayStep(step) {
 }
 
 function selectPayPlan(type, plan) {
-  payState[type] = plan;
+  if (!PAY_PLANS[plan]) return;
+  payState.website = plan;
+  payState.monthly = plan;   // one monthly plan now; both fields kept for older code paths
+  document.querySelectorAll('[id^="pm-ws-"]').forEach(el => el.classList.remove('selected'));
+  document.getElementById('pm-ws-' + plan)?.classList.add('selected');
+  const aiRow = document.getElementById('pm-ai');
+  if (aiRow) {
+    aiRow.style.display = plan === 'premium' ? 'none' : 'flex';
+    if (plan === 'premium') { payState.ai = false; aiRow.classList.remove('selected'); }
+  }
+  document.getElementById('pm-step1-btn').disabled = false;
+}
 
-  // Update UI
-  const prefix = type === 'website' ? 'pm-ws-' : 'pm-mo-';
-  document.querySelectorAll(`[id^="${prefix}"]`).forEach(el => el.classList.remove('selected'));
-  document.getElementById(prefix + plan)?.classList.add('selected');
+function togglePayAI() {
+  if (payState.website === 'premium') return;
+  payState.ai = !payState.ai;
+  document.getElementById('pm-ai')?.classList.toggle('selected', payState.ai);
+}
 
-  // Enable next button
-  if (type === 'website') document.getElementById('pm-step1-btn').disabled = false;
-  if (type === 'monthly')  document.getElementById('pm-step2-btn').disabled = false;
+// Stripe link keys: starter, starter+ai, professional, professional+ai, premium
+function payLinkKey() {
+  return payState.website + (payState.ai && payState.website !== 'premium' ? '+ai' : '');
+}
+function payMonthly() {
+  const p = PAY_PLANS[payState.website];
+  return p ? p.price + (payState.ai && payState.website !== 'premium' ? PAY_AI : 0) : 0;
 }
 
 
@@ -1951,17 +1938,13 @@ async function recordPaymentIntent(){
     await sb.from('sites').update({status:'payment-pending'}).eq('id', payState.siteId);
   }catch(e){}
 
-  const sitePrice = { starter:500, professional:800, premium:1200 };
-  const moPrice   = { starter:55,  professional:85,  premium:150 };
-  const wp = sitePrice[payState.website] || 0;
-  const mp = (payState.monthly && payState.monthly !== 'none') ? (moPrice[payState.monthly] || 0) : 0;
-
+  const mp = payMonthly();
   await logEvent('payment','Checkout started',
     'Site: ' + payState.siteName
-    + ' · Website: ' + payState.website
-    + ' · Monthly: ' + (payState.monthly || 'none')
-    + ' · Due today: $' + (wp + mp),
-    wp + mp);
+    + ' · Plan: ' + payState.website
+    + (payState.ai && payState.website !== 'premium' ? ' + AI assistant' : '')
+    + ' · $' + mp + '/mo',
+    mp);
 
   showToast('Checkout opened. Nathan is notified once payment clears.');
   closePaymentModal();
@@ -1971,7 +1954,7 @@ async function recordPaymentIntent(){
 function payNow() {
   let links = siteConfig || {};   // fetched when the checkout opens, so the window.open below is not popup-blocked
   if (!links || !Object.keys(links).length) { try { links = JSON.parse(localStorage.getItem('stripe_links') || '{}'); } catch(e) { links = {}; } }
-  const key = payState.website + '+' + (payState.monthly || 'none');
+  const key = payLinkKey();
   const link = links[key];
   const fallback = document.getElementById('pm-stripe-fallback');
 
@@ -1988,40 +1971,33 @@ function payNow() {
   }
 }
 
-// Update summary on step 3
+// Update summary on the checkout step
 function renderPayStep(step) {
   if (step !== 3) return;
+  const p = PAY_PLANS[payState.website];
+  if (!p) return;
+  const withAI = payState.ai && payState.website !== 'premium';
+  const mp = payMonthly();
 
-  const sitePrice = { starter:500, professional:800, premium:1200 };
-  const moPrice   = { starter:55,  professional:85,  premium:150 };
-  const siteName  = { starter:'Starter Site', professional:'Professional Site', premium:'Premium Site' };
-  const moName    = { starter:'Basic Maintenance', professional:'Standard Maintenance', premium:'Full Coverage' };
-
-  const w  = payState.website;
-  const m  = payState.monthly;
-  const wp = sitePrice[w] || 0;
-  const mp = (m && m !== 'none') ? (moPrice[m] || 0) : 0;
-
-  document.getElementById('pm-website-label').textContent = siteName[w] || '—';
-  document.getElementById('pm-website-price').textContent = '$' + wp.toLocaleString();
+  document.getElementById('pm-website-label').textContent = p.name + ' plan';
+  document.getElementById('pm-website-price').textContent = '$' + p.price + '/mo';
 
   const moRow = document.getElementById('pm-monthly-row');
-  if (mp) {
+  if (withAI || payState.website === 'premium') {
     moRow.style.display = 'flex';
-    document.getElementById('pm-monthly-label').textContent = (moName[m] || '') + ' — first month';
-    document.getElementById('pm-monthly-price').textContent = '$' + mp;
-    document.getElementById('pm-after').textContent = 'then $' + mp + '/month, cancel anytime';
+    document.getElementById('pm-monthly-label').textContent = 'AI assistant';
+    document.getElementById('pm-monthly-price').textContent = withAI ? '$' + PAY_AI + '/mo' : 'Included';
   } else {
     moRow.style.display = 'none';
-    document.getElementById('pm-after').textContent = 'No recurring charge';
   }
 
-  document.getElementById('pm-due-today').textContent = '$' + (wp + mp).toLocaleString();
+  document.getElementById('pm-due-today').textContent = '$' + mp;
+  document.getElementById('pm-after').textContent =
+    'then $' + mp + '/month · yours after ' + p.ownYears + ' years, then $' + (p.after + (withAI ? PAY_AI : 0)) + '/month';
 
   document.getElementById('pm-pay-btn').style.display = 'block';
   document.getElementById('pm-paid').style.display = 'none';
   document.getElementById('pm-stripe-fallback').style.display = 'none';
-
 }
 
 // ── PLAN SWITCHING ──
@@ -2033,7 +2009,7 @@ function selectSwitchPlan(type, plan) {
   document.querySelectorAll(`[id^="${prefix}"]`).forEach(el => el.classList.remove('selected'));
   document.getElementById(prefix + plan)?.classList.add('selected');
   const btn = document.getElementById('switch-confirm-btn');
-  if (btn) btn.disabled = !(switchState.website || switchState.monthly);
+  if (btn) btn.disabled = !switchState.monthly;
 }
 
 async function confirmPlanSwitch() {
@@ -2041,8 +2017,9 @@ async function confirmPlanSwitch() {
   const msg = document.getElementById('switch-msg');
   btn.textContent = 'Processing...'; btn.disabled = true;
 
-  const links = JSON.parse(localStorage.getItem('stripe_links') || '{}');
-  const mPrices = { starter: 55, professional: 85, premium: 150 };
+  let links = await getCheckoutLinks();
+  if (!links || !Object.keys(links).length) { try { links = JSON.parse(localStorage.getItem('stripe_links') || '{}'); } catch(e) { links = {}; } }
+  const mPrices = { starter: 40, professional: 119, premium: 199 };
 
   // Cancel old monthly subscription if switching monthly
   if (switchState.monthly && switchState.monthly !== 'none') {
@@ -2062,15 +2039,11 @@ async function confirmPlanSwitch() {
 
   const names = { starter:'Starter', professional:'Professional', premium:'Premium', none:'None' };
   await logEvent('plan_change','Client changed plan',
-    'Website: '+(names[switchState.website]||'no change')
-    +' · Monthly: '+(names[switchState.monthly]||'no change'));
+    'New plan: '+(names[switchState.monthly]||'no change'));
 
   // Open Stripe link if available
   if (switchState.monthly && switchState.monthly !== 'none' && links[switchState.monthly]) {
     window.open(links[switchState.monthly], '_blank');
-  }
-  if (switchState.website && links[switchState.website+'-onetime']) {
-    window.open(links[switchState.website+'-onetime'], '_blank');
   }
 
   msg.textContent = '✅ Plan change submitted! Nathan has been notified.';
@@ -2089,49 +2062,33 @@ async function confirmPlanSwitch() {
       <div class="payment-modal">
         <button class="pm-close" onclick="closePaymentModal()">✕</button>
 
-        <!-- STEP 1: CHOOSE WEBSITE -->
+        <!-- STEP 1: CHOOSE PLAN -->
         <div class="payment-step active" id="pm-step1">
-          <div class="pm-title">Choose Your Website</div>
-          <div class="pm-sub">Select the website package you'd like to purchase.</div>
+          <div class="pm-title">Choose Your Plan</div>
+          <div class="pm-sub">One monthly price, nothing up front. Cancel anytime.</div>
           <div class="plan-option" id="pm-ws-starter" onclick="selectPayPlan('website','starter')">
-            <div><div class="plan-option-name">Starter Site</div><div class="plan-option-price">$500 one-time · Up to 5 pages</div></div>
+            <div><div class="plan-option-name">Starter</div><div class="plan-option-price">$40/mo · 1-page site · 2 edits/mo · yours after 3 years</div></div>
             <span class="plan-option-check">✓</span>
           </div>
           <div class="plan-option" id="pm-ws-professional" onclick="selectPayPlan('website','professional')">
-            <div><div class="plan-option-name">Professional Site</div><div class="plan-option-price">$800 one-time · Up to 10 pages</div></div>
+            <div><div class="plan-option-name">Professional</div><div class="plan-option-price">$119/mo · up to 10 pages · 10 edits/mo · yours after 2 years</div></div>
             <span class="plan-option-check">✓</span>
           </div>
           <div class="plan-option" id="pm-ws-premium" onclick="selectPayPlan('website','premium')">
-            <div><div class="plan-option-name">Premium Site</div><div class="plan-option-price">$1,200 one-time · Unlimited pages</div></div>
+            <div><div class="plan-option-name">Premium</div><div class="plan-option-price">$199/mo · unlimited pages · AI assistant included · yours after 2 years</div></div>
             <span class="plan-option-check">✓</span>
           </div>
-          <button class="pm-next-btn" id="pm-step1-btn" onclick="goPayStep(2)" disabled>Next: Choose Maintenance →</button>
-        </div>
-
-        <!-- STEP 2: CHOOSE MONTHLY -->
-        <div class="payment-step" id="pm-step2">
-          <div class="pm-title">Choose Monthly Maintenance</div>
-          <div class="pm-sub">Keeps your site live, secure and maintained.</div>
-          <div class="plan-option" id="pm-mo-starter" onclick="selectPayPlan('monthly','starter')">
-            <div><div class="plan-option-name">Basic</div><div class="plan-option-price">$55/mo · 5 edits/month</div></div>
+          <div class="plan-option" id="pm-ai" onclick="togglePayAI()" style="margin-top:14px;display:none;">
+            <div><div class="plan-option-name">Add the AI assistant</div><div class="plan-option-price">+$25/mo · answers your customers day and night</div></div>
             <span class="plan-option-check">✓</span>
           </div>
-          <div class="plan-option" id="pm-mo-professional" onclick="selectPayPlan('monthly','professional')">
-            <div><div class="plan-option-name">Standard</div><div class="plan-option-price">$85/mo · 10 edits/month</div></div>
-            <span class="plan-option-check">✓</span>
-          </div>
-          <div class="plan-option" id="pm-mo-premium" onclick="selectPayPlan('monthly','premium')">
-            <div><div class="plan-option-name">Full Coverage</div><div class="plan-option-price">$150/mo · Unlimited edits</div></div>
-            <span class="plan-option-check">✓</span>
-          </div>
-          <button class="pm-next-btn" id="pm-step2-btn" onclick="goPayStep(3)" disabled>Next: Payment →</button>
-          <div class="pm-back" onclick="goPayStep(1)">← Back</div>
+          <button class="pm-next-btn" id="pm-step1-btn" onclick="goPayStep(3)" disabled>Next: Review &amp; Pay →</button>
         </div>
 
         <!-- STEP 3: PAYMENT -->
         <div class="payment-step" id="pm-step3">
           <div class="pm-title">Complete Your Payment</div>
-          <div class="pm-sub">One checkout — your website plus your first month.</div>
+          <div class="pm-sub">Your first month today, then the same each month. Nothing else up front.</div>
 
           <div class="checkout-box">
             <div class="checkout-row">
@@ -2153,8 +2110,8 @@ async function confirmPlanSwitch() {
           <div id="pm-paid" style="display:none;text-align:center;padding:12px;color:#6dc86d;font-weight:700;font-size:14px;">✅ Checkout opened in a new tab</div>
           <div id="pm-stripe-fallback" style="display:none;background:rgba(255,180,0,0.08);border:1px solid rgba(255,180,0,0.2);border-radius:12px;padding:14px;font-size:13px;color:#ffb400;margin-top:12px;"></div>
 
-          <div class="pm-back" onclick="goPayStep(2)">← Back</div>
-          <p style="font-size:11px;color:rgba(255,255,255,0.2);text-align:center;margin-top:12px;">Secured by Stripe · Cancel the monthly plan anytime</p>
+          <div class="pm-back" onclick="goPayStep(1)">← Back</div>
+          <p style="font-size:11px;color:rgba(255,255,255,0.2);text-align:center;margin-top:12px;">Secured by Stripe · Cancel anytime · If you cancel before the site is yours it comes down, or buy out the balance to keep it</p>
         </div>
 
       </div>

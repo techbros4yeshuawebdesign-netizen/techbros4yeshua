@@ -1855,6 +1855,8 @@ html.intro-calm #intro.out{animation:calmOut .5s ease forwards !important;}
   margin-left:-1.1em;}
 
 
+.founders-note{max-width:640px;margin:0 auto 34px;text-align:center;font-size:14px;color:rgba(255,255,255,.75);background:rgba(200,241,53,.07);border:1px solid rgba(200,241,53,.25);border-radius:100px;padding:10px 20px}
+.founders-note b{color:var(--lime)}
 .own-tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
 @media(max-width:600px){.own-tiers{grid-template-columns:1fr;}}
 .own-tier{background:rgba(10,12,5,.7);border:1px solid rgba(255,255,255,.09);
@@ -1952,7 +1954,7 @@ html.intro-on body > *:not(#intro){visibility:hidden !important;}
 </div>
   <div class="hero-badge"><div class="badge-dot"></div>Free prototype — no card required</div>
   <h1><span class="glitch" data-text="Your business">Your business</span><br><em>deserves a real</em><br><span class="glitch" data-text="website.">website.</span></h1>
-  <p>We build fast, modern websites for small businesses — from $500, or $55/month with hosting and maintenance included. See your site before you pay a dime.</p>
+  <p>We build fast, modern websites for small businesses from $40 a month with nothing up front. Hosting, security and edits included. See your site before you pay a dime.</p>
   <div class="hero-btns">
     <a href="#contact" class="btn-primary">Get a Free Prototype →</a>
     <a href="example-taco.html" class="btn-demo">
@@ -1968,13 +1970,13 @@ html.intro-on body > *:not(#intro){visibility:hidden !important;}
     <span class="ticker-item"><span class="ticker-dot"></span><strong>Free prototype</strong> — see your site before you commit</span>
     <span class="ticker-item"><span class="ticker-dot"></span><strong>5-7 day</strong> turnaround on prototypes</span>
     <span class="ticker-item"><span class="ticker-dot"></span><strong>Mobile-first</strong> design on every plan</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Websites from <strong>$500</strong> — see it before you pay</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Websites from <strong>$40/mo</strong>, nothing up front</span>
     <span class="ticker-item"><span class="ticker-dot"></span><strong>SSL + hosting</strong> included on all plans</span>
     <span class="ticker-item"><span class="ticker-dot"></span><strong>Cancel anytime</strong> — no contracts</span>
     <span class="ticker-item"><span class="ticker-dot"></span><strong>Free prototype</strong> — see your site before you commit</span>
     <span class="ticker-item"><span class="ticker-dot"></span><strong>5-7 day</strong> turnaround on prototypes</span>
     <span class="ticker-item"><span class="ticker-dot"></span><strong>Mobile-first</strong> design on every plan</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>Websites from <strong>$500</strong> — see it before you pay</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>Websites from <strong>$40/mo</strong>, nothing up front</span>
     <span class="ticker-item"><span class="ticker-dot"></span><strong>SSL + hosting</strong> included on all plans</span>
     <span class="ticker-item"><span class="ticker-dot"></span><strong>Cancel anytime</strong> — no contracts</span>
   </div>
@@ -2041,66 +2043,71 @@ html.intro-on body > *:not(#intro){visibility:hidden !important;}
 <section id="pricing" class="section">
   <div class="section-inner">
     <div class="sec-label reveal" style="text-align:center;">Pricing</div>
-    <div class="sec-title reveal" style="text-align:center;">Build your perfect plan</div>
-    <p class="reveal" style="text-align:center;color:var(--mid);font-size:16px;max-width:560px;margin:0 auto 50px;">First pick your website, then choose your monthly hosting and maintenance level. Mix and match to fit your budget.</p>
+    <div class="sec-title reveal" style="text-align:center;">One monthly price. Nothing up front.</div>
+    <p class="reveal" style="text-align:center;color:var(--mid);font-size:16px;max-width:560px;margin:0 auto 50px;">Pick a plan, see your free preview, and pay nothing until you love it. Your site, hosting and edits are all in one price.</p>
 
     <!-- STEP 1 -->
+    <div class="founders-note reveal">
+      <b>Founding clients:</b> the first 10 businesses lock in their monthly price for life.
+    </div>
+
     <div class="step-label reveal">
       <span class="step-num">1</span>
-      <span>Choose your website</span>
+      <span>Choose your plan</span>
     </div>
 
     <div class="plans-grid" id="website-plans">
 
-      <div class="plan reveal selectable-plan" id="wp-starter" onclick="selectWebsite('starter', 500)">
-        <div class="plan-name">Starter Site</div>
-        <div class="plan-price"><div class="plan-price-num">$500</div><div class="plan-price-mo"> one-time</div></div>
-        <div class="plan-desc">Perfect for small businesses, portfolios, and landing pages.</div>
+      <div class="plan reveal selectable-plan" id="wp-starter" onclick="selectWebsite('starter', 40)">
+        <div class="plan-badge">Best place to start</div>
+        <div class="plan-name">Starter</div>
+        <div class="plan-price"><div class="plan-price-num">$40</div><div class="plan-price-mo">/mo</div></div>
+        <div class="plan-desc">A sharp one-page site that gets you found and gets the phone ringing.</div>
         <ul class="plan-features">
-          <li>Up to 5 pages</li>
-          <li>Mobile responsive</li>
-          <li>Contact form</li>
-          <li>Basic SEO</li>
-          <li>1 round of revisions</li>
-          <li>Built and hosted by us</li>
-          <li class="own-line">Yours to own after 3 years</li>
+          <li>Custom one-page website</li>
+          <li>Mobile-first design</li>
+          <li>Contact or quote form</li>
+          <li>Google-ready basics</li>
+          <li>Hosting, SSL and security</li>
+          <li>2 edits a month</li>
+          <li class="own-line">Yours after 3 years, then $25/mo</li>
         </ul>
         <div class="plan-select-indicator">Tap to select →</div>
       </div>
 
-      <div class="plan featured reveal selectable-plan" id="wp-professional" onclick="selectWebsite('professional', 800)">
+      <div class="plan featured reveal selectable-plan" id="wp-professional" onclick="selectWebsite('professional', 119)">
         <div class="scan-line" style="animation-delay:-1s;"></div>
         <div class="plan-badge">Most Popular</div>
-        <div class="plan-name">Professional Site</div>
-        <div class="plan-price"><div class="plan-price-num">$800</div><div class="plan-price-mo"> one-time</div></div>
-        <div class="plan-desc">For growing businesses that need more pages and features.</div>
+        <div class="plan-name">Professional</div>
+        <div class="plan-price"><div class="plan-price-num">$119</div><div class="plan-price-mo">/mo</div></div>
+        <div class="plan-desc">For growing businesses that need more pages, more features and more changes.</div>
         <ul class="plan-features">
           <li>Up to 10 pages</li>
-          <li>Mobile responsive</li>
-          <li>Contact form + live chat</li>
+          <li>Mobile-first design</li>
+          <li>Forms, booking or quote requests</li>
           <li>Advanced SEO</li>
-          <li>2 rounds of revisions</li>
-          <li>Payment processing</li>
-          <li>Built and hosted by us</li>
-          <li class="own-line">Yours to own after 2 years</li>
+          <li>Hosting, SSL and security</li>
+          <li>10 edits a month</li>
+          <li>Priority support + monthly report</li>
+          <li class="own-line">Yours after 2 years, then $85/mo</li>
         </ul>
         <div class="plan-select-indicator">Tap to select →</div>
       </div>
 
-      <div class="plan reveal selectable-plan" id="wp-premium" onclick="selectWebsite('premium', 1200)">
-        <div class="plan-badge">Premium</div>
-        <div class="plan-name">Premium Site</div>
-        <div class="plan-price"><div class="plan-price-num">$1,200</div><div class="plan-price-mo"> one-time</div></div>
-        <div class="plan-desc">Full-featured, unlimited pages, everything included.</div>
+      <div class="plan reveal selectable-plan" id="wp-premium" onclick="selectWebsite('premium', 199)">
+        <div class="plan-badge">Everything included</div>
+        <div class="plan-name">Premium</div>
+        <div class="plan-price"><div class="plan-price-num">$199</div><div class="plan-price-mo">/mo</div></div>
+        <div class="plan-desc">The full package, with an AI assistant answering your customers around the clock.</div>
         <ul class="plan-features">
+          <li class="feat-star">AI assistant included</li>
           <li>Unlimited pages</li>
-          <li>Mobile responsive</li>
-          <li>Full feature set</li>
-          <li>Advanced SEO + analytics</li>
-          <li>Unlimited revisions</li>
-          <li>Payments + subscriptions</li>
-          <li>Built and hosted by us</li>
-          <li class="own-line">Yours to own after 1 year</li>
+          <li>Payments, ordering or subscriptions</li>
+          <li>Advanced SEO + monitoring</li>
+          <li>Hosting, SSL and security</li>
+          <li>Unlimited edits (fair use)</li>
+          <li>24-hour priority support</li>
+          <li class="own-line">Yours after 2 years, then $150/mo</li>
         </ul>
         <div class="plan-select-indicator">Tap to select →</div>
       </div>
@@ -2108,86 +2115,19 @@ html.intro-on body > *:not(#intro){visibility:hidden !important;}
     </div>
 
     <div class="ownership-note reveal">
-      <div class="ownership-title">About your website</div>
+      <div class="ownership-title">No upfront cost. Ever.</div>
       <p>
-        Built and hosted by us — your monthly plan keeps it live, secure and up to date.
-        <strong style="color:#fff;">Stay with us and the site becomes yours</strong> — after 3 years
-        on Starter, 2 on Professional, or just 1 year on Premium. Most people never ask; your plan
-        carries on either way.
+        One monthly price covers the build, hosting, security and your edits. You see a free preview of
+        your site before you pay anything. <strong style="color:#fff;">Stay with us and the site becomes yours</strong>,
+        then your price drops to just the care plan. Cancel anytime; if you leave before it's yours, the
+        site comes down, or you can buy out the balance and keep it.
         <a href="#ownership">How ownership works &rarr;</a>
       </p>
     </div>
 
-    <!-- STEP 2 — hidden until step 1 selected -->
-    <div id="step2-wrap" style="display:none;margin-top:50px;">
-      <div class="step-label reveal">
-        <span class="step-num">2</span>
-        <span>Choose your monthly hosting & maintenance</span>
-      </div>
-      <p style="color:var(--mid);font-size:14px;margin-bottom:30px;">Keeps your site live, secure and maintained every month.</p>
-
-      <div class="plans-grid" id="monthly-plans">
-
-        <div class="plan reveal selectable-plan" id="mp-starter" onclick="selectMonthly('starter', 55)">
-          <div class="plan-name">Basic</div>
-          <div class="plan-price"><div class="plan-price-num">$55</div><div class="plan-price-mo">/mo</div></div>
-          <div class="plan-desc">Keep your site live and secure every month.</div>
-          <ul class="plan-features">
-            <li>Hosting + SSL</li>
-            <li>Security updates</li>
-            <li>Uptime monitoring</li>
-            <li>5 edits/month</li>
-            <li>Email support</li>
-            
-          </ul>
-          <div class="plan-select-indicator">Tap to select →</div>
-        </div>
-
-        <div class="plan featured reveal selectable-plan" id="mp-professional" onclick="selectMonthly('professional', 85)">
-          <div class="scan-line" style="animation-delay:-1s;"></div>
-          <div class="plan-badge">Most Popular</div>
-          <div class="plan-name">Standard</div>
-          <div class="plan-price"><div class="plan-price-num">$85</div><div class="plan-price-mo">/mo</div></div>
-          <div class="plan-desc">More edits and faster support every month.</div>
-          <ul class="plan-features">
-            <li>Hosting + SSL</li>
-            <li>Security updates</li>
-            <li>Uptime monitoring</li>
-            <li>10 edits/month</li>
-            <li>Priority support</li>
-            <li>Monthly performance report</li>
-            
-          </ul>
-          <div class="plan-select-indicator">Tap to select →</div>
-        </div>
-
-        <div class="plan reveal selectable-plan" id="mp-premium" onclick="selectMonthly('premium', 150)">
-          <div class="plan-badge">Full Coverage</div>
-          <div class="plan-name">Full Coverage</div>
-          <div class="plan-price"><div class="plan-price-num">$150</div><div class="plan-price-mo">/mo</div></div>
-          <div class="plan-desc">Unlimited edits, an AI assistant on your site, and priority everything.</div>
-          <ul class="plan-features">
-            <li class="feat-star">AI assistant answers your customers 24/7</li>
-            <li class="feat-star">Captures enquiries while you work</li>
-            <li>Hosting + SSL</li>
-            <li>Security updates</li>
-            <li>Uptime monitoring</li>
-            <li>Unlimited edits</li>
-            <li>24hr priority support</li>
-            <li>Monthly performance report</li>
-            <li>SEO monitoring</li>
-            
-          </ul>
-          <div class="plan-select-indicator">Tap to select →</div>
-        </div>
-
-      </div>
-
-    </div>
-
     <!-- AI ASSISTANT -->
     <div class="ai-band reveal">
-      <span class="ai-tag">Included with Full Coverage</span>
+      <span class="ai-tag">Included with Premium</span>
       <div class="ai-title">An assistant that <em>answers your customers</em><br>while you're on the job</div>
       <p class="ai-lead">
         Most enquiries arrive when you can't get to the phone. The assistant knows your hours,
@@ -2235,7 +2175,7 @@ html.intro-on body > *:not(#intro){visibility:hidden !important;}
     <!-- STEP 3 — add-on -->
     <div id="step3-wrap" style="display:none;margin-top:50px;">
       <div class="step-label reveal">
-        <span class="step-num">3</span>
+        <span class="step-num">2</span>
         <span>Add the AI assistant?</span>
       </div>
       <p style="color:var(--mid);font-size:14px;margin-bottom:24px;">
@@ -2260,7 +2200,7 @@ html.intro-on body > *:not(#intro){visibility:hidden !important;}
     <!-- STEP 4 — Summary + CTA -->
     <div id="step4-wrap" style="display:none;margin-top:50px;">
       <div class="step-label reveal">
-        <span class="step-num">4</span>
+        <span class="step-num">3</span>
         <span>Your selection</span>
       </div>
       <div class="order-summary" id="order-summary"></div>
@@ -2299,53 +2239,53 @@ html.intro-on body > *:not(#intro){visibility:hidden !important;}
   <p style="color:var(--mid);font-size:16px;line-height:1.75;margin:18px auto 34px;
      max-width:600px;text-align:center;" class="anim-fade">
     You're not renting your website forever. Stick with us and you can ask for
-    everything your site needs to run somewhere else \u2014 no charge, no argument.
-    The bigger your build, the sooner it happens.
+    everything your site needs to run somewhere else — no charge, no argument.
+    Once it's yours, your price drops to just the care plan.
   </p>
 
   <div class="own-tiers anim-fade">
     <div class="own-tier">
-      <div class="own-tier-name">Starter Site</div>
+      <div class="own-tier-name">Starter</div>
       <div class="own-tier-time">3 years</div>
-      <div class="own-tier-sub">$500 build</div>
+      <div class="own-tier-sub">$40/mo, then $25/mo</div>
     </div>
     <div class="own-tier">
-      <div class="own-tier-name">Professional Site</div>
+      <div class="own-tier-name">Professional</div>
       <div class="own-tier-time">2 years</div>
-      <div class="own-tier-sub">$800 build</div>
+      <div class="own-tier-sub">$119/mo, then $85/mo</div>
     </div>
     <div class="own-tier best">
-      <div class="own-tier-name">Premium Site</div>
-      <div class="own-tier-time">1 year</div>
-      <div class="own-tier-sub">$1,200 build</div>
+      <div class="own-tier-name">Premium</div>
+      <div class="own-tier-time">2 years</div>
+      <div class="own-tier-sub">$199/mo, then $150/mo</div>
     </div>
   </div>
 
   <div class="own-grid anim-fade" style="margin-top:22px;">
     <div class="own-card">
-      <div class="own-ico">\ud83d\udce6</div>
+      <div class="own-ico">📦</div>
       <b>What you get</b>
-      <p>Every file your site is built from \u2014 pages, styling, images and content. If your
+      <p>Every file your site is built from — pages, styling, images and content. If your
          site stores data, you get an export of that too. Everything needed to host it elsewhere.</p>
     </div>
     <div class="own-card">
-      <div class="own-ico">\ud83d\udcc5</div>
+      <div class="own-ico">📅</div>
       <b>How it works</b>
       <p>Your countdown starts the day your site goes live and runs while your monthly plan is
          active. You can watch it tick down in your client portal.</p>
     </div>
     <div class="own-card">
-      <div class="own-ico">\ud83d\udd01</div>
+      <div class="own-ico">🔁</div>
       <b>What changes</b>
-      <p>Nothing, unless you want it to. Your plan carries on covering hosting, security and
-         edits. Owning the files doesn\'t mean leaving.</p>
+      <p>Your price drops to the care plan (hosting, security and edits), and nothing else changes
+         unless you want it to. Owning the files doesn't mean leaving.</p>
     </div>
   </div>
 
   <div class="own-fine anim-fade">
     <b>Worth knowing</b>
     <p>The files are your website. Hosting it elsewhere means arranging your own hosting and,
-       if your site uses a database, restoring the export \u2014 straightforward for a developer,
+       if your site uses a database, restoring the export — straightforward for a developer,
        but not a one-click job. Anything we run for you, like your client portal or the AI
        assistant, stays with us and stops working once you move. Your domain stays yours
        throughout.</p>
@@ -2353,7 +2293,7 @@ html.intro-on body > *:not(#intro){visibility:hidden !important;}
 
   <div style="text-align:center;margin-top:30px;" class="anim-fade">
     <a href="portal.html" class="btn-primary" style="font-size:15px;padding:16px 34px;">
-      Check your countdown \u2192
+      Check your countdown →
     </a>
     <p style="font-size:12.5px;color:rgba(255,255,255,.3);margin-top:14px;line-height:1.6;">
       Already eligible? Request your files from the portal, or
@@ -2930,10 +2870,16 @@ document.querySelectorAll('.plan-price-num').forEach(el => {
 
 <script>
 // ── PLAN SELECTION FLOW ──
-// 1 website  ->  2 monthly  ->  3 add-on  ->  4 summary
+// 1 plan  ->  2 AI add-on  ->  3 summary
+// Monthly only: the plan price covers the build, hosting, security and edits.
 
 const AI_PRICE = 25;
-let selectedWebsite = null;
+const PLAN_INFO = {
+  starter:      { name: 'Starter',      price: 40,  ownYears: 3, after: 25 },
+  professional: { name: 'Professional', price: 119, ownYears: 2, after: 85 },
+  premium:      { name: 'Premium',      price: 199, ownYears: 2, after: 150 }
+};
+let selectedWebsite = null;   // kept these names so the contact form and portal hand-off keep working
 let selectedMonthly = null;
 let aiOn = false;
 
@@ -2956,49 +2902,30 @@ function hide(id){
   if (el) el.style.display = 'none';
 }
 
-// ---------- step 1 ----------
+// ---------- step 1: plan ----------
 function selectWebsite(plan, price){
-  selectedWebsite = { plan, price };
+  const info = PLAN_INFO[plan];
+  if (!info) return;
+  selectedWebsite = { plan, price: info.price };
+  selectedMonthly = { plan, price: info.price };
 
   document.querySelectorAll('#website-plans .selectable-plan')
     .forEach(el => el.classList.remove('selected'));
   document.getElementById('wp-' + plan)?.classList.add('selected');
 
-  // choosing again resets everything downstream
-  selectedMonthly = null;
-  aiOn = false;
-  document.querySelectorAll('#monthly-plans .selectable-plan')
-    .forEach(el => el.classList.remove('selected'));
-  document.getElementById('ai-addon')?.classList.remove('show','on','locked');
-  hide('step3-wrap');
-  hide('step4-wrap');
-
-  reveal('step2-wrap');
-}
-
-// ---------- step 2 ----------
-function selectMonthly(plan, price){
-  selectedMonthly = { plan, price };
-
-  document.querySelectorAll('#monthly-plans .selectable-plan')
-    .forEach(el => el.classList.remove('selected'));
-  document.getElementById('mp-' + plan)?.classList.add('selected');
-
-  const box   = document.getElementById('ai-addon');
-  const check = document.getElementById('ai-check');
+  const box    = document.getElementById('ai-addon');
+  const check  = document.getElementById('ai-check');
   const price$ = document.getElementById('ai-price');
-  const sub   = document.getElementById('ai-sub');
-
+  const sub    = document.getElementById('ai-sub');
   hide('step4-wrap');
 
   if (plan === 'premium'){
-    // already part of Full Coverage
     aiOn = true;
     box?.classList.add('show','locked');
     box?.classList.remove('on');
-    if (check)  check.textContent = '\u2713';
+    if (check)  check.textContent = '✓';
     if (price$) price$.textContent = 'Included';
-    if (sub)    sub.textContent = 'Already part of Full Coverage at no extra cost.';
+    if (sub)    sub.textContent = 'Already part of Premium at no extra cost.';
     buildSummary();
     reveal('step3-wrap');
     setTimeout(() => reveal('step4-wrap'), 500);
@@ -3009,26 +2936,28 @@ function selectMonthly(plan, price){
   box?.classList.add('show');
   box?.classList.remove('locked','on');
   if (check)  check.textContent = '+';
-  if (price$) price$.textContent = '+$' + AI_PRICE + '/mo per site';
+  if (price$) price$.textContent = '+$' + AI_PRICE + '/mo';
   if (sub)    sub.textContent = 'Answers your customers day and night and takes their details for you.';
-
   buildSummary();
   reveal('step3-wrap');
 }
 
-// ---------- step 3 ----------
+// kept for any old links that still call it
+function selectMonthly(plan, price){ selectWebsite(plan, price); }
+
+// ---------- step 2: AI add-on ----------
 function toggleAI(){
-  if (selectedMonthly && selectedMonthly.plan === 'premium'){ reveal('step4-wrap'); return; }
+  if (selectedWebsite && selectedWebsite.plan === 'premium'){ reveal('step4-wrap'); return; }
   aiOn = !aiOn;
   document.getElementById('ai-addon')?.classList.toggle('on', aiOn);
   const chk = document.getElementById('ai-check');
-  if (chk) chk.textContent = aiOn ? '\u2713' : '+';
+  if (chk) chk.textContent = aiOn ? '✓' : '+';
   buildSummary();
   reveal('step4-wrap');
 }
 
 function skipAI(){
-  if (!(selectedMonthly && selectedMonthly.plan === 'premium')){
+  if (!(selectedWebsite && selectedWebsite.plan === 'premium')){
     aiOn = false;
     document.getElementById('ai-addon')?.classList.remove('on');
     const chk = document.getElementById('ai-check');
@@ -3038,47 +2967,41 @@ function skipAI(){
   reveal('step4-wrap');
 }
 
-// ---------- step 4 ----------
+// ---------- step 3: summary ----------
 function buildSummary(){
-  if (!selectedWebsite || !selectedMonthly) return;
-
-  const siteName = { starter:'Starter Site', professional:'Professional Site', premium:'Premium Site' };
-  const moName   = { starter:'Basic Maintenance', professional:'Standard Maintenance', premium:'Full Coverage' };
-
-  const included = selectedMonthly.plan === 'premium';
+  if (!selectedWebsite) return;
+  const info = PLAN_INFO[selectedWebsite.plan];
+  const included = selectedWebsite.plan === 'premium';
   const aiCost   = (aiOn && !included) ? AI_PRICE : 0;
-  const perMonth = selectedMonthly.price + aiCost;
+  const perMonth = info.price + aiCost;
 
   let rows =
-    '<div class="summary-row"><span class="summary-label">Website</span>'
-    + '<span class="summary-value">' + siteName[selectedWebsite.plan]
-    + ' \u2014 $' + selectedWebsite.price.toLocaleString() + ' one-time</span></div>'
-    + '<div class="summary-row"><span class="summary-label">Monthly Maintenance</span>'
-    + '<span class="summary-value">' + moName[selectedMonthly.plan]
-    + ' \u2014 $' + selectedMonthly.price + '/mo</span></div>';
-
+    '<div class="summary-row"><span class="summary-label">Plan</span>'
+    + '<span class="summary-value">' + info.name + ' — $' + info.price + '/mo</span></div>'
+    + '<div class="summary-row"><span class="summary-label">Up front</span>'
+    + '<span class="summary-value">$0 — free preview first</span></div>';
   if (aiOn){
     rows += '<div class="summary-row"><span class="summary-label">AI Assistant</span>'
-      + '<span class="summary-value">'
-      + (included ? 'Included with Full Coverage' : '$' + AI_PRICE + '/mo per site')
-      + '</span></div>';
+      + '<span class="summary-value">' + (included ? 'Included with Premium' : '$' + AI_PRICE + '/mo') + '</span></div>';
   }
+  rows += '<div class="summary-row"><span class="summary-label">Ownership</span>'
+    + '<span class="summary-value">Yours after ' + info.ownYears + ' years, then $' + (info.after + aiCost) + '/mo</span></div>';
 
   const el = document.getElementById('order-summary');
   if (el) el.innerHTML =
     '<div style="font-family:Syne,system-ui,sans-serif;font-weight:700;font-size:15px;'
     + 'color:var(--lime);margin-bottom:16px;">Your Plan Summary</div>'
     + rows
-    + '<div class="summary-total"><span>Total</span><span class="summary-total-value">$'
-    + selectedWebsite.price.toLocaleString() + ' + $' + perMonth + '/mo</span></div>';
+    + '<div class="summary-total"><span>Monthly</span><span class="summary-total-value">$'
+    + perMonth + '/mo</span></div>';
 }
 
 function goToInquiry(){
-  if (!selectedWebsite || !selectedMonthly) return;
+  if (!selectedWebsite) return;
   const ai = aiOn ? '&ai=1' : '';
   window.location.href = 'portal.html?action=inquiry'
     + '&plan=' + selectedWebsite.plan
-    + '&monthly=' + selectedMonthly.plan
+    + '&monthly=' + selectedWebsite.plan
     + '&mode=both' + ai;
 }
 
@@ -3088,7 +3011,7 @@ function resetPlans(){
   aiOn = false;
   document.querySelectorAll('.selectable-plan').forEach(el => el.classList.remove('selected'));
   document.getElementById('ai-addon')?.classList.remove('show','on','locked');
-  hide('step2-wrap'); hide('step3-wrap'); hide('step4-wrap');
+  hide('step3-wrap'); hide('step4-wrap');
   document.getElementById('website-plans')?.scrollIntoView({ behavior:'smooth', block:'start' });
 }
 </script>
@@ -3210,19 +3133,19 @@ function resetPlans(){
   const QA = [
     { q: "How much does a website cost?",
       k: ["cost","price","much","expensive","pricing","afford","cheap","fee","charge","$"],
-      a: "Sites start at $500 as a one-time build, then $55 a month for hosting, security and edits. There's a full breakdown further up this page — and you see your site before paying anything." },
+      a: "Plans start at $40 a month with nothing up front. That covers the build, hosting, security and edits, and the site becomes yours after a few years. You see a free preview before paying anything." },
 
     { q: "How long does it take?",
       k: ["long","time","fast","quick","when","soon","turnaround","days","week","deadline"],
-      a: "You'll have a prototype to look at within about 7 days. Once you approve it, going live usually takes another few days." },
+      a: "Your free preview is usually ready within the hour of your request. Once you approve it, going live usually takes another few days." },
 
     { q: "Do I own the site?",
       k: ["own","ownership","mine","keep","files","code","transfer","buy out","buyout"],
-      a: "We build and host it for you — and if you stay with us the site becomes yours. Three years on a Starter build, two on Professional, one on Premium. Then you can request every file, free. There's a section further down explaining it." },
+      a: "Yes, if you stay with us. Starter becomes yours after three years, Professional and Premium after two. Then your price drops to just the care plan and you can request every file, free. If you leave early the site comes down, or you can buy out the balance and keep it." },
 
     { q: "What if I need changes later?",
       k: ["change","edit","update","revision","modify","add","fix","maintain","maintenance"],
-      a: "That's what the monthly plan is for. Basic includes 5 edits a month, Standard 10, and Full Coverage is unlimited. Send a request from your portal and it's usually done in 3–5 days." },
+      a: "That's included in your plan. Starter comes with 2 edits a month, Professional 10, and Premium is unlimited within fair use. Send a request from your portal and it's usually done in 3–5 days." },
 
     { q: "Can I see an example?",
       k: ["example","portfolio","see","work","demo","sample","previous","built","show"],
@@ -3230,7 +3153,7 @@ function resetPlans(){
 
     { q: "What is this assistant?",
       k: ["assistant","chatbot","bot","ai","chat","you","this"],
-      a: "I'm a preview of the assistant we can put on your site. The real one knows your hours, prices and services, answers your customers day or night, and passes their details straight to you. It's $25 a month, or included with Full Coverage." },
+      a: "I'm a preview of the assistant we can put on your site. The real one knows your hours, prices and services, answers your customers day or night, and passes their details straight to you. It's $25 a month, or included with Premium." },
 
     { q: "Do you do hosting?",
       k: ["host","hosting","server","domain","ssl","secure","uptime","live"],
