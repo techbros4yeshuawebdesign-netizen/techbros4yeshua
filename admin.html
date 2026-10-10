@@ -84,6 +84,11 @@ body{font-family:'DM Sans',sans-serif;background:#080a04;color:#fff;min-height:1
 .pl-h2{font-size:15px;font-weight:700;margin:14px 0 4px;color:var(--lime);}
 .pl-h3{font-weight:700;margin:10px 0 2px;}
 .pl-li{padding-left:12px;}
+.mat-row{display:grid;grid-template-columns:44px 1fr auto;gap:10px;align-items:start;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06)}
+.mat-row span{font-size:11px;color:var(--lime);font-weight:700}
+.mat-row a{color:#c9c0ff;word-break:break-all}
+.mat-row p{margin:0;white-space:pre-wrap}
+.mat-row em{font-size:11px;color:rgba(255,255,255,0.4);font-style:normal}
 .plan-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;}
 .demo-wait{font-size:11px;color:rgba(255,255,255,0.5);align-self:center;}
 .plan-actions .demo-btn{background:var(--lime);color:#111;border-color:var(--lime);}
@@ -808,6 +813,23 @@ function planHTML(p, id){
     </div>
   </div>`;
 }
+function materialsHTML(list){
+  if (!list || !list.length) return '';
+  const rows = list.map(m => {
+    const when = new Date(m.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    if (m.kind === 'file') return `<div class="mat-row"><span>File</span><a href="#" onclick="openClientFile('${escHTML(m.file_path)}');return false;">${escHTML(m.file_name || 'file')}</a><em>${when}</em></div>`;
+    if (m.kind === 'link') return `<div class="mat-row"><span>Link</span><a href="${escHTML(m.url)}" target="_blank" rel="noopener">${escHTML(m.url)}</a><em>${when}</em></div>`;
+    return `<div class="mat-row"><span>Text</span><p>${escHTML(m.note)}</p><em>${when}</em></div>`;
+  }).join('');
+  return `<div class="plan-box"><div class="plan-head" style="cursor:default"><span>Client photos &amp; info (${list.length})</span></div><div class="plan-body">${rows}</div></div>`;
+}
+async function openClientFile(path){
+  const w = window.open('', '_blank');
+  const { data, error } = await sb.storage.from('client-files').createSignedUrl(path, 600);
+  if (error || !data) { if (w) w.close(); showAdminToast('Could not open file: ' + (error ? error.message : ''), 'blue'); return; }
+  if (w) w.location.href = data.signedUrl; else window.location.href = data.signedUrl;
+}
+
 function togglePlan(id){
   const b = document.getElementById('plan-body-' + id), a = document.getElementById('plan-arrow-' + id);
   const open = b.style.display === 'none'; b.style.display = open ? 'block' : 'none'; a.textContent = open ? '▾' : '▸';
@@ -858,10 +880,18 @@ async function loadInquiries(){
   
   document.getElementById('s-inquiries').textContent = data?.length||0;
   const c = document.getElementById('inquiries-list');
-  const plans = {};
+  const plans = {}, mats = {};
   if (data && data.length) {
     const { data: pl } = await sb.from('site_plans').select('id,inquiry_id,business,plan,status,created_at,demo_at,demo_url').in('inquiry_id', data.map(r => r.id));
     (pl || []).forEach(p => plans[p.inquiry_id] = p);
+    const uids = data.map(r => r.user_id).filter(Boolean);
+    if (uids.length) {
+      const { data: ms } = await sb.from('client_materials').select('*').in('user_id', uids).order('created_at', { ascending: false });
+      (ms || []).forEach(m => {
+        const owner = data.find(r => r.id === m.inquiry_id) || data.find(r => r.user_id === m.user_id);
+        if (owner) (mats[owner.id] = mats[owner.id] || []).push(m);
+      });
+    }
   }
   if(!data||!data.length){c.innerHTML='<div class="empty">No inquiries yet.</div>';return;}
 
@@ -889,6 +919,7 @@ async function loadInquiries(){
       </div>
       ${(() => { const o = parseOrder(r.message); return o ? invoiceHTML(o, r.id) : ''; })()}
       ${planHTML(plans[r.id], r.id)}
+      ${materialsHTML(mats[r.id])}
       <div class="action-row">
         <select class="plan-select" id="plan-sel-${r.id}">
           <option value="">Select plan to offer...</option>
@@ -1233,10 +1264,24 @@ function saveStripeLinks(){
   const aiEl = document.getElementById('cl-ai-addon');
   if (aiEl) links['ai-addon'] = aiEl.value.trim();
   localStorage.setItem('stripe_links',JSON.stringify(links));
+  // clients read checkout links from site_config, so save them there too
+  sb.from('site_config').upsert({ key: 'stripe_links', value: links, updated_at: new Date().toISOString() }).then(r => {
+    if (r.error) showAdminToast('Saved here, but clients cannot see it yet: ' + r.error.message, 'blue');
+  });
   const msg=document.getElementById('stripe-save-msg');msg.style.display='inline';setTimeout(()=>msg.style.display='none',2000);
 }
 function getStripeLinks(){try{return JSON.parse(localStorage.getItem('stripe_links'))||{};}catch{return{};}}
+async function syncStripeFromServer(){
+  try {
+    const { data } = await sb.from('site_config').select('value').eq('key','stripe_links').single();
+    if (data && data.value && Object.keys(data.value).length) {
+      const local = getStripeLinks();
+      localStorage.setItem('stripe_links', JSON.stringify(Object.assign({}, data.value, local)));
+    }
+  } catch (e) {}
+}
 function loadStripeInputs(){
+  syncStripeFromServer();
   const links=getStripeLinks();
   COMBO_KEYS.forEach(k=>{
     const el=document.getElementById('cl-'+k.replace('+','-'));
@@ -1484,6 +1529,10 @@ function setupRealtime(){
   }).subscribe();
 
   // Profile updated
+  sb.channel('admin-materials').on('postgres_changes',{event:'INSERT',schema:'public',table:'client_materials'},(payload)=>{
+    showAdminToast('Client sent ' + ({file:'a file',note:'text',link:'a link'}[payload.new.kind]||'something'), 'lime');
+    loadInquiries();
+  }).subscribe();
   sb.channel('admin-plans').on('postgres_changes',{event:'INSERT',schema:'public',table:'site_plans'},(payload)=>{
     showAdminToast('🧠 Website plan ready' + (payload.new.business ? ': ' + payload.new.business : ''), 'lime');
     loadInquiries();

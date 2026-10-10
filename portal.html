@@ -489,7 +489,7 @@ html, body { max-width: 100%; overflow-x: hidden; }
   </nav>
   <div class="p-tabs">
     <button class="p-tab active" onclick="showTab('overview')">Overview</button>
-    <button class="p-tab" onclick="showTab('sites')">My Sites</button>
+    <button class="p-tab" id="sites-tab-btn" onclick="showTab('sites')">My Sites</button>
     <button class="p-tab" onclick="showTab('subscription')">Subscription</button>
     <button class="p-tab" onclick="showTab('requests')">Edit Requests</button>
     <button class="p-tab" onclick="showTab('new-request')">+ New Request</button>
@@ -528,7 +528,8 @@ html, body { max-width: 100%; overflow-x: hidden; }
           <div class="actions-grid">
             <button class="action-btn" onclick="showTab('inquiry')"><div class="action-icon">📋</div><span class="action-title">Request Prototype</span><span class="action-sub">Submit a free prototype inquiry</span></button>
             <button class="action-btn" onclick="showTab('new-request')"><div class="action-icon">✏️</div><span class="action-title">Request Edit</span><span class="action-sub">Change something on your site</span></button>
-            <button class="action-btn" onclick="showTab('sites')"><div class="action-icon">🌐</div><span class="action-title">View My Sites</span><span class="action-sub">See all your live websites</span></button>
+            <button class="action-btn" onclick="showTab('sites')"><div class="action-icon">🌐</div><span class="action-title">View My Sites</span><span class="action-sub">Previews and live websites</span></button>
+            <button class="action-btn" onclick="openMaterials(null)"><div class="action-icon">📎</div><span class="action-title">Send Photos &amp; Info</span><span class="action-sub">Logo, photos, text, references</span></button>
             <button class="action-btn" onclick="showTab('subscription')"><div class="action-icon">💳</div><span class="action-title">Manage Billing</span><span class="action-sub">View plan & payment info</span></button>
             <a href="mailto:techBros4yeshua.web.design@gmail.com" class="action-btn"><div class="action-icon">📧</div><span class="action-title">Email Nathan</span><span class="action-sub">Direct line to your rep</span></a>
           </div>
@@ -547,6 +548,7 @@ html, body { max-width: 100%; overflow-x: hidden; }
 
     <!-- SITES -->
     <div id="tab-sites" class="tab-panel">
+      <div id="sites-previews"></div>
       <div id="demo-approvals" style="margin-bottom:16px;"></div>
       <div class="card-label">Your Websites</div>
       <div id="sites-list"><div class="loading">Loading sites...</div></div>
@@ -1047,9 +1049,10 @@ async function requestFiles(siteId, siteName){
 }
 
 async function loadSites() {
-  const {data} = await sb.from('sites').select('*').eq('user_id',currentUser.id).order('created_at',{ascending:false});
+  const {data:all} = await sb.from('sites').select('*').eq('user_id',currentUser.id).order('created_at',{ascending:false});
+  const data = (all||[]).filter(s => !(s.inquiry_id && (s.status==='demo' || s.status==='payment-pending')));
   const c = document.getElementById('sites-list');
-  if (!data||!data.length) { c.innerHTML='<div class="empty"><div class="empty-icon">🌐</div><p>No sites yet — Nathan will add your site once it\'s live.</p></div>'; return; }
+  if (!data.length) { c.innerHTML='<div class="empty" id="sites-empty"><div class="empty-icon">🌐</div><p>'+(previewRows.length ? 'Your live website shows up here once it launches.' : 'No sites yet. Request a free preview and it shows up here.')+'</p></div>'; if (typeof loadDemoApprovals === 'function') loadDemoApprovals(); loadPreviews(); return; }
   c.innerHTML = data.map(s=>`
     <div class="site-card">
       <div>
@@ -1065,6 +1068,7 @@ async function loadSites() {
       ${ownBlock(s)}
     </div>`).join('');
   if (typeof loadDemoApprovals === 'function') loadDemoApprovals();
+  loadPreviews();
 }
 
 async function loadSubscription() {
@@ -1123,59 +1127,89 @@ async function cancelMyPlan(){
 
 // ── WEBSITE PREVIEWS (auto-built demo for each prototype inquiry) ──
 let previewState = {};      // inquiry_id -> stage, used to detect "just became ready"
+let previewRows  = [];
 let previewTimer = null;
+let siteConfig   = null;
 
 function escP(t){ return String(t||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
-async function loadPreviews(){
-  const box = document.getElementById('preview-list');
-  if (!box || !currentUser) return;
-  const { data, error } = await sb.rpc('my_site_previews');
-  if (error) { console.warn('previews', error.message); return; }
-  const rows = data || [];
-  const steps = (stage) => {
-    const order = ['received','designing','ready'];
-    const i = order.indexOf(stage);
-    const lbl = ['Request received','Designing your preview','Preview ready'];
-    return '<div class="pv-steps">' + lbl.map((l,k)=>`<span class="pv-step ${k<i?'on':''} ${k===i?'now':''}">${k===i && stage!=='ready' ? '<span class="pv-dot"></span>' : ''}${l}</span>`).join('') + '</div>';
-  };
-  box.innerHTML = rows.map(r => {
-    const name = escP(r.business || 'your business');
-    if (r.stage === 'ready') {
-      return `<div class="pv-card fade-in">
-        <div class="pv-label">Your free website preview</div>
-        <div class="pv-title">The preview for ${name} is ready.</div>
-        <div class="pv-sub">Here's a first look at your new homepage, built from what you told us. Photos are samples; your own photos and details go in when we build the real site.</div>
-        ${steps('ready')}
-        <div class="pv-actions">
-          <button class="lime-solid" onclick="openPreview('${r.inquiry_id}', this)">View my website preview</button>
-          <button class="pv-ghost" onclick="likePreview('${r.inquiry_id}', '${name.replace(/'/g,'')}')">I like it, let's talk</button>
-        </div>
-      </div>`;
-    }
-    const msg = r.stage === 'designing'
-      ? 'Your plan is done and we are designing your homepage now. This page updates by itself, usually within the hour.'
-      : 'We got your request. Your preview is being put together, usually within the hour. This page updates by itself.';
-    return `<div class="pv-card wait fade-in">
-      <div class="pv-label">Your free website preview</div>
-      <div class="pv-title">Working on ${name}</div>
-      <div class="pv-sub">${msg}</div>
-      ${steps(r.stage)}
-    </div>`;
-  }).join('');
+function previewSteps(stage, siteStatus){
+  const lbl = ['Request received','Designing your preview','Preview ready','Checkout'];
+  let i = ['received','designing','ready'].indexOf(stage);
+  if (siteStatus === 'payment-pending') i = 3;
+  return '<div class="pv-steps">' + lbl.map((l,k)=>`<span class="pv-step ${k<i?'on':''} ${k===i?'now':''}">${k===i && stage!=='ready' ? '<span class="pv-dot"></span>' : ''}${l}</span>`).join('') + '</div>';
+}
 
-  // tell the client the moment a preview turns ready
-  rows.forEach(r => {
+function previewCard(r){
+  const name = escP(r.business || 'your business');
+  const id = r.inquiry_id;
+  const files = `<button class="pv-ghost" onclick="openMaterials('${id}')">Send photos &amp; info</button>`;
+  if (r.stage === 'ready' && r.site_status === 'payment-pending') {
+    return `<div class="pv-card fade-in">
+      <div class="pv-label">Website preview</div>
+      <div class="pv-title">${name}: checkout started</div>
+      <div class="pv-sub">As soon as payment clears we start building the real site. Send your logo, photos and any details now so they go straight in.</div>
+      ${previewSteps(r.stage, r.site_status)}
+      <div class="pv-actions">
+        <button class="lime-solid" onclick="openPreview('${id}', this)">View preview</button>
+        ${files}
+        <button class="pv-ghost" onclick="openPaymentModal('${r.site_id}', '${name.replace(/'/g,'')}')">Open checkout again</button>
+      </div>
+    </div>`;
+  }
+  if (r.stage === 'ready') {
+    return `<div class="pv-card fade-in">
+      <div class="pv-label">Website preview</div>
+      <div class="pv-title">Your preview for ${name} is ready.</div>
+      <div class="pv-sub">A first look at your new homepage, built from what you told us. Photos are samples; your own photos and details go in when we build the real site.</div>
+      ${previewSteps(r.stage)}
+      <div class="pv-actions">
+        <button class="lime-solid" onclick="openPreview('${id}', this)">View preview</button>
+        <button class="lime-solid" onclick="acceptPreview('${id}', this)">I like it</button>
+        ${files}
+      </div>
+    </div>`;
+  }
+  const msg = r.stage === 'designing'
+    ? 'Your plan is done and we are designing your homepage now. This updates by itself, usually within the hour.'
+    : 'We got your request. Your preview is being put together, usually within the hour. This updates by itself.';
+  return `<div class="pv-card wait fade-in">
+    <div class="pv-label">Website preview</div>
+    <div class="pv-title">Working on ${name}</div>
+    <div class="pv-sub">${msg} Want it to look like you? Send your logo and photos now.</div>
+    ${previewSteps(r.stage)}
+    <div class="pv-actions">${files}</div>
+  </div>`;
+}
+
+function renderSitesEmpty(){
+  const e = document.querySelector('#sites-empty p');
+  if (e) e.textContent = previewRows.length ? 'Your live website shows up here once it launches.' : 'No sites yet. Request a free preview and it shows up here.';
+}
+
+async function loadPreviews(){
+  if (!currentUser) return;
+  getCheckoutLinks();
+  const { data, error } = await sb.rpc('my_previews');
+  if (error) { console.warn('previews', error.message); return; }
+  previewRows = (data || []).filter(r => r.site_status !== 'active');
+  const html = previewRows.map(previewCard).join('');
+  const ov = document.getElementById('preview-list');  if (ov) ov.innerHTML = html;
+  const st = document.getElementById('sites-previews'); if (st) st.innerHTML = html;
+
+  previewRows.forEach(r => {
     if (previewState[r.inquiry_id] && previewState[r.inquiry_id] !== 'ready' && r.stage === 'ready') {
-      alertClient('Your website preview is ready', 'Open your dashboard to see the preview for ' + (r.business || 'your business') + '.');
+      alertClient('Your website preview is ready', 'Open My Sites to see the preview for ' + (r.business || 'your business') + '.');
     }
     previewState[r.inquiry_id] = r.stage;
   });
 
-  // keep checking while anything is still in progress
+  const tb = document.getElementById('sites-tab-btn');
+  if (tb) tb.textContent = previewRows.some(r => r.stage === 'ready' && r.site_status !== 'payment-pending') ? 'My Sites \u2022 Preview ready' : 'My Sites';
   clearTimeout(previewTimer);
-  if (rows.some(r => r.stage !== 'ready')) previewTimer = setTimeout(loadPreviews, 60000);
-  if (rows.length && document.getElementById('req-list')) loadRequests();
+  if (previewRows.some(r => r.stage !== 'ready')) previewTimer = setTimeout(loadPreviews, 60000);
+  if (previewRows.length && document.getElementById('req-list')) loadRequests();
+  if (typeof renderSitesEmpty === 'function') renderSitesEmpty();
 }
 
 async function openPreview(inquiryId, btn){
@@ -1196,16 +1230,138 @@ async function openPreview(inquiryId, btn){
   }
 }
 
-async function likePreview(inquiryId, name){
-  const { error } = await sb.from('edit_requests').insert({
-    user_id: currentUser.id,
-    page: 'PREVIEW FEEDBACK',
-    edit_type: 'Client likes their preview — ' + name,
-    message: 'The client viewed the website preview for ' + name + ' and wants to talk next steps.\nInquiry: ' + inquiryId,
-    status: 'pending'
-  });
-  if (error) { showToast('Could not send. Please try again.'); return; }
-  showToast('Sent! Nathan will reach out soon.');
+// "I like it": create the site record, then run the normal checkout
+async function acceptPreview(inquiryId, btn){
+  const old = btn ? btn.textContent : '';
+  if (btn) { btn.textContent = 'One moment...'; btn.disabled = true; }
+  const { data: siteId, error } = await sb.rpc('accept_preview', { p_inquiry: inquiryId });
+  if (btn) { btn.textContent = old; btn.disabled = false; }
+  if (error || !siteId) { showToast('Could not start checkout. Please try again.'); return; }
+  const r = previewRows.find(x => x.inquiry_id === inquiryId) || {};
+  openPaymentModal(siteId, r.business || 'Your website');
+  loadPreviews();
+}
+
+// Stripe links live in site_config so clients can use them (admin saves them there)
+async function getCheckoutLinks(){
+  if (siteConfig) return siteConfig;
+  try {
+    const { data } = await sb.from('site_config').select('value').eq('key','stripe_links').single();
+    siteConfig = (data && data.value) || {};
+  } catch (e) { siteConfig = {}; }
+  return siteConfig;
+}
+
+// ── PHOTOS, FILES, NOTES AND REFERENCES FROM THE CLIENT ──
+const MAT_MAX = 15 * 1024 * 1024;
+let matInquiry = null;
+
+function ensureMaterialsModal(){
+  if (document.getElementById('mat-overlay')) return;
+  const el = document.createElement('div');
+  el.id = 'mat-overlay';
+  el.style.cssText = 'display:none;position:fixed;inset:0;z-index:9000;background:rgba(5,6,3,0.82);align-items:flex-start;justify-content:center;overflow-y:auto;padding:24px 14px;';
+  el.innerHTML = `
+    <div style="width:min(560px,100%);background:#14160c;border:1px solid rgba(200,241,53,0.2);border-radius:20px;padding:26px;color:#fff;margin:auto 0;">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:6px;">
+        <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:20px;">Send photos &amp; info</div>
+        <button onclick="closeMaterials()" aria-label="Close" style="background:none;border:none;color:var(--mid);font-size:26px;cursor:pointer;line-height:1;">&times;</button>
+      </div>
+      <p style="font-size:13.5px;color:var(--mid);line-height:1.6;margin-bottom:18px;">Your logo, photos of your work, your team, your storefront, menus or price sheets, and links to sites you like. We put these into your real website.</p>
+      <label style="display:block;font-size:13px;font-weight:600;margin-bottom:6px;">Photos and files</label>
+      <input id="mat-files" type="file" multiple accept="image/*,.pdf,.doc,.docx,.txt" style="width:100%;padding:12px;border:1px dashed rgba(200,241,53,0.35);border-radius:12px;background:rgba(200,241,53,0.04);color:#fff;font-size:14px;margin-bottom:6px;">
+      <div style="font-size:12px;color:var(--mid);margin-bottom:16px;">Images, PDF or Word, up to 15 MB each.</div>
+      <label style="display:block;font-size:13px;font-weight:600;margin-bottom:6px;" for="mat-note">Text for your site</label>
+      <textarea id="mat-note" rows="4" maxlength="5000" placeholder="Your story, hours, services and prices, anything you want on the site" style="width:100%;padding:12px;border:1px solid rgba(255,255,255,0.12);border-radius:12px;background:rgba(255,255,255,0.04);color:#fff;font-size:14px;font-family:inherit;margin-bottom:14px;resize:vertical;"></textarea>
+      <label style="display:block;font-size:13px;font-weight:600;margin-bottom:6px;" for="mat-link">A website or page you like (optional)</label>
+      <input id="mat-link" type="url" maxlength="1000" placeholder="https://..." style="width:100%;padding:12px;border:1px solid rgba(255,255,255,0.12);border-radius:12px;background:rgba(255,255,255,0.04);color:#fff;font-size:14px;margin-bottom:18px;">
+      <div id="mat-msg" style="font-size:13px;margin-bottom:12px;display:none;"></div>
+      <button id="mat-send" class="lime-solid" onclick="sendMaterials()" style="border:none;cursor:pointer;width:100%;">Send to Tech Bros</button>
+      <div style="margin-top:22px;border-top:1px solid rgba(255,255,255,0.08);padding-top:16px;">
+        <div style="font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--lime);font-weight:700;margin-bottom:10px;">Already sent</div>
+        <div id="mat-list" style="font-size:13.5px;color:var(--mid);">Nothing yet.</div>
+      </div>
+    </div>`;
+  el.addEventListener('click', e => { if (e.target === el) closeMaterials(); });
+  document.body.appendChild(el);
+}
+
+function openMaterials(inquiryId){
+  ensureMaterialsModal();
+  matInquiry = inquiryId || null;
+  document.getElementById('mat-files').value = '';
+  document.getElementById('mat-note').value = '';
+  document.getElementById('mat-link').value = '';
+  document.getElementById('mat-msg').style.display = 'none';
+  document.getElementById('mat-overlay').style.display = 'flex';
+  loadMaterials();
+}
+function closeMaterials(){ const o = document.getElementById('mat-overlay'); if (o) o.style.display = 'none'; }
+
+function matSay(text, ok){
+  const m = document.getElementById('mat-msg');
+  m.style.display = 'block'; m.style.color = ok ? '#6dc86d' : (ok === false ? '#ff8080' : 'var(--mid)'); m.textContent = text;
+}
+
+async function loadMaterials(){
+  let q = sb.from('client_materials').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false });
+  const { data } = await q;
+  const list = document.getElementById('mat-list');
+  if (!list) return;
+  const rows = (data || []).filter(r => !matInquiry || !r.inquiry_id || r.inquiry_id === matInquiry);
+  if (!rows.length) { list.textContent = 'Nothing yet.'; return; }
+  list.innerHTML = rows.map(r => {
+    const what = r.kind === 'file' ? escP(r.file_name || 'File')
+               : r.kind === 'link' ? escP(r.url)
+               : escP((r.note || '').slice(0, 90)) + ((r.note || '').length > 90 ? '...' : '');
+    const tag = { file: 'File', link: 'Link', note: 'Text' }[r.kind] || '';
+    return `<div style="display:flex;gap:10px;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
+      <span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"><b style="color:#fff;font-weight:600;">${tag}</b> &nbsp;${what}</span>
+      <button onclick="removeMaterial('${r.id}', '${escP(r.file_path || '')}')" style="background:none;border:1px solid rgba(255,255,255,0.15);color:var(--mid);border-radius:100px;padding:3px 10px;font-size:12px;cursor:pointer;flex:none;">Remove</button>
+    </div>`;
+  }).join('');
+}
+
+async function sendMaterials(){
+  const btn = document.getElementById('mat-send');
+  const files = Array.from(document.getElementById('mat-files').files || []);
+  const note = document.getElementById('mat-note').value.trim();
+  let link = document.getElementById('mat-link').value.trim();
+  if (!files.length && !note && !link) { matSay('Add a photo, some text, or a link first.', false); return; }
+  const tooBig = files.find(f => f.size > MAT_MAX);
+  if (tooBig) { matSay(tooBig.name + ' is over 15 MB. Please send a smaller copy.', false); return; }
+  if (link && !/^https?:\/\//i.test(link)) link = 'https://' + link;
+
+  btn.disabled = true; btn.textContent = 'Sending...';
+  let sent = 0, failed = [];
+  const folder = currentUser.id + '/' + (matInquiry || 'general');
+  for (const f of files) {
+    matSay('Uploading ' + f.name + ' (' + (sent + 1) + ' of ' + files.length + ')...');
+    const safe = f.name.replace(/[^a-zA-Z0-9._-]+/g, '-').slice(-80) || 'file';
+    const path = folder + '/' + Date.now() + '-' + safe;
+    const up = await sb.storage.from('client-files').upload(path, f, { contentType: f.type || undefined, upsert: false });
+    if (up.error) { failed.push(f.name); continue; }
+    const ins = await sb.from('client_materials').insert({ user_id: currentUser.id, inquiry_id: matInquiry, kind: 'file', file_path: path, file_name: f.name, mime: f.type || null, size_bytes: f.size });
+    if (ins.error) { failed.push(f.name); continue; }
+    sent++;
+  }
+  if (note) { const r = await sb.from('client_materials').insert({ user_id: currentUser.id, inquiry_id: matInquiry, kind: 'note', note }); if (r.error) failed.push('your text'); else sent++; }
+  if (link) { const r = await sb.from('client_materials').insert({ user_id: currentUser.id, inquiry_id: matInquiry, kind: 'link', url: link }); if (r.error) failed.push('your link'); else sent++; }
+
+  btn.disabled = false; btn.textContent = 'Send to Tech Bros';
+  if (failed.length) matSay('Sent ' + sent + '. Could not send: ' + failed.join(', ') + '. Please try those again.', false);
+  else { matSay('Sent. We will use these in your website.', true); showToast('Your files and info were sent.'); }
+  document.getElementById('mat-files').value = '';
+  if (!failed.includes('your text')) document.getElementById('mat-note').value = '';
+  if (!failed.includes('your link')) document.getElementById('mat-link').value = '';
+  loadMaterials();
+}
+
+async function removeMaterial(id, path){
+  if (!confirm('Remove this item?')) return;
+  if (path) await sb.storage.from('client-files').remove([path]);
+  await sb.from('client_materials').delete().eq('id', id);
+  loadMaterials();
 }
 
 async function loadRequests() {
@@ -1546,7 +1702,8 @@ init();
 <script>
 // ── DEMO APPROVAL ──
 async function loadDemoApprovals() {
-  const {data:sites} = await sb.from('sites').select('*').eq('user_id',currentUser.id).eq('status','demo');
+  const {data:demoSites} = await sb.from('sites').select('*').eq('user_id',currentUser.id).eq('status','demo');
+  const sites = (demoSites||[]).filter(s => !s.inquiry_id);
   const wrap = document.getElementById('demo-approvals');
   if (!wrap) return;
   if (!sites||!sites.length) { wrap.innerHTML=''; return; }
@@ -1571,6 +1728,7 @@ let payState = { siteId: null, siteName: null, website: null, monthly: null };
 
 function openPaymentModal(siteId, siteName) {
   payState = { siteId, siteName, website: null, monthly: null };
+  getCheckoutLinks();
   document.getElementById('payment-overlay').style.display = 'flex';
   goPayStep(1);
 }
@@ -1811,7 +1969,8 @@ async function recordPaymentIntent(){
 }
 
 function payNow() {
-  const links = JSON.parse(localStorage.getItem('stripe_links') || '{}');
+  let links = siteConfig || {};   // fetched when the checkout opens, so the window.open below is not popup-blocked
+  if (!links || !Object.keys(links).length) { try { links = JSON.parse(localStorage.getItem('stripe_links') || '{}'); } catch(e) { links = {}; } }
   const key = payState.website + '+' + (payState.monthly || 'none');
   const link = links[key];
   const fallback = document.getElementById('pm-stripe-fallback');
