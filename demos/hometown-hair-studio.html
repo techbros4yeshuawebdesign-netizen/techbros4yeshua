@@ -3,438 +3,304 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Hometown Hair Studio | Hair Salon in Live Oak</title>
-<meta name="description" content="Two-chair hair salon in Live Oak for women, men and kids. Cuts, color, highlights and blowouts. Request an appointment online and we will text you back.">
+<title>Hometown Hair Studio | Hair salon in Live Oak</title>
+<meta name="description" content="A two-chair hair salon in Live Oak for women, men and kids. Cuts, color, highlights and blowouts. Request an appointment and we'll text you back.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Gilda+Display&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --rose:#C7776A; --rose-dark:#A85A4E; --plum:#3E2A3A; --cream:#FBF4EE; --blush:#F3D9CF;
-  --sage:#8FA58A; --ink:#241B22; --muted:#6B5A63; --line:#E8D6CC; --white:#fff;
-  --display:'Fraunces',Georgia,serif; --body:'Nunito Sans',system-ui,-apple-system,sans-serif;
-  --r:18px;
+  --ink:#231C20; --plum:#3A2A32; --copper:#B4705E; --copper-dark:#94574A;
+  --blush:#F3EAE6; --line:#E4D9D3; --muted:#6E6267; --white:#fff;
+  --display:'Gilda Display','Didot','Bodoni 72',Georgia,serif;
+  --body:'Jost',system-ui,sans-serif;
 }
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{margin:0;background:var(--cream);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.6;overflow-x:hidden}
-img,svg{display:block;max-width:100%}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+body{font-family:var(--body);color:var(--ink);background:var(--white);font-size:17px;line-height:1.65;overflow-x:hidden}
+img{display:block;max-width:100%}
 a{color:inherit}
-:focus-visible{outline:3px solid var(--plum);outline-offset:3px;border-radius:6px}
-.wrap{width:min(1120px,100% - 40px);margin-inline:auto}
-.ribbon{background:var(--plum);color:var(--blush);font-size:12.5px;text-align:center;padding:6px 12px;line-height:1.35}
-header{position:sticky;top:0;z-index:20;background:rgba(251,244,238,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
-.bar{display:flex;align-items:center;justify-content:space-between;gap:12px;height:62px}
-.logo{display:flex;align-items:center;gap:10px;text-decoration:none;font-family:var(--display);font-weight:700;font-size:20px;color:var(--plum);white-space:nowrap}
-.logo svg{width:30px;height:30px;flex:none}
-nav ul{display:flex;gap:26px;list-style:none;margin:0;padding:0}
-nav a{text-decoration:none;font-weight:600;color:var(--muted)}
-nav a:hover{color:var(--plum)}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap;text-decoration:none;font-weight:700;font-family:var(--body);font-size:16px;border-radius:999px;padding:14px 24px;border:2px solid transparent;cursor:pointer;transition:background .2s,color .2s,border-color .2s}
-.btn-primary{background:var(--rose-dark);color:var(--white)}
-.btn-primary:hover{background:var(--plum)}
-.btn-ghost{border-color:var(--plum);color:var(--plum);background:transparent}
-.btn-ghost:hover{background:var(--plum);color:var(--cream)}
-.btn-sm{padding:9px 18px;font-size:15px}
-@media (max-width:820px){nav{display:none}}
+:focus-visible{outline:2px solid var(--copper);outline-offset:3px}
+.wrap{width:min(1180px,100% - 40px);margin-inline:auto}
+h1,h2,h3{font-family:var(--display);font-weight:400;line-height:1.04;letter-spacing:-.01em}
+
+.ribbon{background:var(--ink);color:#CBBFC4;font-size:12.5px;text-align:center;padding:0 12px;height:31px;line-height:31px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* header sits on the photo, turns solid on scroll */
+header{position:fixed;left:0;right:0;top:31px;z-index:30;transition:background .3s,top .3s,box-shadow .3s}
+header.solid{top:0;background:rgba(255,255,255,.97);box-shadow:0 1px 0 var(--line)}
+.bar{display:flex;align-items:center;gap:28px;height:72px}
+.brand{font-family:var(--display);font-size:24px;text-decoration:none;color:#fff;margin-right:auto;white-space:nowrap}
+.links{display:flex;gap:28px;font-size:15px;font-weight:500}
+.links a{text-decoration:none;color:rgba(255,255,255,.88)}
+header.solid .brand{color:var(--ink)}
+header.solid .links a{color:var(--muted)}
+.links a:hover{color:var(--copper)}
+.btn{display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;border-radius:2px;padding:14px 26px;font:500 15px var(--body);letter-spacing:.02em;text-decoration:none;border:1px solid transparent;cursor:pointer;transition:background .2s,color .2s,border-color .2s}
+.btn-copper{background:var(--copper);color:#fff}
+.btn-copper:hover{background:var(--copper-dark)}
+.btn-light{border-color:rgba(255,255,255,.7);color:#fff}
+.btn-light:hover{background:#fff;color:var(--ink)}
+.btn-dark{border-color:var(--ink);color:var(--ink)}
+.btn-dark:hover{background:var(--ink);color:#fff}
+.bar .btn{padding:10px 18px}
+@media(max-width:860px){.links{display:none}}
 
 /* hero */
-.hero{padding:48px 0 64px}
-.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
-h1,h2,h3{font-family:var(--display);color:var(--plum);line-height:1.05;margin:0}
-h1{font-size:clamp(46px,8vw,100px);font-weight:700;letter-spacing:-.02em}
-.lede{font-size:clamp(18px,2vw,21px);color:var(--muted);max-width:30ch;margin:22px 0 30px}
-.actions{display:flex;gap:12px;flex-wrap:wrap}
-.ba{position:relative;aspect-ratio:5/6;border-radius:28px;overflow:hidden;background:var(--blush);box-shadow:0 30px 60px -30px rgba(62,42,58,.45);--pos:50%;touch-action:pan-y}
-.ba svg{position:absolute;inset:0;width:100%;height:100%}
-.ba .after{clip-path:inset(0 0 0 var(--pos))}
-.ba .handle{position:absolute;top:0;bottom:0;left:var(--pos);width:3px;margin-left:-1.5px;background:var(--white);pointer-events:none}
-.ba .knob{position:absolute;top:50%;left:50%;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;background:var(--white);box-shadow:0 6px 18px rgba(36,27,34,.25);display:grid;place-items:center}
-.ba input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:ew-resize}
-.ba input:focus-visible ~ .handle .knob{outline:3px solid var(--plum);outline-offset:3px}
-.tag{position:absolute;top:16px;padding:5px 12px;border-radius:999px;font-size:13px;font-weight:700;background:rgba(255,255,255,.88);color:var(--plum);pointer-events:none}
-.tag.l{left:16px}.tag.r{right:16px}
-.cap{font-size:13px;color:var(--muted);margin-top:10px;text-align:center}
-@media (max-width:820px){.hero{padding:28px 0 48px}.hero-grid{grid-template-columns:1fr;gap:30px}.ba{max-width:440px;margin-inline:auto;width:100%}}
+.hero{position:relative;min-height:min(92vh,860px);display:flex;align-items:flex-end;color:#fff;overflow:hidden;background:var(--plum)}
+.hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:60% 30%;transform:scale(1.06);transition:transform 2.4s cubic-bezier(.2,.7,.2,1)}
+.hero.in img{transform:scale(1)}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(35,28,32,.82) 0%,rgba(35,28,32,.45) 55%,rgba(35,28,32,.1) 100%),linear-gradient(0deg,rgba(35,28,32,.55),transparent 45%)}
+.hero .wrap{position:relative;z-index:1;padding:150px 0 76px}
+.hero h1{font-size:clamp(50px,8vw,112px);max-width:9.5em}
+.hero p{font-size:19px;max-width:30em;color:rgba(255,255,255,.86);margin:22px 0 34px}
+.hero .cta{display:flex;gap:12px;flex-wrap:wrap}
+@media(max-width:700px){.hero{min-height:640px}.hero .wrap{padding:130px 0 48px}.hero::after{background:linear-gradient(0deg,rgba(35,28,32,.9) 10%,rgba(35,28,32,.35) 70%,rgba(35,28,32,.2))}}
 
-section{padding:76px 0}
-.sec-head{max-width:620px;margin-bottom:36px}
-h2{font-size:clamp(34px,5vw,54px);font-weight:700;letter-spacing:-.015em}
-.sec-head p{color:var(--muted);margin:14px 0 0}
+section{padding:110px 0}
+.kick{font-size:15px;color:var(--copper);margin-bottom:14px}
+h2{font-size:clamp(38px,5vw,64px)}
 
 /* services */
-.services{background:var(--white)}
-.svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:40px}
-.svc-group h3{font-size:26px;padding-bottom:12px;border-bottom:2px solid var(--rose)}
-.svc-group ul{list-style:none;margin:0;padding:0}
-.svc-group li{display:flex;justify-content:space-between;gap:16px;padding:16px 0;border-bottom:1px solid var(--line)}
-.svc-group li b{display:block;font-weight:700}
-.svc-group li span{color:var(--muted);font-size:15.5px}
-.note{margin-top:30px;color:var(--muted)}
-@media (max-width:820px){.svc-grid{grid-template-columns:1fr;gap:28px}}
+.svc{display:grid;grid-template-columns:.9fr 1.1fr;gap:72px;align-items:start}
+.svc .intro p{color:var(--muted);margin-top:20px;max-width:26em}
+.menu h3{font-size:30px;padding:26px 0 10px;border-bottom:1px solid var(--ink)}
+.menu h3:first-child{padding-top:0}
+.menu dl{display:grid;grid-template-columns:auto 1fr;gap:0 32px}
+.menu dt,.menu dd{padding:15px 0;border-bottom:1px solid var(--line)}
+.menu dt{font-weight:500}
+.menu dd{color:var(--muted);text-align:right}
+.menu .note{margin-top:22px;color:var(--muted);font-size:15px}
+@media(max-width:860px){.svc{grid-template-columns:1fr;gap:40px}.menu dl{grid-template-columns:1fr}.menu dt{border-bottom:0;padding-bottom:0}.menu dd{text-align:left;padding-top:2px}}
 
 /* gallery */
-.gal{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) minmax(0,1fr);grid-template-rows:auto auto;gap:16px}
-.gal figure{margin:0;min-width:0}
-.gal figure:first-child{grid-row:span 2}
-.gal .art{border-radius:var(--r);overflow:hidden;background:var(--blush);height:100%}
-.gal .art svg{width:100%;height:100%}
-.gal figcaption{font-size:13.5px;color:var(--muted);margin-top:8px}
-.gal figure:first-child .art{aspect-ratio:auto;height:calc(100% - 30px)}
-.gal figure:not(:first-child) .art{aspect-ratio:4/3;height:auto;width:100%}
-@media (max-width:820px){.gal{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.gal figure:first-child{grid-column:span 2;grid-row:auto}.gal figure:first-child .art{aspect-ratio:16/10;height:auto}}
+.gallery{background:var(--blush)}
+.gal-head{display:flex;justify-content:space-between;align-items:end;gap:30px;margin-bottom:40px;flex-wrap:wrap}
+.gal-head p{color:var(--muted);max-width:26em}
+.mosaic{display:grid;grid-template-columns:1.25fr 1fr 1fr;grid-template-rows:300px 300px;gap:14px}
+.mosaic figure{position:relative;overflow:hidden;background:#d9cbc4}
+.mosaic figure:first-child{grid-row:span 2}
+.mosaic figure:nth-child(4){grid-column:span 2}
+.mosaic img{width:100%;height:100%;object-fit:cover}
+.mosaic figcaption{position:absolute;left:14px;bottom:12px;font-size:13px;color:#fff;background:rgba(35,28,32,.55);padding:3px 10px}
+.credit{margin-top:14px;font-size:12.5px;color:var(--muted)}
+@media(max-width:860px){.mosaic{grid-template-columns:1fr 1fr;grid-template-rows:none;grid-auto-rows:220px}.mosaic figure:first-child{grid-column:span 2;grid-row:auto}.mosaic figure:nth-child(4){grid-column:span 2}}
 
-/* steps */
-.how{background:var(--plum);color:var(--blush)}
-.how h2{color:var(--cream)}
-.how .sec-head p{color:var(--blush)}
-.steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:28px;counter-reset:s}
-.steps li{counter-increment:s;padding-top:20px;border-top:1px solid rgba(243,217,207,.3)}
-.steps li::before{content:counter(s);font-family:var(--display);font-size:56px;font-weight:700;color:var(--rose);line-height:1;display:block;margin-bottom:12px}
-.steps h3{color:var(--cream);font-size:24px;margin-bottom:8px}
-@media (max-width:820px){.steps{grid-template-columns:1fr}}
+/* booking steps */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:48px;margin-top:56px;counter-reset:s}
+.steps li{list-style:none;counter-increment:s;border-top:1px solid var(--ink);padding-top:22px}
+.steps li::before{content:counter(s);font-family:var(--display);font-size:46px;color:var(--copper);display:block;line-height:1;margin-bottom:14px}
+.steps h3{font-size:28px;margin-bottom:8px}
+.steps p{color:var(--muted)}
+@media(max-width:860px){.steps{grid-template-columns:1fr;gap:34px}}
 
 /* visit */
-.visit-grid{display:grid;grid-template-columns:1fr 1.1fr;gap:48px;align-items:center}
-.map{border-radius:var(--r);overflow:hidden;background:#EFE6D8;border:1px solid var(--line)}
-.facts{list-style:none;padding:0;margin:24px 0 0}
-.facts li{padding:14px 0;border-bottom:1px solid var(--line)}
-.facts b{display:block;color:var(--plum)}
-@media (max-width:820px){.visit-grid{grid-template-columns:1fr;gap:28px}}
+.visit{display:grid;grid-template-columns:1fr 1fr;min-height:560px;background:var(--plum);color:#EADFE3}
+.visit img{width:100%;height:100%;object-fit:cover}
+.visit .txt{padding:90px 64px;align-self:center}
+.visit h2{color:#fff}
+.visit ul{list-style:none;margin-top:30px}
+.visit li{padding:16px 0;border-bottom:1px solid rgba(234,223,227,.18)}
+.visit li b{display:block;color:#fff;font-weight:500}
+@media(max-width:860px){.visit{grid-template-columns:1fr}.visit img{height:300px}.visit .txt{padding:56px 20px}}
 
 /* form */
-.book{background:var(--blush)}
-.book-grid{display:grid;grid-template-columns:.8fr 1.2fr;gap:48px;align-items:start}
-form{background:var(--white);border-radius:24px;padding:30px;box-shadow:0 20px 50px -30px rgba(62,42,58,.4)}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.field{margin-bottom:18px}
-label,.legend{display:block;font-weight:700;font-size:15px;margin-bottom:6px;color:var(--plum)}
-input[type=text],input[type=tel],select,textarea{width:100%;font:inherit;font-size:16px;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;background:var(--cream);color:var(--ink)}
-input:focus,select:focus,textarea:focus{border-color:var(--rose-dark);outline:none;box-shadow:0 0 0 3px rgba(199,119,106,.25)}
-textarea{min-height:96px;resize:vertical}
-fieldset{border:0;margin:0 0 18px;padding:0}
-.chips{display:flex;flex-wrap:wrap;gap:8px}
-.chips label{margin:0;font-weight:600;font-size:14.5px;color:var(--ink);cursor:pointer}
-.chips input{position:absolute;opacity:0;width:1px;height:1px}
-.chips span{display:inline-block;padding:8px 14px;border-radius:999px;border:1.5px solid var(--line);background:var(--cream);white-space:nowrap}
-.chips input:checked + span{background:var(--plum);border-color:var(--plum);color:var(--cream)}
-.chips input:focus-visible + span{outline:3px solid var(--plum);outline-offset:2px}
-.err{color:#9B2C2C;font-size:14px;margin-top:5px;display:none}
-.invalid .err{display:block}
-.invalid input,.invalid select{border-color:#9B2C2C}
-.thanks{display:none;text-align:center;padding:20px 6px}
-.thanks h3{font-size:30px;margin-bottom:10px}
-form.done .fields{display:none}
-form.done .thanks{display:block}
-@media (max-width:820px){.book-grid{grid-template-columns:1fr;gap:24px}form{padding:22px}.row{grid-template-columns:1fr;gap:0}}
+.book .grid{display:grid;grid-template-columns:.85fr 1.15fr;gap:72px}
+.book .grid > div > p{color:var(--muted);margin-top:18px;max-width:24em}
+form{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.full{grid-column:1/-1}
+label,legend{display:block;font-size:14px;font-weight:500;margin-bottom:8px}
+input,select,textarea{width:100%;font:16px var(--body);color:var(--ink);background:#fff;border:0;border-bottom:1px solid var(--ink);padding:10px 2px;border-radius:0}
+input:focus,select:focus,textarea:focus{outline:none;border-bottom:2px solid var(--copper)}
+textarea{min-height:90px;resize:vertical}
+fieldset{border:0}
+.times{display:flex;flex-wrap:wrap;gap:8px}
+.times label{margin:0;font-weight:400;cursor:pointer}
+.times input{position:absolute;opacity:0;width:1px;height:1px}
+.times span{display:inline-block;padding:8px 16px;border:1px solid var(--line);font-size:15px;white-space:nowrap}
+.times input:checked+span{background:var(--ink);border-color:var(--ink);color:#fff}
+.times input:focus-visible+span{outline:2px solid var(--copper);outline-offset:2px}
+.err{color:#9B2C2C;font-size:14px;display:none}
+.done{display:none;border-top:1px solid var(--ink);padding-top:26px}
+.done h3{font-size:40px;margin-bottom:10px}
+@media(max-width:860px){.book .grid{grid-template-columns:1fr;gap:36px}form{grid-template-columns:1fr}}
 
-footer{background:var(--ink);color:#CDBFC6;padding:44px 0 110px;font-size:15px}
-footer .logo{color:var(--cream)}
-.foot{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:center}
-footer a{color:var(--blush)}
-@media (min-width:821px){footer{padding-bottom:44px}}
+footer{background:var(--ink);color:#A99DA3;padding:56px 0 120px;font-size:14px}
+.foot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:20px 40px;align-items:baseline}
+footer .brand{color:#fff;font-size:28px}
+footer a{color:#EADFE3}
+@media(min-width:861px){footer{padding-bottom:56px}}
 
-.dock{position:fixed;left:0;right:0;bottom:0;z-index:30;display:none;gap:10px;padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:rgba(251,244,238,.97);border-top:1px solid var(--line)}
-.dock .btn{flex:1;padding:13px 10px;font-size:15.5px}
-@media (max-width:820px){.dock{display:flex}}
-@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+.dock{display:none;position:fixed;left:0;right:0;bottom:0;z-index:25;gap:8px;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:rgba(255,255,255,.97);box-shadow:0 -1px 0 var(--line)}
+.dock .btn{flex:1;padding:14px 8px}
+@media(max-width:860px){.dock{display:flex}}
+
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.hero img{transition:none;transform:none}header{transition:none}}
 </style>
 </head>
 <body>
-<div class="ribbon">Website preview made for Hometown Hair Studio by Tech Bros for Yeshua</div>
-<header>
+
+<div class="ribbon" role="note">Website preview made for Hometown Hair Studio by Tech Bros for Yeshua</div>
+
+<header id="hdr">
   <div class="wrap bar">
-    <a class="logo" href="#top" aria-label="Hometown Hair Studio home">
-      <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="15" fill="#C7776A"/><path d="M10 22c0-7 3-12 6-12s6 5 6 12" fill="none" stroke="#FBF4EE" stroke-width="2.4" stroke-linecap="round"/><path d="M13 14c2 1 4 1 6 0" stroke="#FBF4EE" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
-      Hometown Hair Studio
-    </a>
-    <nav aria-label="Main"><ul>
-      <li><a href="#services">Services</a></li>
-      <li><a href="#work">Our work</a></li>
-      <li><a href="#how">How booking works</a></li>
-      <li><a href="#visit">Visit</a></li>
-    </ul></nav>
-    <a class="btn btn-primary btn-sm" href="#book">Book</a>
+    <a class="brand" href="#top">Hometown Hair Studio</a>
+    <nav class="links" aria-label="Main">
+      <a href="#services">Services</a><a href="#work">Our work</a><a href="#visit">Visit</a>
+    </nav>
+    <a class="btn btn-copper" href="#book">Book</a>
   </div>
 </header>
 
 <main id="top">
-<section class="hero" aria-labelledby="h1">
-  <div class="wrap hero-grid">
-    <div>
-      <h1 id="h1">Your hometown chair in Live Oak.</h1>
-      <p class="lede">Cuts, color, highlights and blowouts for moms, teens, kids and the guys too. Request a time and we will text you back.</p>
-      <div class="actions">
-        <a class="btn btn-primary" href="#book">Request an appointment</a>
-        <a class="btn btn-ghost" href="#visit">Call or text</a>
-      </div>
-    </div>
-    <div>
-      <div class="ba" id="ba">
-        <svg viewBox="0 0 400 480" role="img" aria-label="Illustration before the appointment: long, frizzy, dull hair">
-          <rect width="400" height="480" fill="#EADFD6"/>
-          <circle cx="330" cy="80" r="70" fill="#E2D3C7"/>
-          <path d="M112 132C96 70 160 26 212 30c66 2 104 54 98 112 22 62 30 128 16 196-8 34-36 44-60 36H140c-30 8-58-6-64-38-12-66 4-140 36-204Z" fill="#7A6352"/>
-          <path d="M96 210c-14 20-20 46-12 70M318 200c16 24 18 52 8 78M104 300c-10 16-12 34-4 50M306 296c12 18 10 40 2 54M120 120c-24 4-36 22-34 40M300 120c22 6 30 24 26 40" stroke="#7A6352" stroke-width="7" stroke-linecap="round" fill="none"/>
-          <path d="M140 250c-6 30-4 60 6 90M268 250c8 30 6 64-6 92M180 300c-2 20 0 40 4 56M230 300c2 22 0 40-4 56" stroke="#5E4A3D" stroke-width="3" fill="none" stroke-linecap="round"/>
-          <path d="M80 480c8-92 60-142 125-142s117 50 125 142Z" fill="#3E2A3A"/>
-          <rect x="182" y="232" width="46" height="80" rx="20" fill="#E0AE8E"/>
-          <ellipse cx="205" cy="176" rx="58" ry="72" fill="#E8B99A"/>
-          <path d="M146 158c-6-60 30-98 72-96 44 2 68 40 60 92-18-34-46-50-70-48-14 22-40 40-62 52Z" fill="#7A6352"/>
-          <path d="M150 120c10-14 22-24 36-30M262 112c-8-16-22-28-38-32" stroke="#5E4A3D" stroke-width="4" stroke-linecap="round" fill="none"/>
-          <circle cx="183" cy="184" r="4.5" fill="#3E2A3A"/><circle cx="227" cy="184" r="4.5" fill="#3E2A3A"/>
-          <path d="M192 216c8 4 18 4 26 0" stroke="#A85A4E" stroke-width="3.5" stroke-linecap="round" fill="none"/>
-          <path d="M196 342l9 14 9-14" fill="none" stroke="#F3D9CF" stroke-width="3" stroke-linecap="round"/>
-        </svg>
-        <svg class="after" viewBox="0 0 400 480" role="img" aria-label="Illustration after the appointment: a sleek shoulder-length cut with warm highlights">
-          <rect width="400" height="480" fill="#F3D9CF"/>
-          <circle cx="330" cy="80" r="70" fill="#EFC9BC"/>
-          <path d="M138 140c0-62 34-92 72-92s72 30 72 92l4 122c0 14-14 22-28 16l-4-2H170l-4 2c-14 6-28-2-28-16Z" fill="#6A4A38"/>
-          <path d="M156 110c-4 50-2 110 4 160M180 80c-6 60-4 140 2 190M248 84c6 60 6 130 0 186M266 112c6 50 6 110 0 156" stroke="#D3A46C" stroke-width="6" stroke-linecap="round" fill="none"/>
-          <path d="M80 480c8-92 60-142 125-142s117 50 125 142Z" fill="#3E2A3A"/>
-          <rect x="182" y="232" width="46" height="80" rx="20" fill="#E0AE8E"/>
-          <ellipse cx="205" cy="176" rx="58" ry="72" fill="#E8B99A"/>
-          <path d="M144 164c-6-64 28-106 70-106 42 0 70 34 66 96-16-30-40-46-66-48-10 24-40 46-70 58Z" fill="#6A4A38"/>
-          <path d="M168 104c14-22 34-34 56-36M234 78c18 6 32 20 40 40" stroke="#D3A46C" stroke-width="5" stroke-linecap="round" fill="none"/>
-          <path d="M200 66c-8 26-28 48-52 62" stroke="#E7C291" stroke-width="3" stroke-linecap="round" fill="none" opacity=".8"/>
-          <circle cx="183" cy="184" r="4.5" fill="#3E2A3A"/><circle cx="227" cy="184" r="4.5" fill="#3E2A3A"/>
-          <path d="M188 212c10 10 24 10 34 0" stroke="#A85A4E" stroke-width="3.5" stroke-linecap="round" fill="none"/>
-          <path d="M196 342l9 14 9-14" fill="none" stroke="#F3D9CF" stroke-width="3" stroke-linecap="round"/>
-          <path d="M318 150l6 12 12 6-12 6-6 12-6-12-12-6 12-6Z" fill="#FBF4EE"/>
-          <path d="M96 236l4 8 8 4-8 4-4 8-4-8-8-4 8-4Z" fill="#FBF4EE"/>
-        </svg>
-        <span class="tag l">Before</span><span class="tag r">After</span>
-        <input type="range" min="0" max="100" value="50" id="baRange" aria-label="Drag to compare before and after">
-        <div class="handle" aria-hidden="true"><div class="knob"><svg width="22" height="22" viewBox="0 0 22 22"><path d="M8 5l-5 6 5 6M14 5l5 6-5 6" fill="none" stroke="#3E2A3A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
-      </div>
-      <p class="cap">Drag to compare. Your before and after photo goes here.</p>
+
+<section class="hero" id="hero" aria-labelledby="h1" style="padding:0">
+  <img src="https://images.unsplash.com/photo-1580618672591-eb180b1a973f?auto=format&fit=crop&q=70&w=2000" alt="A stylist blow-drying a client's hair with a round brush" fetchpriority="high">
+  <div class="wrap">
+    <h1 id="h1">Your hometown chair in Live Oak.</h1>
+    <p>Cuts, color, highlights and blowouts for moms, teens, kids and the guys too. Send a request and we'll text you back with a time.</p>
+    <div class="cta">
+      <a class="btn btn-copper" href="#book">Request an appointment</a>
+      <a class="btn btn-light" href="#visit">Call or text</a>
     </div>
   </div>
 </section>
 
-<section class="services" id="services" aria-labelledby="svc-h">
-  <div class="wrap">
-    <div class="sec-head">
-      <h2 id="svc-h">Something for everyone in the family</h2>
-      <p>Two chairs, one friendly studio. Tell us what you are after and we will make sure the time fits the service.</p>
+<section id="services" aria-labelledby="sv">
+  <div class="wrap svc">
+    <div class="intro">
+      <p class="kick">Services</p>
+      <h2 id="sv">Two chairs. Every kind of cut.</h2>
+      <p>A small studio where you're seen by name. Tell us what you're after and we'll set aside the right amount of time for it.</p>
     </div>
-    <div class="svc-grid">
-      <div class="svc-group">
-        <h3>Cuts</h3>
-        <ul>
-          <li><div><b>Women's cuts</b><span>Trims, shape-ups and brand new looks</span></div></li>
-          <li><div><b>Men's cuts</b><span>Clean, classic and easy to keep up</span></div></li>
-          <li><div><b>Kids' cuts</b><span>Patient and quick, so little ones stay happy</span></div></li>
-        </ul>
-      </div>
-      <div class="svc-group">
-        <h3>Color</h3>
-        <ul>
-          <li><div><b>All-over color</b><span>Refresh your shade or try something new</span></div></li>
-          <li><div><b>Highlights</b><span>Soft brightness or bold contrast, your call</span></div></li>
-        </ul>
-      </div>
-      <div class="svc-group">
-        <h3>Styling</h3>
-        <ul>
-          <li><div><b>Blowouts</b><span>Smooth, full and ready for the week, the photo or the big night</span></div></li>
-        </ul>
-      </div>
-    </div>
-    <p class="note">Ask about pricing when you request your appointment. We are happy to talk through options first.</p>
-  </div>
-</section>
-
-<section id="work" aria-labelledby="work-h">
-  <div class="wrap">
-    <div class="sec-head">
-      <h2 id="work-h">Fresh from the chair</h2>
-      <p>A look at recent cuts, color and styling from the studio.</p>
-    </div>
-    <div class="gal">
-      <figure>
-        <div class="art"><svg viewBox="0 0 400 420" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Illustration of highlight foils in warm tones">
-          <rect width="400" height="420" fill="#F3D9CF"/>
-          <g transform="rotate(-12 200 210)">
-            <rect x="60" y="70" width="70" height="290" rx="6" fill="#E9E2DC"/><rect x="72" y="70" width="10" height="290" fill="#D3A46C"/>
-            <rect x="150" y="50" width="70" height="300" rx="6" fill="#F1ECE7"/><rect x="164" y="50" width="10" height="300" fill="#C98F5A"/>
-            <rect x="240" y="80" width="70" height="280" rx="6" fill="#E9E2DC"/><rect x="254" y="80" width="10" height="280" fill="#D3A46C"/>
-          </g>
-          <circle cx="330" cy="350" r="40" fill="#C7776A"/><rect x="316" y="300" width="28" height="40" rx="6" fill="#3E2A3A"/>
-        </svg></div>
-        <figcaption>Highlights. Your photo here.</figcaption>
-      </figure>
-      <figure>
-        <div class="art"><svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Illustration of scissors and a comb">
-          <rect width="400" height="300" fill="#E5ECE2"/>
-          <rect x="60" y="200" width="280" height="26" rx="8" fill="#8FA58A"/>
-          <g fill="#3E2A3A"><rect x="72" y="226" width="6" height="18" rx="2"/><rect x="92" y="226" width="6" height="18" rx="2"/><rect x="112" y="226" width="6" height="18" rx="2"/><rect x="132" y="226" width="6" height="18" rx="2"/><rect x="152" y="226" width="6" height="18" rx="2"/><rect x="172" y="226" width="6" height="18" rx="2"/></g>
-          <path d="M150 70l140 90M150 160l140-90" stroke="#3E2A3A" stroke-width="10" stroke-linecap="round"/>
-          <circle cx="128" cy="60" r="22" fill="none" stroke="#C7776A" stroke-width="10"/><circle cx="128" cy="170" r="22" fill="none" stroke="#C7776A" stroke-width="10"/>
-        </svg></div>
-        <figcaption>Kids' cuts. Your photo here.</figcaption>
-      </figure>
-      <figure>
-        <div class="art"><svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Illustration of a hair dryer and round brush">
-          <rect width="400" height="300" fill="#EADFD6"/>
-          <path d="M80 110h150a50 50 0 0 1 0 100H80Z" fill="#C7776A"/><rect x="190" y="190" width="34" height="80" rx="12" fill="#A85A4E"/>
-          <circle cx="232" cy="160" r="26" fill="#FBF4EE"/>
-          <path d="M60 130h-20M60 160h-30M60 190h-20" stroke="#8FA58A" stroke-width="6" stroke-linecap="round"/>
-          <rect x="290" y="60" width="18" height="140" rx="9" fill="#3E2A3A"/><rect x="278" y="60" width="42" height="90" rx="21" fill="#6A4A38"/>
-        </svg></div>
-        <figcaption>Blowouts. Your photo here.</figcaption>
-      </figure>
-      <figure>
-        <div class="art"><svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Illustration of a salon chair">
-          <rect width="400" height="300" fill="#3E2A3A"/>
-          <rect x="150" y="60" width="100" height="110" rx="26" fill="#C7776A"/>
-          <rect x="130" y="150" width="140" height="40" rx="14" fill="#A85A4E"/>
-          <rect x="192" y="190" width="16" height="60" fill="#E8D6CC"/><ellipse cx="200" cy="256" rx="60" ry="10" fill="#E8D6CC"/>
-        </svg></div>
-        <figcaption>Men's cuts. Your photo here.</figcaption>
-      </figure>
-      <figure>
-        <div class="art"><svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Illustration of a color bowl and brush">
-          <rect width="400" height="300" fill="#F3D9CF"/>
-          <path d="M110 140h180c0 60-40 100-90 100s-90-40-90-100Z" fill="#3E2A3A"/>
-          <ellipse cx="200" cy="140" rx="90" ry="18" fill="#8B4A5A"/>
-          <path d="M240 150l80-110" stroke="#8FA58A" stroke-width="12" stroke-linecap="round"/><rect x="228" y="130" width="26" height="30" rx="4" fill="#E9E2DC" transform="rotate(36 241 145)"/>
-        </svg></div>
-        <figcaption>All-over color. Your photo here.</figcaption>
-      </figure>
+    <div class="menu">
+      <h3>Cuts</h3>
+      <dl>
+        <dt>Women's cuts</dt><dd>Trims, shape-ups and brand new looks</dd>
+        <dt>Men's cuts</dt><dd>Clean, classic and easy to keep up</dd>
+        <dt>Kids' cuts</dt><dd>Patient and quick, so little ones stay happy</dd>
+      </dl>
+      <h3>Color</h3>
+      <dl>
+        <dt>All-over color</dt><dd>Refresh your shade or try something new</dd>
+        <dt>Highlights</dt><dd>Soft brightness or bold contrast</dd>
+      </dl>
+      <h3>Styling</h3>
+      <dl>
+        <dt>Blowouts</dt><dd>Smooth and full, for the week or the big night</dd>
+      </dl>
+      <p class="note">Ask about pricing when you send your request. We're happy to talk through options first.</p>
     </div>
   </div>
 </section>
 
-<section class="how" id="how" aria-labelledby="how-h">
+<section class="gallery" id="work" aria-labelledby="wk">
   <div class="wrap">
-    <div class="sec-head">
-      <h2 id="how-h">Booking without the back-and-forth</h2>
-      <p>No more digging through old texts to find your appointment.</p>
+    <div class="gal-head">
+      <div><p class="kick">Our work</p><h2 id="wk">Fresh from the chair.</h2></div>
+      <p>Your own photos go here, so new clients can see your cuts and color before they book.</p>
     </div>
+    <div class="mosaic">
+      <figure><img loading="lazy" src="https://images.unsplash.com/photo-1634449571010-02389ed0f9b0?auto=format&fit=crop&q=70&w=1000" alt="A stylist cutting a client's hair"><figcaption>Cuts</figcaption></figure>
+      <figure><img loading="lazy" src="https://images.unsplash.com/photo-1734111719430-fe4a3973f8af?auto=format&fit=crop&q=70&w=800" alt="A round brush styling long blonde hair"><figcaption>Blowouts</figcaption></figure>
+      <figure><img loading="lazy" src="https://images.unsplash.com/photo-1629397685944-7073f5589754?auto=format&fit=crop&q=70&w=800" alt="A stylist curling a client's hair"><figcaption>Styling</figcaption></figure>
+      <figure><img loading="lazy" src="https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?auto=format&fit=crop&q=70&w=1200" alt="Salon chairs facing a long mirror"><figcaption>The studio</figcaption></figure>
+    </div>
+    <p class="credit">Sample photos from Unsplash. Your real photos replace these.</p>
+  </div>
+</section>
+
+<section aria-labelledby="hw">
+  <div class="wrap">
+    <p class="kick">Booking</p>
+    <h2 id="hw">No more lost texts.</h2>
     <ol class="steps">
-      <li><h3>Send a request</h3><p>Pick your service and the days that work for you. It takes about a minute.</p></li>
-      <li><h3>We text you back</h3><p>Jasmine checks requests between clients and texts you to confirm a time.</p></li>
+      <li><h3>Send a request</h3><p>Pick your service and the times that work for you. It takes about a minute.</p></li>
+      <li><h3>Get a text back</h3><p>Jasmine checks requests between clients and texts you to confirm.</p></li>
       <li><h3>Sit back and relax</h3><p>Come in, settle into the chair, and leave feeling like yourself again.</p></li>
     </ol>
   </div>
 </section>
 
-<section id="visit" aria-labelledby="visit-h">
-  <div class="wrap visit-grid">
-    <div class="map">
-      <svg viewBox="0 0 480 360" role="img" aria-label="Simple illustrated map of Live Oak with the studio marked">
-        <rect width="480" height="360" fill="#EFE6D8"/>
-        <path d="M0 230C120 210 200 250 300 220S440 170 480 180" stroke="#B9CDB5" stroke-width="26" fill="none"/>
-        <path d="M0 120h480M160 0v360M340 0v360M0 300h480" stroke="#FBF4EE" stroke-width="16"/>
-        <path d="M60 0l120 360" stroke="#FBF4EE" stroke-width="10"/>
-        <g fill="#8FA58A"><circle cx="70" cy="60" r="20"/><circle cx="92" cy="50" r="16"/><circle cx="420" cy="80" r="22"/><circle cx="400" cy="270" r="18"/><circle cx="250" cy="330" r="16"/></g>
-        <g transform="translate(250 92)"><path d="M0 0c-24 0-40 18-40 40 0 30 40 66 40 66s40-36 40-66c0-22-16-40-40-40Z" fill="#C7776A"/><circle cy="40" r="15" fill="#FBF4EE"/></g>
-        <rect x="170" y="210" width="160" height="34" rx="17" fill="#3E2A3A"/>
-        <text x="250" y="232" text-anchor="middle" font-family="Nunito Sans, sans-serif" font-size="15" font-weight="700" fill="#FBF4EE">Hometown Hair Studio</text>
-      </svg>
+<section class="visit" id="visit" aria-labelledby="vs" style="padding:0">
+  <img loading="lazy" src="https://images.unsplash.com/photo-1600948836101-f9ffda59d250?auto=format&fit=crop&q=70&w=1200" alt="Salon chairs facing round mirrors">
+  <div class="txt">
+    <p class="kick" style="color:#D9A291">Visit</p>
+    <h2 id="vs">Right here in Live Oak.</h2>
+    <ul>
+      <li><b>Prefer to text?</b>Most clients do. Send a message and we'll reply between appointments.</li>
+      <li><b>Hours and directions</b>Find us on Google Maps for current hours and directions.</li>
+      <li><b>Bringing the kids?</b>Book back-to-back times and the whole family is done in one trip.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="book" id="book" aria-labelledby="bk">
+  <div class="wrap grid">
+    <div>
+      <p class="kick">Appointments</p>
+      <h2 id="bk">Request a time.</h2>
+      <p>Tell us what you'd like and when you're free. We'll text you to confirm.</p>
     </div>
     <div>
-      <h2 id="visit-h">Right here in Live Oak</h2>
-      <p class="lede" style="margin-bottom:0">A small, two-chair studio where you will be seen by name.</p>
-      <ul class="facts">
-        <li><b>Prefer to text?</b>Most of our clients do. Send a message and we will reply between appointments.</li>
-        <li><b>Hours and directions</b>Find us on Google Maps for current hours and turn-by-turn directions.</li>
-        <li><b>Coming with the kids?</b>Book back-to-back times so the whole family is done in one trip.</li>
-      </ul>
+      <form id="bf" novalidate>
+        <div><label for="n">Your name</label><input id="n" autocomplete="name" required></div>
+        <div><label for="p">Mobile number</label><input id="p" type="tel" inputmode="tel" autocomplete="tel" required></div>
+        <div class="full"><label for="s">Service</label>
+          <select id="s" required>
+            <option value="">Choose a service</option>
+            <option>Women's cut</option><option>Men's cut</option><option>Kids' cut</option>
+            <option>All-over color</option><option>Highlights</option><option>Blowout</option><option>Not sure yet</option>
+          </select></div>
+        <fieldset class="full"><legend>When works for you?</legend>
+          <div class="times">
+            <label><input type="checkbox" value="Weekday mornings"><span>Weekday mornings</span></label>
+            <label><input type="checkbox" value="Weekday afternoons"><span>Weekday afternoons</span></label>
+            <label><input type="checkbox" value="After school"><span>After school</span></label>
+            <label><input type="checkbox" value="Weekends"><span>Weekends</span></label>
+          </div>
+        </fieldset>
+        <div class="full"><label for="m">Anything we should know?</label><textarea id="m" placeholder="Booking for more than one person, color history, a look you love"></textarea></div>
+        <p class="err full" id="err" role="alert">Add your name, a mobile number and a service so we can text you.</p>
+        <div class="full"><button class="btn btn-copper" type="submit">Send my request</button></div>
+      </form>
+      <div class="done" id="done" role="status" tabindex="-1">
+        <h3>Thank you.</h3>
+        <p>This is a website preview, so nothing was sent. On the live site, Jasmine gets your request right away and texts you back.</p>
+      </div>
     </div>
   </div>
 </section>
 
-<section class="book" id="book" aria-labelledby="book-h">
-  <div class="wrap book-grid">
-    <div class="sec-head">
-      <h2 id="book-h">Request your appointment</h2>
-      <p>Tell us what you would like and when you are free. We will text you to lock in a time.</p>
-    </div>
-    <form id="bookForm" novalidate>
-      <div class="fields">
-        <div class="row">
-          <div class="field"><label for="f-name">Your name</label><input type="text" id="f-name" name="name" autocomplete="name" required><p class="err">Please add your name.</p></div>
-          <div class="field"><label for="f-phone">Mobile number</label><input type="tel" id="f-phone" name="phone" autocomplete="tel" inputmode="tel" required><p class="err">Please add a number we can text.</p></div>
-        </div>
-        <div class="field"><label for="f-svc">Service</label>
-          <select id="f-svc" name="service" required>
-            <option value="">Choose a service</option>
-            <option>Women's cut</option><option>Men's cut</option><option>Kids' cut</option>
-            <option>All-over color</option><option>Highlights</option><option>Blowout</option><option>Not sure yet</option>
-          </select><p class="err">Please choose a service.</p></div>
-        <fieldset class="field" id="f-when">
-          <legend class="legend">When works for you?</legend>
-          <div class="chips">
-            <label><input type="checkbox" name="when" value="Weekday mornings"><span>Weekday mornings</span></label>
-            <label><input type="checkbox" name="when" value="Weekday afternoons"><span>Weekday afternoons</span></label>
-            <label><input type="checkbox" name="when" value="After school"><span>After school</span></label>
-            <label><input type="checkbox" name="when" value="Weekends"><span>Weekends</span></label>
-          </div>
-          <p class="err">Pick at least one time that works.</p>
-        </fieldset>
-        <div class="field"><label for="f-notes">Anything we should know? (optional)</label><textarea id="f-notes" name="notes" placeholder="Booking for more than one person, color history, a look you love"></textarea></div>
-        <button class="btn btn-primary" type="submit">Send my request</button>
-      </div>
-      <div class="thanks" role="status" aria-live="polite" tabindex="-1">
-        <h3>Thank you!</h3>
-        <p>This is a website preview, so nothing was sent. On the live site, Jasmine would get your request right away and text you back to confirm.</p>
-      </div>
-    </form>
-  </div>
-</section>
 </main>
 
 <footer>
   <div class="wrap foot">
-    <a class="logo" href="#top">Hometown Hair Studio</a>
-    <p style="margin:0">Hair salon in Live Oak. Cuts, color, highlights and blowouts.</p>
-    <p style="margin:0">Website by <a href="#top">Tech Bros for Yeshua</a></p>
+    <span class="brand">Hometown Hair Studio</span>
+    <span>Hair salon in Live Oak &middot; Cuts, color and styling</span>
+    <span>Website by <a href="#top">Tech Bros for Yeshua</a></span>
   </div>
 </footer>
 
-<div class="dock">
-  <a class="btn btn-ghost" href="#visit">Call or text</a>
-  <a class="btn btn-primary" href="#book">Request a time</a>
-</div>
+<div class="dock"><a class="btn btn-dark" href="#visit">Call or text</a><a class="btn btn-copper" href="#book">Request a time</a></div>
 
 <script>
 (function(){
-  var ba=document.getElementById('ba'),r=document.getElementById('baRange');
-  function set(v){ba.style.setProperty('--pos',v+'%');}
-  r.addEventListener('input',function(){set(r.value);});
-  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if(!reduce){
-    var t0=null,touched=false;
-    r.addEventListener('pointerdown',function(){touched=true;});
-    r.addEventListener('keydown',function(){touched=true;});
-    function ease(x){return x<.5?2*x*x:1-Math.pow(-2*x+2,2)/2;}
-    function step(ts){
-      if(touched)return;
-      if(!t0)t0=ts;
-      var p=Math.min((ts-t0)/2200,1),v;
-      v=p<.5?50+40*ease(p*2):90-75*ease((p-.5)*2);
-      set(v);r.value=v;
-      if(p<1)requestAnimationFrame(step);else{var e0=null;requestAnimationFrame(function back(ts2){if(touched)return;if(!e0)e0=ts2;var q=Math.min((ts2-e0)/600,1);var w=15+35*ease(q);set(w);r.value=w;if(q<1)requestAnimationFrame(back);});}
-    }
-    setTimeout(function(){requestAnimationFrame(step);},500);
-  }
-  var f=document.getElementById('bookForm');
-  f.addEventListener('submit',function(e){
+  var hero = document.getElementById('hero'), hdr = document.getElementById('hdr');
+  requestAnimationFrame(function(){ hero.classList.add('in'); });
+  function onScroll(){ hdr.classList.toggle('solid', window.scrollY > 40); }
+  window.addEventListener('scroll', onScroll, { passive: true }); onScroll();
+
+  var f = document.getElementById('bf');
+  f.addEventListener('submit', function(e){
     e.preventDefault();
-    var ok=true,first=null;
-    ['f-name','f-phone','f-svc'].forEach(function(id){
-      var el=document.getElementById(id),box=el.parentNode;
-      var bad=!el.value.trim()||(id==='f-phone'&&el.value.replace(/\D/g,'').length<7);
-      box.classList.toggle('invalid',bad);el.setAttribute('aria-invalid',bad);
-      if(bad){ok=false;first=first||el;}
-    });
-    var when=document.getElementById('f-when'),any=f.querySelectorAll('input[name=when]:checked').length>0;
-    when.classList.toggle('invalid',!any);
-    if(!any){ok=false;first=first||when.querySelector('input');}
-    if(!ok){first.focus();return;}
-    f.classList.add('done');f.querySelector('.thanks').focus();
+    var ok = document.getElementById('n').value.trim() &&
+             document.getElementById('p').value.replace(/\D/g,'').length >= 7 &&
+             document.getElementById('s').value;
+    document.getElementById('err').style.display = ok ? 'none' : 'block';
+    if (!ok) return;
+    f.style.display = 'none';
+    var d = document.getElementById('done'); d.style.display = 'block'; d.focus();
   });
 })();
 </script>
