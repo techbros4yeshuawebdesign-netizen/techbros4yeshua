@@ -831,9 +831,11 @@ function materialsHTML(list){
   if (!list || !list.length) return '';
   const rows = list.map(m => {
     const when = new Date(m.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-    if (m.kind === 'file') return `<div class="mat-row"><span>File</span><a href="#" onclick="openClientFile('${escHTML(m.file_path)}');return false;">${escHTML(m.file_name || 'file')}</a><em>${when}</em></div>`;
-    if (m.kind === 'link') return `<div class="mat-row"><span>Link</span><a href="${escHTML(m.url)}" target="_blank" rel="noopener">${escHTML(m.url)}</a><em>${when}</em></div>`;
-    return `<div class="mat-row"><span>Text</span><p>${escHTML(m.note)}</p><em>${when}</em></div>`;
+    const st = m.applied_at ? ' \u00b7 added' : ' \u00b7 waiting';
+    if (m.kind === 'file' && m.public_url) return `<div class="mat-row"><span>Photo</span><a href="${escHTML(m.public_url)}" target="_blank" rel="noopener" style="display:flex;gap:10px;align-items:center;"><img src="${escHTML(m.public_url)}" alt="" loading="lazy" style="width:56px;height:40px;object-fit:cover;border-radius:4px;flex:none;">${escHTML(m.file_name || 'photo')}</a><em>${when}${st}</em></div>`;
+    if (m.kind === 'file') return `<div class="mat-row"><span>File</span><a href="#" onclick="openClientFile('${escHTML(m.file_path)}');return false;">${escHTML(m.file_name || 'file')}</a><em>${when}${st}</em></div>`;
+    if (m.kind === 'link') return `<div class="mat-row"><span>Link</span><a href="${escHTML(m.url)}" target="_blank" rel="noopener">${escHTML(m.url)}</a><em>${when}${st}</em></div>`;
+    return `<div class="mat-row"><span>Text</span><p>${escHTML(m.note)}</p><em>${when}${st}</em></div>`;
   }).join('');
   return `<div class="plan-box"><div class="plan-head" style="cursor:default"><span>Client photos &amp; info (${list.length})</span></div><div class="plan-body">${rows}</div></div>`;
 }
@@ -1041,10 +1043,116 @@ async function loadClients(){
         </select>
         <button class="pay-btn" onclick="changePlan('${r.id}','${r.email}','${r.full_name||r.email}')">Change Plan →</button>
         <button class="pay-btn" onclick="addManualSub('${r.id}')">+ Add Subscription</button>
+        <button class="pay-btn" onclick="openClientRecord('${r.id}')">Client record</button>
         ${sub ? `<button class="cancel-btn" onclick="cancelSub('${r.id}','${(r.full_name||r.email).replace(/'/g,"\\'")}','${sub.plan}')">Cancel Subscription</button>` : ''}
       </div>
       <div class="req-date">Joined ${fmtShort(r.created_at)}</div>
     </div>`}).join('');
+}
+
+// ── CLIENT RECORD: everything about one client in one place ──
+function ensureRecordModal(){
+  if (document.getElementById('rec-overlay')) return;
+  const el = document.createElement('div');
+  el.id = 'rec-overlay';
+  el.style.cssText = 'display:none;position:fixed;inset:0;z-index:9000;background:rgba(5,6,3,0.86);overflow-y:auto;padding:24px 14px;';
+  el.innerHTML = '<div id="rec-box" style="width:min(860px,100%);margin:0 auto;background:#14160c;border:1px solid rgba(200,241,53,0.2);border-radius:18px;padding:24px;color:#fff;"></div>';
+  el.addEventListener('click', e => { if (e.target === el) closeClientRecord(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeClientRecord(); });
+  document.body.appendChild(el);
+}
+function closeClientRecord(){ const o = document.getElementById('rec-overlay'); if (o) o.style.display = 'none'; }
+function recSection(title, inner){
+  return `<div style="margin-top:22px;"><div style="font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--lime);font-weight:700;margin-bottom:10px;">${title}</div>${inner}</div>`;
+}
+async function openClientRecord(userId){
+  ensureRecordModal();
+  const box = document.getElementById('rec-box');
+  box.innerHTML = '<div style="color:var(--mid)">Loading client record...</div>';
+  document.getElementById('rec-overlay').style.display = 'block';
+
+  const [prof, rec, reqs, mats, sites, subs, log] = await Promise.all([
+    sb.from('profiles').select('id,full_name,email,created_at').eq('id', userId).single(),
+    sb.from('client_records').select('*').eq('user_id', userId).maybeSingle(),
+    sb.from('edit_requests').select('*').eq('user_id', userId).order('created_at', { ascending: false }),
+    sb.from('client_materials').select('*').eq('user_id', userId).order('created_at', { ascending: false }),
+    sb.from('sites').select('*').eq('user_id', userId).order('created_at', { ascending: false }),
+    sb.from('subscriptions').select('*').eq('user_id', userId).order('created_at', { ascending: false }),
+    sb.from('activity_log').select('*').eq('user_id', userId).order('created_at', { ascending: false }).limit(60)
+  ]);
+  const p = prof.data || {};
+  const inquiries = (reqs.data || []).filter(r => r.status === 'inquiry' || /PROTOTYPE|NEW WEBSITE|WEBSITE ENQUIRY/.test(r.page || ''));
+  const requests = (reqs.data || []).filter(r => !inquiries.includes(r));
+  let plans = [];
+  if (inquiries.length) {
+    const { data } = await sb.from('site_plans').select('id,inquiry_id,business,status,demo_at,demo_url,created_at').in('inquiry_id', inquiries.map(r => r.id));
+    plans = data || [];
+  }
+  const sub = (subs.data || []).find(s => s.status === 'active');
+  const d = t => t ? fmtShort(t) : '';
+
+  const previewsHTML = inquiries.length ? inquiries.map(r => {
+    const pl = plans.find(x => x.inquiry_id === r.id);
+    const name = (pl && pl.business) || (r.edit_type || '').replace(/^.*?—\s*/, '') || 'Inquiry';
+    const state = !pl ? 'No plan yet' : (pl.demo_at || pl.demo_url) ? 'Preview ready ' + d(pl.demo_at) : 'Plan written, preview in progress';
+    const btns = pl ? `<button class="pay-btn" onclick="previewDemo('${pl.id}')">View preview</button><button class="pay-btn" onclick="sharePlanLink('${pl.id}')">Copy share link</button>` : '';
+    return `<div class="req-card" style="margin-bottom:8px;"><div class="req-top"><div class="req-type">${escHTML(name)}</div><span class="badge ${r.status === 'inquiry' ? 'new' : 'done'}"><span class="badge-dot"></span>${escHTML(r.status)}</span></div>
+      <div class="req-meta">${escHTML(state)} &middot; asked ${d(r.created_at)}</div><div class="action-row">${btns}</div></div>`;
+  }).join('') : '<div style="color:var(--mid);font-size:13.5px;">No website requests.</div>';
+
+  const photos = (mats.data || []).filter(m => m.kind === 'file' && m.public_url);
+  const others = (mats.data || []).filter(m => !(m.kind === 'file' && m.public_url));
+  const photoGrid = photos.length ? `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;">${photos.map(m => `
+      <a href="${escHTML(m.public_url)}" target="_blank" rel="noopener" title="${escHTML(m.file_name || '')}" style="position:relative;display:block;aspect-ratio:4/3;border-radius:6px;overflow:hidden;background:#222;">
+        <img src="${escHTML(m.public_url)}" alt="${escHTML(m.file_name || '')}" loading="lazy" style="width:100%;height:100%;object-fit:cover;">
+        <span style="position:absolute;left:4px;bottom:4px;font-size:10.5px;padding:2px 6px;border-radius:100px;background:rgba(0,0,0,.7);color:${m.applied_at ? 'var(--lime)' : '#ddd'};">${m.applied_at ? 'added' : 'waiting'}</span>
+      </a>`).join('')}</div>` : '';
+  const materialsBlock = (photos.length || others.length) ? photoGrid + materialsHTML(others) : '<div style="color:var(--mid);font-size:13.5px;">Nothing sent yet.</div>';
+
+  const requestsHTML = requests.length ? requests.map(r => `
+    <div class="req-card" style="margin-bottom:8px;">
+      <div class="req-top"><div class="req-type">${escHTML(r.edit_type || r.page || 'Request')}</div><span class="badge ${r.status === 'done' ? 'done' : 'pending'}"><span class="badge-dot"></span>${escHTML(r.status || 'pending')}</span></div>
+      <div class="req-msg" style="white-space:pre-wrap;">${escHTML(r.message || '')}</div>
+      <label style="display:block;font-size:12px;color:var(--mid);margin:10px 0 4px;">What we did</label>
+      <textarea id="res-${r.id}" rows="2" style="width:100%;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.04);color:#fff;font-family:inherit;font-size:13.5px;">${escHTML(r.resolution || '')}</textarea>
+      <div class="action-row"><button class="pay-btn" onclick="resolveRequest('${r.id}','${userId}')">${r.status === 'done' ? 'Update note' : 'Save and mark done'}</button></div>
+      <div class="req-date">${d(r.created_at)}${r.resolved_at ? ' &middot; done ' + d(r.resolved_at) : ''}</div>
+    </div>`).join('') : '<div style="color:var(--mid);font-size:13.5px;">No edit requests.</div>';
+
+  const sitesHTML = (sites.data || []).length ? (sites.data || []).map(st => `<div class="mat-row"><span>${escHTML(st.status || '')}</span><p>${escHTML(st.site_name || '')}${st.site_url ? ` &middot; <a href="${escHTML(st.site_url)}" target="_blank" rel="noopener">${escHTML(st.site_url)}</a>` : ''}</p><em>${d(st.created_at)}</em></div>`).join('') : '<div style="color:var(--mid);font-size:13.5px;">No sites yet.</div>';
+
+  const logHTML = (log.data || []).length ? (log.data || []).map(a => `<div class="mat-row"><span>${escHTML(a.actor || '')}</span><p><b style="color:#fff;font-weight:600;">${escHTML(a.title || '')}</b>${a.detail ? ' &middot; ' + escHTML(a.detail) : ''}</p><em>${d(a.created_at)}</em></div>`).join('') : '<div style="color:var(--mid);font-size:13.5px;">Nothing logged yet.</div>';
+
+  box.innerHTML = `
+    <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;">
+      <div><div style="font-family:'Syne',sans-serif;font-weight:800;font-size:22px;">${escHTML(p.full_name || p.email || 'Client')}</div>
+        <div style="color:var(--mid);font-size:13.5px;margin-top:4px;">${escHTML(p.email || '')} &middot; ${sub ? escHTML(sub.plan) + ' $' + sub.amount + '/mo' : 'no active plan'} &middot; client since ${d(p.created_at)}</div></div>
+      <button onclick="closeClientRecord()" aria-label="Close" style="background:none;border:none;color:var(--mid);font-size:28px;cursor:pointer;line-height:1;">&times;</button>
+    </div>
+    ${recSection('Client brief (what we know; the builder reads and updates this)', `
+      <input id="rec-business" value="${escHTML((rec.data && rec.data.business) || '')}" placeholder="Business name" style="width:100%;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.04);color:#fff;font-size:14px;margin-bottom:8px;">
+      <textarea id="rec-brief" rows="7" placeholder="Brand colors, tone, services, hours, preferences, decisions..." style="width:100%;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.04);color:#fff;font-family:inherit;font-size:13.5px;line-height:1.55;">${escHTML((rec.data && rec.data.brief) || '')}</textarea>
+      <div class="action-row"><button class="pay-btn" onclick="saveClientBrief('${userId}')">Save brief</button>${rec.data ? `<span style="color:var(--mid);font-size:12px;align-self:center;">updated ${d(rec.data.updated_at)}</span>` : ''}</div>`)}
+    ${recSection('Previews', previewsHTML)}
+    ${recSection('Photos &amp; info they sent', materialsBlock)}
+    ${recSection('Edit requests and what we did', requestsHTML)}
+    ${recSection('Sites', sitesHTML)}
+    ${recSection('History', logHTML)}`;
+}
+async function saveClientBrief(userId){
+  const business = document.getElementById('rec-business').value.trim() || null;
+  const brief = document.getElementById('rec-brief').value;
+  const { error } = await sb.from('client_records').upsert({ user_id: userId, business, brief, updated_at: new Date().toISOString() });
+  showAdminToast(error ? 'Could not save: ' + error.message : 'Brief saved', error ? 'red' : 'lime');
+}
+async function resolveRequest(id, userId){
+  const resolution = document.getElementById('res-' + id).value.trim();
+  if (!resolution) { showAdminToast('Write what was done first', 'red'); return; }
+  const { error } = await sb.from('edit_requests').update({ status: 'done', resolution, resolved_at: new Date().toISOString() }).eq('id', id);
+  if (error) { showAdminToast('Could not save: ' + error.message, 'red'); return; }
+  adminLog('edit', 'Edit request completed', resolution.slice(0, 200), userId);
+  showAdminToast('Saved', 'lime');
+  openClientRecord(userId);
 }
 
 async function changePlan(userId,email,name){

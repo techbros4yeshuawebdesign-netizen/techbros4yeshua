@@ -1107,6 +1107,7 @@ async function cancelMyPlan(){
 let previewState = {};      // inquiry_id -> stage, used to detect "just became ready"
 let previewRows  = [];
 let previewTimer = null;
+let previewUpdating = new Set();   // inquiry ids with photos/changes not yet applied
 let siteConfig   = null;
 
 function escP(t){ return String(t||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
@@ -1129,21 +1130,26 @@ function previewCard(r){
       <div class="pv-sub">As soon as payment clears we start building the real site. Send your logo, photos and any details now so they go straight in.</div>
       ${previewSteps(r.stage, r.site_status)}
       <div class="pv-actions">
-        <button class="lime-solid" onclick="openPreview('${id}', this)">View preview</button>
+        <button class="lime-solid" onclick="openPreview('${id}', this, '${escP(r.demo_url || '')}')">View preview</button>
         ${files}
         <button class="pv-ghost" onclick="openPaymentModal('${r.site_id}', '${name.replace(/'/g,'')}')">Open checkout again</button>
       </div>
     </div>`;
   }
   if (r.stage === 'ready') {
+    const updating = previewUpdating.has(id);
+    const sub = updating
+      ? 'We are adding your photos and changes to this preview now. It usually takes under an hour and this page updates by itself.'
+      : 'A first look at your new homepage. Send your photos and logo, or tell us what to change, and we update the preview for you.';
     return `<div class="pv-card fade-in">
-      <div class="pv-label">Website preview</div>
-      <div class="pv-title">Your preview for ${name} is ready.</div>
-      <div class="pv-sub">A first look at your new homepage, built from what you told us. Photos are samples; your own photos and details go in when we build the real site.</div>
+      <div class="pv-label">${updating ? 'Updating your preview' : 'Website preview'}</div>
+      <div class="pv-title">Your preview for ${name} is ${updating ? 'being updated' : 'ready'}.</div>
+      <div class="pv-sub">${sub}</div>
       ${previewSteps(r.stage)}
       <div class="pv-actions">
-        <button class="lime-solid" onclick="openPreview('${id}', this)">View preview</button>
+        <button class="lime-solid" onclick="openPreview('${id}', this, '${escP(r.demo_url || '')}')">View preview</button>
         <button class="lime-solid" onclick="acceptPreview('${id}', this)">I like it</button>
+        <button class="pv-ghost" onclick="openFeedback('${id}')">Request changes</button>
         ${files}
       </div>
     </div>`;
@@ -1171,6 +1177,21 @@ async function loadPreviews(){
   const { data, error } = await sb.rpc('my_previews');
   if (error) { console.warn('previews', error.message); return; }
   previewRows = (data || []).filter(r => r.site_status !== 'active');
+
+  // which previews still have photos, text or change requests waiting to go in
+  const before = previewUpdating;
+  const [mats, fb] = await Promise.all([
+    sb.from('client_materials').select('inquiry_id').eq('user_id', currentUser.id).is('applied_at', null),
+    sb.from('edit_requests').select('inquiry_id').eq('user_id', currentUser.id).eq('page', 'PREVIEW FEEDBACK').is('resolved_at', null)
+  ]);
+  const latest = previewRows[0] && previewRows[0].inquiry_id;
+  previewUpdating = new Set([...(mats.data || []), ...(fb.data || [])].map(x => x.inquiry_id || latest).filter(Boolean));
+  before.forEach(id => {
+    if (!previewUpdating.has(id) && previewRows.some(r => r.inquiry_id === id)) {
+      alertClient('Your preview was updated', 'Your photos and changes are in. Open My Sites to see it.');
+    }
+  });
+
   const html = previewRows.map(previewCard).join('');
   const ov = document.getElementById('preview-list');  if (ov) ov.innerHTML = html;
   const st = document.getElementById('sites-previews'); if (st) st.innerHTML = html;
@@ -1185,17 +1206,21 @@ async function loadPreviews(){
   const tb = document.getElementById('sites-tab-btn');
   if (tb) tb.textContent = previewRows.some(r => r.stage === 'ready' && r.site_status !== 'payment-pending') ? 'My Sites \u2022 Preview ready' : 'My Sites';
   clearTimeout(previewTimer);
-  if (previewRows.some(r => r.stage !== 'ready')) previewTimer = setTimeout(loadPreviews, 60000);
+  if (previewRows.some(r => r.stage !== 'ready') || previewUpdating.size) previewTimer = setTimeout(loadPreviews, 60000);
   if (previewRows.length && document.getElementById('req-list')) loadRequests();
   if (typeof renderSitesEmpty === 'function') renderSitesEmpty();
 }
 
-async function openPreview(inquiryId, btn){
+async function openPreview(inquiryId, btn, demoUrl){
   const w = window.open('', '_blank');   // open first so phone popup blockers allow it
   const old = btn ? btn.textContent : '';
   if (btn) { btn.textContent = 'Opening...'; btn.disabled = true; }
   try {
     const { data, error } = await sb.rpc('my_site_preview_html', { p_inquiry: inquiryId });
+    if (!error && !data && /^https:\/\//.test(demoUrl || '')) {
+      if (w) w.location.href = demoUrl; else window.location.href = demoUrl;
+      return;
+    }
     if (error || !data) throw new Error(error ? error.message : 'not ready');
     const url = URL.createObjectURL(new Blob([data], { type: 'text/html' }));
     if (w) w.location.href = url; else window.location.href = url;
@@ -1248,7 +1273,7 @@ function ensureMaterialsModal(){
       <p style="font-size:13.5px;color:var(--mid);line-height:1.6;margin-bottom:18px;">Your logo, photos of your work, your team, your storefront, menus or price sheets, and links to sites you like. We put these into your real website.</p>
       <label style="display:block;font-size:13px;font-weight:600;margin-bottom:6px;">Photos and files</label>
       <input id="mat-files" type="file" multiple accept="image/*,.pdf,.doc,.docx,.txt" style="width:100%;padding:12px;border:1px dashed rgba(200,241,53,0.35);border-radius:12px;background:rgba(200,241,53,0.04);color:#fff;font-size:14px;margin-bottom:6px;">
-      <div style="font-size:12px;color:var(--mid);margin-bottom:16px;">Images, PDF or Word, up to 15 MB each.</div>
+      <div style="font-size:12px;color:var(--mid);margin-bottom:16px;">Images, PDF or Word, up to 15 MB each. Photos you send can appear on your public website.</div>
       <label style="display:block;font-size:13px;font-weight:600;margin-bottom:6px;" for="mat-note">Text for your site</label>
       <textarea id="mat-note" rows="4" maxlength="5000" placeholder="Your story, hours, services and prices, anything you want on the site" style="width:100%;padding:12px;border:1px solid rgba(255,255,255,0.12);border-radius:12px;background:rgba(255,255,255,0.04);color:#fff;font-size:14px;font-family:inherit;margin-bottom:14px;resize:vertical;"></textarea>
       <label style="display:block;font-size:13px;font-weight:600;margin-bottom:6px;" for="mat-link">A website or page you like (optional)</label>
@@ -1266,7 +1291,8 @@ function ensureMaterialsModal(){
 
 function openMaterials(inquiryId){
   ensureMaterialsModal();
-  matInquiry = inquiryId || null;
+  // photos sent from the quick action go to the newest preview
+  matInquiry = inquiryId || (previewRows[0] && previewRows[0].inquiry_id) || null;
   document.getElementById('mat-files').value = '';
   document.getElementById('mat-note').value = '';
   document.getElementById('mat-link').value = '';
@@ -1275,6 +1301,61 @@ function openMaterials(inquiryId){
   loadMaterials();
 }
 function closeMaterials(){ const o = document.getElementById('mat-overlay'); if (o) o.style.display = 'none'; }
+
+// ── REQUEST CHANGES TO A PREVIEW ──
+let fbInquiry = null;
+function ensureFeedbackModal(){
+  if (document.getElementById('fb-overlay')) return;
+  const el = document.createElement('div');
+  el.id = 'fb-overlay';
+  el.style.cssText = 'display:none;position:fixed;inset:0;z-index:9000;background:rgba(5,6,3,0.82);align-items:flex-start;justify-content:center;overflow-y:auto;padding:24px 14px;';
+  el.innerHTML = `
+    <div style="width:min(520px,100%);background:#14160c;border:1px solid rgba(200,241,53,0.2);border-radius:20px;padding:26px;color:#fff;margin:auto 0;">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:6px;">
+        <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:20px;">Request changes</div>
+        <button onclick="closeFeedback()" aria-label="Close" style="background:none;border:none;color:var(--mid);font-size:26px;cursor:pointer;line-height:1;">&times;</button>
+      </div>
+      <p style="font-size:13.5px;color:var(--mid);line-height:1.6;margin-bottom:16px;">Tell us what to change on your preview: colors, wording, sections to add or remove, which photo goes where. Changes to your preview are free and do not count toward your monthly edits.</p>
+      <label style="display:block;font-size:13px;font-weight:600;margin-bottom:6px;" for="fb-text">What should we change?</label>
+      <textarea id="fb-text" rows="6" maxlength="4000" placeholder="Example: Use my truck photo at the top, make the green darker, and add our Saturday hours." style="width:100%;padding:12px;border:1px solid rgba(255,255,255,0.12);border-radius:12px;background:rgba(255,255,255,0.04);color:#fff;font-size:14px;font-family:inherit;margin-bottom:14px;resize:vertical;"></textarea>
+      <div id="fb-msg" style="font-size:13px;margin-bottom:12px;display:none;"></div>
+      <button id="fb-send" class="lime-solid" onclick="sendFeedback()" style="border:none;cursor:pointer;width:100%;">Send changes</button>
+    </div>`;
+  el.addEventListener('click', e => { if (e.target === el) closeFeedback(); });
+  document.body.appendChild(el);
+}
+function openFeedback(inquiryId){
+  ensureFeedbackModal();
+  fbInquiry = inquiryId;
+  document.getElementById('fb-text').value = '';
+  document.getElementById('fb-msg').style.display = 'none';
+  document.getElementById('fb-overlay').style.display = 'flex';
+  setTimeout(() => document.getElementById('fb-text').focus(), 50);
+}
+function closeFeedback(){ const o = document.getElementById('fb-overlay'); if (o) o.style.display = 'none'; }
+async function sendFeedback(){
+  const text = document.getElementById('fb-text').value.trim();
+  const msg = document.getElementById('fb-msg');
+  const say = (t, ok) => { msg.textContent = t; msg.style.display = 'block'; msg.style.color = ok ? 'var(--lime)' : '#ff8a80'; };
+  if (text.length < 3) { say('Tell us what to change first.', false); return; }
+  const btn = document.getElementById('fb-send');
+  btn.disabled = true; btn.textContent = 'Sending...';
+  const row = previewRows.find(r => r.inquiry_id === fbInquiry);
+  const { error } = await sb.from('edit_requests').insert({
+    user_id: currentUser.id,
+    page: 'PREVIEW FEEDBACK',
+    edit_type: 'Preview changes \u2014 ' + ((row && row.business) || 'my website'),
+    message: text,
+    status: 'pending',
+    inquiry_id: fbInquiry
+  });
+  btn.disabled = false; btn.textContent = 'Send changes';
+  if (error) { say('Could not send. Please try again.', false); return; }
+  closeFeedback();
+  showToast('Got it. Your preview updates within the hour.');
+  logEvent('other', 'Requested preview changes', (row && row.business) || '');
+  loadPreviews();
+}
 
 function matSay(text, ok){
   const m = document.getElementById('mat-msg');
@@ -1293,8 +1374,12 @@ async function loadMaterials(){
                : r.kind === 'link' ? escP(r.url)
                : escP((r.note || '').slice(0, 90)) + ((r.note || '').length > 90 ? '...' : '');
     const tag = { file: 'File', link: 'Link', note: 'Text' }[r.kind] || '';
+    const state = r.applied_at
+      ? '<span style="color:var(--lime);font-size:12px;flex:none;">Added</span>'
+      : '<span style="color:var(--mid);font-size:12px;flex:none;">Waiting</span>';
     return `<div style="display:flex;gap:10px;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
-      <span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"><b style="color:#fff;font-weight:600;">${tag}</b> &nbsp;${what}</span>
+      <span style="min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"><b style="color:#fff;font-weight:600;">${tag}</b> &nbsp;${what}</span>
+      ${state}
       <button onclick="removeMaterial('${r.id}', '${escP(r.file_path || '')}')" style="background:none;border:1px solid rgba(255,255,255,0.15);color:var(--mid);border-radius:100px;padding:3px 10px;font-size:12px;cursor:pointer;flex:none;">Remove</button>
     </div>`;
   }).join('');
@@ -1328,7 +1413,8 @@ async function sendMaterials(){
 
   btn.disabled = false; btn.textContent = 'Send to Tech Bros';
   if (failed.length) matSay('Sent ' + sent + '. Could not send: ' + failed.join(', ') + '. Please try those again.', false);
-  else { matSay('Sent. We will use these in your website.', true); showToast('Your files and info were sent.'); }
+  else { matSay('Sent. We add these to your preview, usually within the hour.', true); showToast('Sent. Your preview updates within the hour.'); }
+  if (sent) loadPreviews();
   document.getElementById('mat-files').value = '';
   if (!failed.includes('your text')) document.getElementById('mat-note').value = '';
   if (!failed.includes('your link')) document.getElementById('mat-link').value = '';
@@ -1351,8 +1437,9 @@ async function loadRequests() {
     <div class="req-card">
       <div class="req-top"><div class="req-type">${r.edit_type||'Edit Request'}</div><span class="badge ${r.status==='inquiry' ? (previewState[r.id]==='ready' ? 'done' : 'pending') : (sc[r.status]||'pending')}"><span class="badge-dot"></span>${r.status==='inquiry' ? ({ready:'preview ready',designing:'designing preview',received:'request received'}[previewState[r.id]]||'request received') : (r.status||'pending')}</span></div>
       <div class="req-page">📄 ${r.page||'—'}</div>
-      <div class="req-msg">${r.message||''}</div>
-      <div class="req-date">${new Date(r.created_at).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}</div>
+      <div class="req-msg">${escP(r.message||'')}</div>
+      ${r.resolution ? `<div class="req-msg" style="margin-top:8px;border-left:2px solid var(--lime);padding-left:10px;"><b style="color:var(--lime);font-weight:600;">What we did:</b> ${escP(r.resolution)}</div>` : ''}
+      <div class="req-date">${new Date(r.created_at).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}${r.resolved_at ? ' \u00b7 done ' + new Date(r.resolved_at).toLocaleDateString('en-US',{month:'long',day:'numeric'}) : ''}</div>
     </div>`).join('');
 }
 
