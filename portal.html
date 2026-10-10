@@ -122,6 +122,22 @@ body{font-family:'DM Sans',sans-serif;background:transparent;color:#fff;min-heig
 .lime-solid:hover{transform:scale(1.03) translateY(-2px);box-shadow:0 0 25px rgba(200,241,53,0.4);}
 
 /* REQUESTS */
+.pv-card{position:relative;overflow:hidden;background:linear-gradient(135deg,rgba(200,241,53,0.10),rgba(20,22,12,0.9) 60%);border:1px solid rgba(200,241,53,0.28);border-radius:18px;padding:24px 26px;margin-bottom:16px}
+.pv-card.wait{background:var(--card);border-color:var(--border)}
+.pv-top{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap}
+.pv-label{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--lime);font-weight:700;margin-bottom:6px}
+.pv-title{font-family:'Syne',sans-serif;font-weight:800;font-size:22px;color:#fff;line-height:1.2}
+.pv-sub{font-size:14px;color:var(--mid);margin-top:8px;line-height:1.6;max-width:46em}
+.pv-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.pv-actions button,.pv-actions a{border:none;cursor:pointer;text-decoration:none;white-space:nowrap}
+.pv-ghost{background:transparent!important;border:1px solid rgba(255,255,255,0.18)!important;color:#fff!important;padding:11px 20px;border-radius:100px;font-family:'Syne',sans-serif;font-weight:600;font-size:13px}
+.pv-steps{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
+.pv-step{font-size:12px;padding:5px 12px;border-radius:100px;border:1px solid var(--border);color:var(--mid)}
+.pv-step.on{border-color:rgba(200,241,53,0.4);color:var(--lime)}
+.pv-step.now{background:rgba(200,241,53,0.12);border-color:rgba(200,241,53,0.4);color:var(--lime)}
+.pv-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--lime);margin-right:6px;animation:pvPulse 1.6s ease-in-out infinite}
+@keyframes pvPulse{50%{opacity:.25}}
+@media (prefers-reduced-motion:reduce){.pv-dot{animation:none}}
 .req-card{background:var(--card2);border:1px solid var(--border);border-radius:13px;padding:18px 22px;margin-bottom:9px;transition:all 0.25s;}
 .req-card:hover{border-color:rgba(200,241,53,0.15);transform:translateY(-2px);}
 .req-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;gap:10px;flex-wrap:wrap;}
@@ -486,6 +502,7 @@ html, body { max-width: 100%; overflow-x: hidden; }
     <div id="tab-overview" class="tab-panel active">
       <div id="ov-loading" class="loading">Loading your dashboard...</div>
       <div id="ov-content" style="display:none;">
+        <div id="preview-list"></div>
         <div class="stats-grid">
           <div class="stat fade-in"><div class="stat-num" id="ov-sites">—</div><div class="stat-lbl">Active Sites</div></div>
           <div class="stat fade-in"><div class="stat-num" id="ov-plan">—</div><div class="stat-lbl">Current Plan</div></div>
@@ -709,7 +726,7 @@ html, body { max-width: 100%; overflow-x: hidden; }
         <div id="inq-success" style="display:none;text-align:center;padding:40px 20px;">
           <div style="font-size:48px;margin-bottom:16px;">✅</div>
           <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:22px;color:#fff;margin-bottom:8px;">Inquiry Sent!</div>
-          <div style="font-size:14px;color:var(--mid);margin-bottom:20px;">Nathan will review your request and reach out within 24 hours.</div>
+          <div style="font-size:14px;color:var(--mid);margin-bottom:20px;">Your free website preview will appear on your dashboard, usually within the hour. We'll let you know when it's ready.</div>
           <button class="lime-solid" onclick="showTab('overview')" style="border:none;cursor:pointer;">Back to Dashboard</button>
         </div>
         <div id="inq-form">
@@ -903,6 +920,7 @@ async function loadPortal(user) {
 }
 
 async function loadOverview() {
+  loadPreviews();
   document.getElementById('ov-loading').style.display='block';
   document.getElementById('ov-content').style.display='none';
 
@@ -1103,6 +1121,93 @@ async function cancelMyPlan(){
   loadOverview();
 }
 
+// ── WEBSITE PREVIEWS (auto-built demo for each prototype inquiry) ──
+let previewState = {};      // inquiry_id -> stage, used to detect "just became ready"
+let previewTimer = null;
+
+function escP(t){ return String(t||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+async function loadPreviews(){
+  const box = document.getElementById('preview-list');
+  if (!box || !currentUser) return;
+  const { data, error } = await sb.rpc('my_site_previews');
+  if (error) { console.warn('previews', error.message); return; }
+  const rows = data || [];
+  const steps = (stage) => {
+    const order = ['received','designing','ready'];
+    const i = order.indexOf(stage);
+    const lbl = ['Request received','Designing your preview','Preview ready'];
+    return '<div class="pv-steps">' + lbl.map((l,k)=>`<span class="pv-step ${k<i?'on':''} ${k===i?'now':''}">${k===i && stage!=='ready' ? '<span class="pv-dot"></span>' : ''}${l}</span>`).join('') + '</div>';
+  };
+  box.innerHTML = rows.map(r => {
+    const name = escP(r.business || 'your business');
+    if (r.stage === 'ready') {
+      return `<div class="pv-card fade-in">
+        <div class="pv-label">Your free website preview</div>
+        <div class="pv-title">The preview for ${name} is ready.</div>
+        <div class="pv-sub">Here's a first look at your new homepage, built from what you told us. Photos are samples; your own photos and details go in when we build the real site.</div>
+        ${steps('ready')}
+        <div class="pv-actions">
+          <button class="lime-solid" onclick="openPreview('${r.inquiry_id}', this)">View my website preview</button>
+          <button class="pv-ghost" onclick="likePreview('${r.inquiry_id}', '${name.replace(/'/g,'')}')">I like it, let's talk</button>
+        </div>
+      </div>`;
+    }
+    const msg = r.stage === 'designing'
+      ? 'Your plan is done and we are designing your homepage now. This page updates by itself, usually within the hour.'
+      : 'We got your request. Your preview is being put together, usually within the hour. This page updates by itself.';
+    return `<div class="pv-card wait fade-in">
+      <div class="pv-label">Your free website preview</div>
+      <div class="pv-title">Working on ${name}</div>
+      <div class="pv-sub">${msg}</div>
+      ${steps(r.stage)}
+    </div>`;
+  }).join('');
+
+  // tell the client the moment a preview turns ready
+  rows.forEach(r => {
+    if (previewState[r.inquiry_id] && previewState[r.inquiry_id] !== 'ready' && r.stage === 'ready') {
+      alertClient('Your website preview is ready', 'Open your dashboard to see the preview for ' + (r.business || 'your business') + '.');
+    }
+    previewState[r.inquiry_id] = r.stage;
+  });
+
+  // keep checking while anything is still in progress
+  clearTimeout(previewTimer);
+  if (rows.some(r => r.stage !== 'ready')) previewTimer = setTimeout(loadPreviews, 60000);
+  if (rows.length && document.getElementById('req-list')) loadRequests();
+}
+
+async function openPreview(inquiryId, btn){
+  const w = window.open('', '_blank');   // open first so phone popup blockers allow it
+  const old = btn ? btn.textContent : '';
+  if (btn) { btn.textContent = 'Opening...'; btn.disabled = true; }
+  try {
+    const { data, error } = await sb.rpc('my_site_preview_html', { p_inquiry: inquiryId });
+    if (error || !data) throw new Error(error ? error.message : 'not ready');
+    const url = URL.createObjectURL(new Blob([data], { type: 'text/html' }));
+    if (w) w.location.href = url; else window.location.href = url;
+    logEvent('other', 'Opened website preview', inquiryId);
+  } catch (e) {
+    if (w) w.close();
+    showToast('Could not open the preview. Please try again in a minute.');
+  } finally {
+    if (btn) { btn.textContent = old; btn.disabled = false; }
+  }
+}
+
+async function likePreview(inquiryId, name){
+  const { error } = await sb.from('edit_requests').insert({
+    user_id: currentUser.id,
+    page: 'PREVIEW FEEDBACK',
+    edit_type: 'Client likes their preview — ' + name,
+    message: 'The client viewed the website preview for ' + name + ' and wants to talk next steps.\nInquiry: ' + inquiryId,
+    status: 'pending'
+  });
+  if (error) { showToast('Could not send. Please try again.'); return; }
+  showToast('Sent! Nathan will reach out soon.');
+}
+
 async function loadRequests() {
   const {data} = await sb.from('edit_requests').select('*').eq('user_id',currentUser.id).order('created_at',{ascending:false});
   const c = document.getElementById('req-list');
@@ -1110,7 +1215,7 @@ async function loadRequests() {
   const sc = {pending:'pending',done:'done',active:'active'};
   c.innerHTML = data.map(r=>`
     <div class="req-card">
-      <div class="req-top"><div class="req-type">${r.edit_type||'Edit Request'}</div><span class="badge ${sc[r.status]||'pending'}"><span class="badge-dot"></span>${r.status||'pending'}</span></div>
+      <div class="req-top"><div class="req-type">${r.edit_type||'Edit Request'}</div><span class="badge ${r.status==='inquiry' ? (previewState[r.id]==='ready' ? 'done' : 'pending') : (sc[r.status]||'pending')}"><span class="badge-dot"></span>${r.status==='inquiry' ? ({ready:'preview ready',designing:'designing preview',received:'request received'}[previewState[r.id]]||'request received') : (r.status||'pending')}</span></div>
       <div class="req-page">📄 ${r.page||'—'}</div>
       <div class="req-msg">${r.message||''}</div>
       <div class="req-date">${new Date(r.created_at).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}</div>
@@ -1189,7 +1294,7 @@ async function submitInquiry() {
   });
   btn.textContent='Submit Inquiry →'; btn.disabled=false;
   if (error) { m.textContent='Error submitting. Please try again.'; m.className='msg error'; }
-  else { document.getElementById('inq-form').style.display='none'; document.getElementById('inq-success').style.display='block'; m.className='msg'; }
+  else { document.getElementById('inq-form').style.display='none'; document.getElementById('inq-success').style.display='block'; m.className='msg'; loadPreviews(); }
 }
 
 // ── REAL-TIME ──
@@ -1261,6 +1366,7 @@ async function loadEditLimit() {
     .select('id')
     .eq('user_id', currentUser.id)
     .neq('status','inquiry')
+    .neq('page','PREVIEW FEEDBACK')
     .gte('created_at', monthStart);
 
   const used = reqs?.length || 0;
