@@ -2075,11 +2075,11 @@ html.intro-on body > *:not(#intro){visibility:hidden !important;}
         <div class="plan-select-indicator">Tap to select →</div>
       </div>
 
-      <div class="plan featured reveal selectable-plan" id="wp-professional" onclick="selectWebsite('professional', 119)">
+      <div class="plan featured reveal selectable-plan" id="wp-professional" onclick="selectWebsite('professional', 79)">
         <div class="scan-line" style="animation-delay:-1s;"></div>
         <div class="plan-badge">Most Popular</div>
         <div class="plan-name">Professional</div>
-        <div class="plan-price"><div class="plan-price-num">$119</div><div class="plan-price-mo">/mo</div></div>
+        <div class="plan-price"><div class="plan-price-num">$79</div><div class="plan-price-mo">/mo</div></div>
         <div class="plan-desc">For growing businesses that need more pages, more features and more changes.</div>
         <ul class="plan-features">
           <li>Up to 10 pages</li>
@@ -2089,15 +2089,15 @@ html.intro-on body > *:not(#intro){visibility:hidden !important;}
           <li>Hosting, SSL and security</li>
           <li>10 edits a month</li>
           <li>Priority support + monthly report</li>
-          <li class="own-line">Yours after 2 years, then $85/mo</li>
+          <li class="own-line">Yours after 2 years, then $55/mo</li>
         </ul>
         <div class="plan-select-indicator">Tap to select →</div>
       </div>
 
-      <div class="plan reveal selectable-plan" id="wp-premium" onclick="selectWebsite('premium', 199)">
+      <div class="plan reveal selectable-plan" id="wp-premium" onclick="selectWebsite('premium', 129)">
         <div class="plan-badge">Everything included</div>
         <div class="plan-name">Premium</div>
-        <div class="plan-price"><div class="plan-price-num">$199</div><div class="plan-price-mo">/mo</div></div>
+        <div class="plan-price"><div class="plan-price-num">$129</div><div class="plan-price-mo">/mo</div></div>
         <div class="plan-desc">The full package, with an AI assistant answering your customers around the clock.</div>
         <ul class="plan-features">
           <li class="feat-star">AI assistant included</li>
@@ -2107,7 +2107,7 @@ html.intro-on body > *:not(#intro){visibility:hidden !important;}
           <li>Hosting, SSL and security</li>
           <li>Unlimited edits (fair use)</li>
           <li>24-hour priority support</li>
-          <li class="own-line">Yours after 2 years, then $150/mo</li>
+          <li class="own-line">Yours after 2 years, then $95/mo</li>
         </ul>
         <div class="plan-select-indicator">Tap to select →</div>
       </div>
@@ -2252,12 +2252,12 @@ html.intro-on body > *:not(#intro){visibility:hidden !important;}
     <div class="own-tier">
       <div class="own-tier-name">Professional</div>
       <div class="own-tier-time">2 years</div>
-      <div class="own-tier-sub">$119/mo, then $85/mo</div>
+      <div class="own-tier-sub">$79/mo, then $55/mo</div>
     </div>
     <div class="own-tier best">
       <div class="own-tier-name">Premium</div>
       <div class="own-tier-time">2 years</div>
-      <div class="own-tier-sub">$199/mo, then $150/mo</div>
+      <div class="own-tier-sub">$129/mo, then $95/mo</div>
     </div>
   </div>
 
@@ -2876,8 +2876,8 @@ document.querySelectorAll('.plan-price-num').forEach(el => {
 const AI_PRICE = 25;
 const PLAN_INFO = {
   starter:      { name: 'Starter',      price: 40,  ownYears: 3, after: 25 },
-  professional: { name: 'Professional', price: 119, ownYears: 2, after: 85 },
-  premium:      { name: 'Premium',      price: 199, ownYears: 2, after: 150 }
+  professional: { name: 'Professional', price: 79, ownYears: 2, after: 55 },
+  premium:      { name: 'Premium',      price: 129, ownYears: 2, after: 95 }
 };
 let selectedWebsite = null;   // kept these names so the contact form and portal hand-off keep working
 let selectedMonthly = null;

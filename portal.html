@@ -598,11 +598,11 @@ html, body { max-width: 100%; overflow-x: hidden; }
             <span class="plan-option-check">✓</span>
           </div>
           <div class="plan-option" id="sw-m-professional" onclick="selectSwitchPlan('monthly','professional')">
-            <div><div class="plan-option-name">Professional</div><div class="plan-option-price">$119/mo · Up to 10 pages · 10 edits/mo · yours after 2 yrs</div></div>
+            <div><div class="plan-option-name">Professional</div><div class="plan-option-price">$79/mo · Up to 10 pages · 10 edits/mo · yours after 2 yrs</div></div>
             <span class="plan-option-check">✓</span>
           </div>
           <div class="plan-option" id="sw-m-premium" onclick="selectSwitchPlan('monthly','premium')">
-            <div><div class="plan-option-name">Premium</div><div class="plan-option-price">$199/mo · Unlimited pages · AI assistant · yours after 2 yrs</div></div>
+            <div><div class="plan-option-name">Premium</div><div class="plan-option-price">$129/mo · Unlimited pages · AI assistant · yours after 2 yrs</div></div>
             <span class="plan-option-check">✓</span>
           </div>
 
@@ -662,8 +662,8 @@ html, body { max-width: 100%; overflow-x: hidden; }
                 <select id="site-plan" onchange="document.getElementById('site-monthly').value=this.value">
                   <option value="">Select a plan...</option>
                   <option value="starter">Starter — $40/mo</option>
-                  <option value="professional">Professional — $119/mo</option>
-                  <option value="premium">Premium — $199/mo</option>
+                  <option value="professional">Professional — $79/mo</option>
+                  <option value="premium">Premium — $129/mo</option>
                 </select>
                 <input type="hidden" id="site-monthly" value="">
               </div>
@@ -686,7 +686,7 @@ html, body { max-width: 100%; overflow-x: hidden; }
         <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>How long does an edit take?</span><span>+</span></div><div class="faq-a">Most edits are completed within 3–5 business days. Complex changes may take longer. You'll see your request status update in the Edit Requests tab.</div></div>
         <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>What does maintenance include?</span><span>+</span></div><div class="faq-a">Maintenance covers: security updates, hosting uptime monitoring, SSL certificate renewal, and regular backups. It does NOT include new features, integrations, or redesigns.</div></div>
         <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>How do I approve my prototype?</span><span>+</span></div><div class="faq-a">You have 7 days from when your prototype is ready to review and request changes. On day 7 we proceed with the current version and begin your subscription. Use the Edit Requests tab for any remaining changes.</div></div>
-        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Can I own my website?</span><span>+</span></div><div class="faq-a">Yes. Starter becomes yours after 3 years, Professional and Premium after 2. Your countdown runs while your plan is active and you can watch it on the My Sites tab. When it reaches zero your price drops to just the care plan ($25, $85 or $150 a month) and you can request your files, free. If you cancel before then the site comes down, or you can buy out the balance and keep it.</div></div>
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Can I own my website?</span><span>+</span></div><div class="faq-a">Yes. Starter becomes yours after 3 years, Professional and Premium after 2. Your countdown runs while your plan is active and you can watch it on the My Sites tab. When it reaches zero your price drops to just the care plan ($25, $55 or $95 a month) and you can request your files, free. If you cancel before then the site comes down, or you can buy out the balance and keep it.</div></div>
         <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Can I upgrade my plan?</span><span>+</span></div><div class="faq-a">Yes! Contact Nathan or email techBros4yeshua.web.design@gmail.com to upgrade. Your old plan cancels and the new one starts — no double billing.</div></div>
         <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>What if my site goes down?</span><span>+</span></div><div class="faq-a">Email Nathan immediately at techBros4yeshua.web.design@gmail.com. Hosting issues are treated as urgent and addressed as soon as possible, usually within a few hours.</div></div>
         <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>Can I cancel my subscription?</span><span>+</span></div><div class="faq-a">Yes, you can cancel anytime. Your site stays live until the end of your billing period. After cancellation, hosting ends and the site goes offline.</div></div>
@@ -754,8 +754,8 @@ const sb = supabase.createClient(SURL, SKEY);
 
 const PLANS = {
   starter:      {name:'Starter',      price:'$40/month',  features:['Custom one-page website','Hosting + SSL + security','2 edits per month','Email support','Yours after 3 years, then $25/month']},
-  professional: {name:'Professional', price:'$119/month', features:['Up to 10 pages','Hosting + SSL + security','10 edits per month','Priority support','Monthly performance report','Yours after 2 years, then $85/month']},
-  premium:      {name:'Premium',      price:'$199/month', features:['Unlimited pages','AI assistant included','Unlimited edits (fair use)','24hr priority support','SEO monitoring','Yours after 2 years, then $150/month']}
+  professional: {name:'Professional', price:'$79/month', features:['Up to 10 pages','Hosting + SSL + security','10 edits per month','Priority support','Monthly performance report','Yours after 2 years, then $55/month']},
+  premium:      {name:'Premium',      price:'$129/month', features:['Unlimited pages','AI assistant included','Unlimited edits (fair use)','24hr priority support','SEO monitoring','Yours after 2 years, then $95/month']}
 };
 
 let currentUser = null;
@@ -1374,7 +1374,7 @@ async function submitRequest(mode) {
     const m=document.getElementById('new-site-msg');
     if (!siteType||!sitePlan||!siteName||!siteDesc) { m.textContent='Please choose a plan and fill in the remaining fields.'; m.className='msg error'; return; }
     const btn=document.getElementById('new-site-btn'); btn.textContent='Submitting...'; btn.disabled=true;
-    const {error}=await sb.from('edit_requests').insert({user_id:currentUser.id,page:'NEW WEBSITE',edit_type:'New Website Request — '+siteType,message:'Plan: '+sitePlan+' ($'+({starter:40,professional:119,premium:199}[sitePlan]||'?')+'/mo, nothing up front)'
+    const {error}=await sb.from('edit_requests').insert({user_id:currentUser.id,page:'NEW WEBSITE',edit_type:'New Website Request — '+siteType,message:'Plan: '+sitePlan+' ($'+({starter:40,professional:79,premium:129}[sitePlan]||'?')+'/mo, nothing up front)'
       +'\nSite Name: '+siteName+'\nDomain: '+(siteDomain||'Not provided')+'\n\nVision:\n'+siteDesc,status:'pending'});
     if (error) { m.textContent='Error. Try again.'; m.className='msg error'; btn.textContent='Submit New Site Request →'; btn.disabled=false; }
     else { m.textContent='✓ Submitted! Nathan will reach out within 24 hours.'; m.className='msg success'; btn.textContent='Submit New Site Request →'; btn.disabled=false; document.getElementById('site-type').value=''; document.getElementById('site-plan').value=''; document.getElementById('site-name-input').value=''; document.getElementById('site-desc').value=''; document.getElementById('site-domain').value=''; await loadRequests(); setTimeout(()=>showTab('requests'),1500); }
@@ -1563,7 +1563,7 @@ function prefillInquiry() {
 
   if (!plan) return;
 
-  const websiteNames  = { starter:'Starter ($40/mo)', professional:'Professional ($119/mo)', premium:'Premium ($199/mo)' };
+  const websiteNames  = { starter:'Starter ($40/mo)', professional:'Professional ($79/mo)', premium:'Premium ($129/mo)' };
   const monthlyNames  = websiteNames;
   const planSelectNames = { starter:'starter', professional:'professional', premium:'premium' };
 
@@ -1577,7 +1577,7 @@ function prefillInquiry() {
   let summaryText = '';
 
   const wantsAI = params.get('ai') || sessionStorage.getItem('chosen_ai');
-  const mPrices = { starter: 40, professional: 119, premium: 199 };
+  const mPrices = { starter: 40, professional:79, premium:129 };
   const aiInc   = plan === 'premium';
   const perMonth = (mPrices[plan] || 0) + (wantsAI && !aiInc ? 25 : 0);
   summaryHTML += `<div>🏠 <strong style="color:#fff;">Plan:</strong> ${websiteNames[plan] || plan}</div>`;
@@ -1688,8 +1688,8 @@ async function loadDemoApprovals() {
 // ── PAYMENT MODAL ──
 const PAY_PLANS = {
   starter:      { name: 'Starter',      price: 40,  ownYears: 3, after: 25 },
-  professional: { name: 'Professional', price: 119, ownYears: 2, after: 85 },
-  premium:      { name: 'Premium',      price: 199, ownYears: 2, after: 150 }
+  professional: { name: 'Professional', price: 79, ownYears: 2, after: 55 },
+  premium:      { name: 'Premium',      price: 129, ownYears: 2, after: 95 }
 };
 const PAY_AI = 25;
 let payState = { siteId: null, siteName: null, website: null, monthly: null, ai: false };
@@ -2019,7 +2019,7 @@ async function confirmPlanSwitch() {
 
   let links = await getCheckoutLinks();
   if (!links || !Object.keys(links).length) { try { links = JSON.parse(localStorage.getItem('stripe_links') || '{}'); } catch(e) { links = {}; } }
-  const mPrices = { starter: 40, professional: 119, premium: 199 };
+  const mPrices = { starter: 40, professional:79, premium:129 };
 
   // Cancel old monthly subscription if switching monthly
   if (switchState.monthly && switchState.monthly !== 'none') {
@@ -2071,11 +2071,11 @@ async function confirmPlanSwitch() {
             <span class="plan-option-check">✓</span>
           </div>
           <div class="plan-option" id="pm-ws-professional" onclick="selectPayPlan('website','professional')">
-            <div><div class="plan-option-name">Professional</div><div class="plan-option-price">$119/mo · up to 10 pages · 10 edits/mo · yours after 2 years</div></div>
+            <div><div class="plan-option-name">Professional</div><div class="plan-option-price">$79/mo · up to 10 pages · 10 edits/mo · yours after 2 years</div></div>
             <span class="plan-option-check">✓</span>
           </div>
           <div class="plan-option" id="pm-ws-premium" onclick="selectPayPlan('website','premium')">
-            <div><div class="plan-option-name">Premium</div><div class="plan-option-price">$199/mo · unlimited pages · AI assistant included · yours after 2 years</div></div>
+            <div><div class="plan-option-name">Premium</div><div class="plan-option-price">$129/mo · unlimited pages · AI assistant included · yours after 2 years</div></div>
             <span class="plan-option-check">✓</span>
           </div>
           <div class="plan-option" id="pm-ai" onclick="togglePayAI()" style="margin-top:14px;display:none;">
