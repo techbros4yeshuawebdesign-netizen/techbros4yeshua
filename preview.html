@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Your website preview | Tech Bros for Yeshua</title>
+<style>
+  :root { --bar:#111510; --lime:#c8f135; --text:#e9eee4; --muted:#9aa394; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; background: var(--bar); font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; color: var(--text); }
+  .bar { position: fixed; top: 0; left: 0; right: 0; height: 52px; z-index: 2; display: flex; align-items: center; gap: 12px; padding: 0 14px; background: var(--bar); border-bottom: 1px solid rgba(200,241,53,.18); }
+  .bar .who { flex: 1; min-width: 0; font-size: 13px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bar .who b { color: var(--text); font-weight: 600; }
+  .bar a { flex: none; background: var(--lime); color: #111; text-decoration: none; font-weight: 700; font-size: 13.5px; padding: 9px 16px; border-radius: 100px; white-space: nowrap; }
+  .bar a:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+  iframe { position: fixed; top: 52px; left: 0; width: 100%; height: calc(100% - 52px); border: 0; background: #fff; }
+  .state { position: fixed; inset: 52px 0 0; display: grid; place-items: center; text-align: center; padding: 24px; }
+  .state p { max-width: 30em; line-height: 1.6; color: var(--muted); }
+  .state b { display: block; color: var(--text); font-size: 20px; margin-bottom: 8px; }
+  @media (max-width: 420px) { .bar .who span { display: none; } }
+</style>
+</head>
+<body>
+  <div class="bar">
+    <div class="who" id="who"><span>Website preview by </span><b>Tech Bros for Yeshua</b></div>
+    <a id="claim" href="index.html#contact">Make it yours</a>
+  </div>
+  <div class="state" id="state"><p>Loading your preview...</p></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(async function () {
+  const state = document.getElementById('state');
+  function show(title, text) { state.innerHTML = '<div><b>' + title + '</b><p>' + text + '</p></div>'; }
+
+  const id = new URLSearchParams(location.search).get('p') || '';
+  if (!/^[0-9a-f-]{36}$/i.test(id)) { show('Preview not found', 'This link looks incomplete. Ask us to send it again.'); return; }
+
+  try {
+    const sb = supabase.createClient(
+      'https://ganpjzutbzygaxlcgejd.supabase.co',
+      'sb_publishable_x9BC4b-yBIZAXz67WTVTkQ_v3wOCGhZ',
+      { auth: { persistSession: false } }
+    );
+    const { data, error } = await sb.rpc('public_preview', { p_id: id });
+    const row = data && data[0];
+    if (error || !row || !row.html) { show('Preview not ready', 'This preview is still being built or has expired. Check back soon.'); return; }
+
+    const name = row.business || 'your business';
+    document.title = name + ' | Website preview';
+    document.getElementById('who').innerHTML = '<span>Preview for </span><b></b>';
+    document.querySelector('#who b').textContent = name;
+    document.getElementById('claim').href = 'index.html?claim=' + encodeURIComponent(name) + '#pricing';
+
+    // the preview runs isolated from this page and from any login
+    const frame = document.createElement('iframe');
+    frame.setAttribute('sandbox', 'allow-scripts allow-forms allow-popups');
+    frame.setAttribute('title', 'Website preview for ' + name);
+    frame.srcdoc = row.html;
+    state.remove();
+    document.body.appendChild(frame);
+  } catch (e) {
+    show('Could not load the preview', 'Please check your connection and try again.');
+  }
+})();
+</script>
+</body>
+</html>

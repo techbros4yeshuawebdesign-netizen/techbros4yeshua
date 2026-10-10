@@ -422,12 +422,33 @@ html, body { max-width: 100%; overflow-x: hidden; }
 
     <div class="tabs">
       <button class="tab active" onclick="showTab('inquiries')">📋 Inquiries</button>
+      <button class="tab" onclick="showTab('prospects')">🎯 Prospects</button>
       <button class="tab" onclick="showTab('edit-requests')">✏️ Edit Requests</button>
       <button class="tab" onclick="showTab('clients')">👥 Clients</button>
       <button class="tab" onclick="showTab('sites-mgmt')">🌐 Manage Sites</button>
       <button class="tab" onclick="showTab('stripe-settings')">⚙️ Stripe Links</button>
       <button class="tab" onclick="showTab('pricing-mgmt')">💰 Pricing</button>
       <button class="tab" onclick="showTab('activity-log')">📜 Activity Log</button>
+    </div>
+
+    <!-- PROSPECTS: build a preview before you ever talk to them -->
+    <div id="tab-prospects" class="tab-panel">
+      <div class="label">Prospect Previews</div>
+      <p style="font-size:13px;color:var(--mid);margin-bottom:14px;line-height:1.6;">Add a local business. Within the hour Claude builds them a full homepage preview and a short message to send. You get a share link that works without an account, and a pop-up when they open it.</p>
+      <div class="req-card" style="margin-bottom:16px;">
+        <div class="add-site-grid">
+          <div class="f-group"><label>Business name *</label><input type="text" id="pr-business" maxlength="200" placeholder="Sunrise Auto Detailing"></div>
+          <div class="f-group"><label>What they do *</label><input type="text" id="pr-trade" maxlength="200" placeholder="Mobile car detailing"></div>
+          <div class="f-group"><label>City</label><input type="text" id="pr-city" maxlength="120" placeholder="Yuba City"></div>
+          <div class="f-group"><label>Owner first name</label><input type="text" id="pr-owner" maxlength="120" placeholder="Mike"></div>
+          <div class="f-group"><label>Phone (for your texting)</label><input type="text" id="pr-phone" maxlength="40" placeholder="530-555-0100"></div>
+          <div class="f-group"><label>Current website or Facebook</label><input type="text" id="pr-site" maxlength="500" placeholder="https://facebook.com/..."></div>
+        </div>
+        <div class="f-group" style="margin-bottom:12px;"><label>Notes (services, what you know, angle)</label><input type="text" id="pr-notes" maxlength="4000" placeholder="Does ceramic coating, works out of a van, lots of Google reviews"></div>
+        <button class="save-btn" onclick="addProspect()">Queue preview →</button>
+        <span id="pr-msg" style="font-size:13px;margin-left:12px;display:none;"></span>
+      </div>
+      <div id="prospects-list"><div class="loading">Loading prospects...</div></div>
     </div>
 
     <!-- INQUIRIES -->
@@ -602,10 +623,11 @@ function showTab(name){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   const panel = document.getElementById('tab-'+name);
   if(panel) panel.classList.add('active');
-  const tabs=['inquiries','edit-requests','clients','sites-mgmt','stripe-settings','pricing-mgmt','activity-log'];
+  const tabs=['inquiries','prospects','edit-requests','clients','sites-mgmt','stripe-settings','pricing-mgmt','activity-log'];
   const idx=tabs.indexOf(name);
   if(idx>-1)document.querySelectorAll('.tab')[idx]?.classList.add('active');
   if(name==='sites-mgmt') loadSitesMgmt();
+  if(name==='prospects') loadProspects();
   if(name==='stripe-settings') loadStripeInputs();
 
   if(name==='activity-log') loadLog();
@@ -714,7 +736,7 @@ function planHTML(p, id){
       <div class="plan-actions">
         ${p.demo_at
           ? `<button class="demo-btn" onclick="previewDemo('${p.id}')">Preview demo homepage</button>
-             ${p.demo_url ? `<button onclick="copyDemoLink('${escHTML(p.demo_url)}')">Copy live link for client</button>` : ''}
+             ${p.demo_url ? `<button onclick="copyDemoLink('${escHTML(p.demo_url)}')">Copy live link for client</button>` : `<button onclick="sharePlanLink('${p.id}')">Copy share link</button>`}
              <button onclick="downloadDemo('${p.id}')">Download demo HTML</button>`
           : `<span class="demo-wait">Demo homepage: building next run</span>`}
         <button onclick="copyPlan('${p.id}')">Copy plan</button>
@@ -724,6 +746,87 @@ function planHTML(p, id){
     </div>
   </div>`;
 }
+
+// ── PROSPECTS ──
+const PREVIEW_BASE = location.origin + location.pathname.replace(/[^/]*$/, '') + 'preview.html?p=';
+
+async function addProspect(){
+  const v = id => (document.getElementById(id)?.value || '').trim();
+  const business = v('pr-business'), trade = v('pr-trade');
+  const msg = document.getElementById('pr-msg');
+  msg.style.display = 'inline';
+  if (!business || !trade) { msg.style.color = '#ff8080'; msg.textContent = 'Add the business name and what they do.'; return; }
+  const { error } = await sb.from('prospects').insert({
+    business, trade, city: v('pr-city') || null, owner_name: v('pr-owner') || null,
+    phone: v('pr-phone') || null, current_site: v('pr-site') || null, notes: v('pr-notes') || null
+  });
+  if (error) { msg.style.color = '#ff8080'; msg.textContent = 'Could not save: ' + error.message; return; }
+  ['pr-business','pr-trade','pr-owner','pr-phone','pr-site','pr-notes'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  msg.style.color = 'var(--lime)'; msg.textContent = 'Queued. The preview is usually ready within the hour.';
+  setTimeout(() => { msg.style.display = 'none'; }, 5000);
+  loadProspects();
+}
+
+async function loadProspects(){
+  const box = document.getElementById('prospects-list');
+  if (!box) return;
+  const { data, error } = await sb.from('prospects')
+    .select('id,business,owner_name,city,trade,phone,status,demo_at,pitch,views,last_viewed_at,created_at')
+    .order('created_at', { ascending: false });
+  if (error) { box.innerHTML = '<div class="empty">Could not load prospects: ' + escHTML(error.message) + '</div>'; return; }
+  if (!data || !data.length) { box.innerHTML = '<div class="empty">No prospects yet. Add a business above.</div>'; return; }
+  const label = { queued:'Building preview', ready:'Ready to send', contacted:'Contacted', won:'Won', lost:'Not now' };
+  box.innerHTML = data.map(p => {
+    const link = PREVIEW_BASE + p.id;
+    const ready = !!p.demo_at;
+    const viewed = p.views ? `Opened ${p.views} time${p.views > 1 ? 's' : ''}, last ${fmtShort(p.last_viewed_at)}` : (ready ? 'Not opened yet' : '');
+    return `<div class="account-card" id="pr-${p.id}">
+      <div class="account-header">
+        <div class="account-avatar">${escHTML((p.business || '?').slice(0,2).toUpperCase())}</div>
+        <div style="flex:1;min-width:0;">
+          <div class="account-name">${escHTML(p.business)}</div>
+          <div class="account-email">${escHTML([p.trade, p.city].filter(Boolean).join(' · '))}${p.owner_name ? ' · ' + escHTML(p.owner_name) : ''}${p.phone ? ' · ' + escHTML(p.phone) : ''}</div>
+          <div class="account-meta">Added ${fmtShort(p.created_at)}${viewed ? ' · <b style="color:var(--lime)">' + viewed + '</b>' : ''}</div>
+        </div>
+        <span class="badge ${p.status === 'won' ? 'active' : (ready ? 'new' : 'pending')}"><span class="badge-dot"></span>${label[p.status] || p.status}</span>
+      </div>
+      ${ready ? `<div class="plan-box"><div class="plan-body" style="padding-top:12px;">
+          ${p.pitch ? `<div class="mat-row" style="grid-template-columns:60px 1fr;"><span>Message</span><p id="pitch-${p.id}">${escHTML(p.pitch)}</p></div>` : ''}
+          <div class="plan-actions">
+            <button class="demo-btn" onclick="window.open('${link}','_blank')">Open preview</button>
+            <button onclick="copyText('${link}','Link copied')">Copy link</button>
+            ${p.pitch ? `<button onclick="copyText(document.getElementById('pitch-${p.id}').textContent,'Message copied')">Copy message</button>` : ''}
+            ${p.phone ? `<button onclick="textProspect('${p.id}','${escHTML(p.phone)}')">Text it</button>` : ''}
+          </div>
+        </div></div>` : '<div class="plan-box plan-wait">Preview is being built. It shows up here with a share link when ready.</div>'}
+      <div class="action-row" style="margin-top:10px;">
+        ${['contacted','won','lost'].map(st => `<button onclick="setProspect('${p.id}','${st}')" style="padding:6px 14px;border-radius:100px;font-size:11px;font-family:'Syne',sans-serif;font-weight:600;cursor:pointer;border:1px solid rgba(255,255,255,0.15);background:${p.status===st?'rgba(200,241,53,0.15)':'transparent'};color:#fff;">${label[st]}</button>`).join('')}
+        <button onclick="deleteProspect('${p.id}')" style="padding:6px 14px;border-radius:100px;font-size:11px;cursor:pointer;border:1px solid rgba(255,80,80,0.3);background:transparent;color:#ff8080;">Delete</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function copyText(t, ok){
+  try { await navigator.clipboard.writeText(t); showAdminToast(ok || 'Copied', 'lime'); }
+  catch (e) { prompt('Copy this:', t); }
+}
+function textProspect(id, phone){
+  const msg = document.getElementById('pitch-' + id)?.textContent || (PREVIEW_BASE + id);
+  const num = String(phone).replace(/[^0-9+]/g, '');
+  location.href = 'sms:' + num + '?&body=' + encodeURIComponent(msg);
+}
+async function setProspect(id, status){
+  await sb.from('prospects').update({ status }).eq('id', id);
+  loadProspects();
+}
+async function deleteProspect(id){
+  if (!confirm('Delete this prospect and its preview?')) return;
+  await sb.from('prospects').delete().eq('id', id);
+  loadProspects();
+}
+function sharePlanLink(planId){ copyText(PREVIEW_BASE + planId, 'Share link copied'); }
+
 function materialsHTML(list){
   if (!list || !list.length) return '';
   const rows = list.map(m => {
@@ -1435,6 +1538,13 @@ function setupRealtime(){
   }).subscribe();
 
   // Profile updated
+  sb.channel('admin-prospects').on('postgres_changes',{event:'UPDATE',schema:'public',table:'prospects'},(payload)=>{
+    // realtime "old" rows only carry the id, so judge by how recent the timestamps are
+    const n = payload.new, fresh = t => t && (Date.now() - new Date(t).getTime()) < 20000;
+    if (fresh(n.last_viewed_at)) showAdminToast(n.business + ' just opened their preview', 'lime');
+    else if (fresh(n.demo_at) && n.status === 'ready') showAdminToast('Preview ready: ' + n.business, 'lime');
+    if (document.getElementById('tab-prospects')?.classList.contains('active')) loadProspects();
+  }).subscribe();
   sb.channel('admin-materials').on('postgres_changes',{event:'INSERT',schema:'public',table:'client_materials'},(payload)=>{
     showAdminToast('Client sent ' + ({file:'a file',note:'text',link:'a link'}[payload.new.kind]||'something'), 'lime');
     loadInquiries();
@@ -1443,7 +1553,7 @@ function setupRealtime(){
     showAdminToast('🧠 Website plan ready' + (payload.new.business ? ': ' + payload.new.business : ''), 'lime');
     loadInquiries();
   }).on('postgres_changes',{event:'UPDATE',schema:'public',table:'site_plans'},(payload)=>{
-    if (payload.new.demo_at && !(payload.old && payload.old.demo_at)) showAdminToast('Demo homepage ready' + (payload.new.business ? ': ' + payload.new.business : ''), 'lime');
+    if (payload.new.demo_at && (Date.now() - new Date(payload.new.demo_at).getTime()) < 20000) showAdminToast('Demo homepage ready' + (payload.new.business ? ': ' + payload.new.business : ''), 'lime');
     loadInquiries();
   }).subscribe();
   sb.channel('admin-profiles-update').on('postgres_changes',{event:'UPDATE',schema:'public',table:'profiles'},()=>{loadClients();}).subscribe();

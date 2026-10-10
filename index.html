@@ -3034,6 +3034,12 @@ function resetPlans(){
     a.textContent = text;
   }
 
+  // arriving from a preview link: prefill the business name
+  try {
+    const claim = new URLSearchParams(location.search).get('claim');
+    if (claim) { const bizEl = document.getElementById('cf-biz'); if (bizEl && !bizEl.value) bizEl.value = claim.slice(0, 200); }
+  } catch (e) {}
+
   window.sendContact = async function(){
     const name  = document.getElementById('cf-name').value.trim();
     const biz   = document.getElementById('cf-biz').value.trim();
