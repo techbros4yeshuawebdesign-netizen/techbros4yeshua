@@ -3,7 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tech Bros for Yeshua — Website Creation</title>
+<title>Tech Bros for Yeshua — Websites for Yuba-Sutter Small Businesses</title>
+<meta name="description" content="Custom websites for small businesses in Yuba City, Marysville and the Yuba-Sutter area. Free preview within the hour, monthly plans from $40 with nothing up front, and the site becomes yours.">
+<link rel="canonical" href="https://techbros4yeshuawebdesign-netizen.github.io/techbros4yeshua/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Tech Bros for Yeshua — Websites for local small businesses">
+<meta property="og:description" content="Free website preview within the hour. Monthly plans from $40, nothing up front, and the site becomes yours.">
+<meta property="og:url" content="https://techbros4yeshuawebdesign-netizen.github.io/techbros4yeshua/">
+<meta property="og:image" content="https://images.unsplash.com/photo-1734303023491-db8037a21f09?auto=format&fit=crop&q=70&w=1200">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"ProfessionalService","name":"Tech Bros for Yeshua","description":"Custom websites, hosting and maintenance for small businesses on simple monthly plans.","url":"https://techbros4yeshuawebdesign-netizen.github.io/techbros4yeshua/","email":"techbros4yeshua.web.design@gmail.com","areaServed":["Yuba City, CA","Marysville, CA","Live Oak, CA","Yuba-Sutter, CA"],"priceRange":"$40-$129 per month","makesOffer":[{"@type":"Offer","name":"Starter website plan","price":"40","priceCurrency":"USD"},{"@type":"Offer","name":"Professional website plan","price":"79","priceCurrency":"USD"},{"@type":"Offer","name":"Premium website plan","price":"129","priceCurrency":"USD"}]}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -14,6 +25,8 @@
   --white:#fff;--mid:rgba(255,255,255,0.55);
 }
 html{scroll-behavior:smooth;background:#080a04;}
+html{overflow-x:hidden;}
+@supports (overflow:clip){html,body{overflow-x:clip;}}
 body{font-family:'DM Sans',system-ui,-apple-system,'Segoe UI',sans-serif;background:transparent;color:#fff;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
 
 /* CANVAS */
@@ -162,9 +175,19 @@ footer{background:rgba(4,5,2,0.9);padding:44px 40px;text-align:center;color:rgba
 .modal-tab.active{background:var(--lime);color:#080a04;}
 
 /* SMOOTH SCROLL PERFORMANCE */
+.nb-short{display:none;}
+@media(max-width:420px){
+  .nav-logo{font-size:15px !important;letter-spacing:-0.3px;}
+  .nav-btn{padding:8px 11px !important;font-size:12px !important;}
+}
 @media(max-width:700px){
-  nav{padding:14px 20px;}
+  nav{padding:12px 16px;gap:10px;}
   .nav-links{display:none;}
+  .nav-logo{white-space:nowrap;font-size:17px;}
+  .nav-btn{padding:9px 14px;font-size:12.5px;white-space:nowrap;}
+  .nav-btn.outline{margin-right:0;}
+  .nb-long{display:none;}
+  .nb-short{display:inline;}
   .section,.contact-section,.login-section{padding:60px 20px;}
   .pricing-section{padding:60px 20px;}
   .form-row{grid-template-columns:1fr;}
@@ -1914,7 +1937,6 @@ html.intro-on body > *:not(#intro){visibility:hidden !important;}
 <!-- BG -->
 <div id="scroll-bar"></div>
 <div id="fp-dots"></div>
-<div id="section-label">Home</div>
 <canvas id="matrix-canvas"></canvas>
 <div id="cursor-glow"></div>
 <div class="scanline"></div>
@@ -1929,13 +1951,14 @@ html.intro-on body > *:not(#intro){visibility:hidden !important;}
   <a class="nav-logo" href="#">Tech Bros for <span>Yeshua</span></a>
   <div class="nav-links">
     <a href="#how">How It Works</a>
+    <a href="#work">Work</a>
     <a href="#pricing">Pricing</a>
     <a href="#contact">Contact</a>
   </div>
   <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
     <a href="portal.html" class="nav-btn outline">Client Login</a>
     <a href="example-taco.html" class="nav-demo">See our work</a>
-      <a href="#contact" class="nav-btn">Get Free Prototype →</a>
+      <a href="#contact" class="nav-btn"><span class="nb-long">Get Free Prototype →</span><span class="nb-short">Free preview</span></a>
   </div>
 </nav>
 
@@ -2015,28 +2038,55 @@ html.intro-on body > *:not(#intro){visibility:hidden !important;}
     <div class="step reveal">
       <div class="step-num">01</div>
       <div class="step-icon">📋</div>
-      <h3>Fill out a quick form</h3>
-      <p class="step-body">Tell us your business name, industry, and what you need. Takes 3 minutes.</p>
+      <h3>Tell us about your business</h3>
+      <p class="step-body">Your business name, what you do, and what you want people to do on your site. Takes about 3 minutes.</p>
     </div>
     <div class="step reveal">
       <div class="step-num">02</div>
       <div class="step-icon">💬</div>
-      <h3>Discovery chat</h3>
-      <p class="step-body">We learn your brand, goals, and vision. No pressure, just a chat — no time limit.</p>
+      <h3>See your free preview</h3>
+      <p class="step-body">We design a homepage just for your business, usually within the hour. It shows up in your client portal.</p>
     </div>
     <div class="step reveal">
       <div class="step-num">03</div>
       <div class="step-icon">🎨</div>
-      <h3>We build your prototype</h3>
-      <p class="step-body">In 5–7 days we deliver 2–3 fully designed pages. Mobile-optimized, branded, real.</p>
+      <h3>Make it yours</h3>
+      <p class="step-body">Send your photos and logo, or tell us what to change. Your preview updates for free until you love it.</p>
     </div>
     <div class="step reveal">
       <div class="step-num">04</div>
       <div class="step-icon">✅</div>
-      <h3>You decide</h3>
-      <p class="step-body">Love it? Pick a plan and go live. Not ready? No problem — just let us know and there's zero obligation.</p>
+      <h3>Go live</h3>
+      <p class="step-body">Pick a monthly plan with nothing up front. We build the full site, you look it over, and it goes live. No obligation before that.</p>
     </div>
   </div>
+</section>
+
+<!-- SAMPLE WORK -->
+<section id="work" class="section">
+  <style>
+    .sw-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:22px;}
+    .sw-card{display:block;min-width:0;text-decoration:none;color:#fff;border:1px solid rgba(200,241,53,0.12);border-radius:16px;overflow:hidden;background:rgba(200,241,53,0.03);transition:border-color .2s,transform .2s;}
+    .sw-card:hover,.sw-card:focus-visible{border-color:rgba(200,241,53,0.45);transform:translateY(-3px);}
+    .sw-card img{display:block;width:100%;max-width:100%;height:auto;aspect-ratio:16/10;object-fit:cover;background:#1a1d12;}
+    .sw-card div{padding:18px 20px 20px;}
+    .sw-card h3{font-family:'Syne',system-ui,sans-serif;font-size:19px;margin-bottom:4px;}
+    .sw-card p{color:var(--mid);font-size:14px;line-height:1.5;}
+    .sw-note{color:var(--mid);font-size:13px;margin-top:16px;}
+  </style>
+  <div class="sec-label reveal">Sample work</div>
+  <div class="sec-title reveal" style="margin-bottom:36px;">What your preview could look like.</div>
+  <div class="sw-grid">
+    <a class="sw-card reveal" href="demos/carter-family-landscaping.html" target="_blank" rel="noopener">
+      <img src="https://images.unsplash.com/photo-1734303023491-db8037a21f09?auto=format&fit=crop&q=70&w=900" alt="Freshly mowed lawn in front of a family home" loading="lazy" width="900" height="563">
+      <div><h3>Carter Family Landscaping</h3><p>Yard care in Yuba City and Marysville. Quote form, service list, and a phone-first layout.</p></div>
+    </a>
+    <a class="sw-card reveal" href="demos/hometown-hair-studio.html" target="_blank" rel="noopener">
+      <img src="https://images.unsplash.com/photo-1580618672591-eb180b1a973f?auto=format&fit=crop&q=70&w=900" alt="Stylist finishing a client's haircut in a bright salon" loading="lazy" width="900" height="563">
+      <div><h3>Hometown Hair Studio</h3><p>A hair salon in Live Oak. Editorial look, services and booking request.</p></div>
+    </a>
+  </div>
+  <p class="sw-note">These are sample businesses we designed to show our style. Yours is built from your own details and photos.</p>
 </section>
 
 <!-- PRICING -->
@@ -2398,6 +2448,8 @@ html.intro-on body > *:not(#intro){visibility:hidden !important;}
     <a href="#pricing">Pricing</a>
     <a href="#login">Client Login</a>
     <a href="portal.html?action=inquiry">Get Started</a>
+    <a href="terms.html">Terms</a>
+    <a href="privacy.html">Privacy</a>
   </div>
   <p>© 2026 Tech Bros for Yeshua. Built for small businesses.</p>
 </footer>
