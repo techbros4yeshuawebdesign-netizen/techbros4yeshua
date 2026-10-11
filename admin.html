@@ -1065,7 +1065,10 @@ function closeClientRecord(){ const o = document.getElementById('rec-overlay'); 
 function recSection(title, inner){
   return `<div style="margin-top:22px;"><div style="font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--lime);font-weight:700;margin-bottom:10px;">${title}</div>${inner}</div>`;
 }
+let currentRecordUser = null;
+function refreshRecord(){ const o = document.getElementById('rec-overlay'); if (o && o.style.display === 'block' && currentRecordUser) openClientRecord(currentRecordUser); }
 async function openClientRecord(userId){
+  currentRecordUser = userId;
   ensureRecordModal();
   const box = document.getElementById('rec-box');
   box.innerHTML = '<div style="color:var(--mid)">Loading client record...</div>';
@@ -1119,7 +1122,7 @@ async function openClientRecord(userId){
       <div class="req-date">${d(r.created_at)}${r.resolved_at ? ' &middot; done ' + d(r.resolved_at) : ''}</div>
     </div>`).join('') : '<div style="color:var(--mid);font-size:13.5px;">No edit requests.</div>';
 
-  const sitesHTML = (sites.data || []).length ? (sites.data || []).map(st => `<div class="mat-row"><span>${escHTML(st.status || '')}</span><p>${escHTML(st.site_name || '')}${st.site_url ? ` &middot; <a href="${escHTML(st.site_url)}" target="_blank" rel="noopener">${escHTML(st.site_url)}</a>` : ''}</p><em>${d(st.created_at)}</em></div>`).join('') : '<div style="color:var(--mid);font-size:13.5px;">No sites yet.</div>';
+  const sitesHTML = (sites.data || []).length ? (sites.data || []).map(st => `<div class="req-card" style="margin-bottom:8px;"><div class="req-top"><div class="req-type">${escHTML((st.site_name || '').replace(/^TEST\s+/i, ''))}</div><span class="badge ${st.status === 'active' ? 'done' : 'pending'}"><span class="badge-dot"></span>${escHTML(st.status || '')}</span></div>${st.site_url ? `<div class="req-meta"><a href="${escHTML(st.site_url)}" target="_blank" rel="noopener" style="color:var(--lime);">${escHTML(st.site_url)}</a></div>` : ''}${buildControls(st)}</div>`).join('') : '<div style="color:var(--mid);font-size:13.5px;">No sites yet.</div>';
 
   const logHTML = (log.data || []).length ? (log.data || []).map(a => `<div class="mat-row"><span>${escHTML(a.actor || '')}</span><p><b style="color:#fff;font-weight:600;">${escHTML(a.title || '')}</b>${a.detail ? ' &middot; ' + escHTML(a.detail) : ''}</p><em>${d(a.created_at)}</em></div>`).join('') : '<div style="color:var(--mid);font-size:13.5px;">Nothing logged yet.</div>';
 
@@ -1327,6 +1330,7 @@ async function loadSitesMgmt(){
         </div>
       </div>
       ${ownControls(s)}
+      ${buildControls(s)}
     </div>`).join('');
 }
 
@@ -1346,6 +1350,102 @@ async function addSite(){
   adminLog('site','Site added', name+(url?' · '+url:''), userId);
   const msg=document.getElementById('add-site-msg');msg.style.display='inline';setTimeout(()=>msg.style.display='none',3000);
   loadSitesMgmt();
+}
+
+// ── FULL SITE BUILD: queue, review, go live, export ──
+const SITE_BASE = location.origin + location.pathname.replace(/[^/]*$/, '') + 'site.html?s=';
+function buildControls(s){
+  const st = s.build_status;
+  const label = { queued:'Full site queued for the builder', building:'Builder is making the full site now', review:'Full site ready for your review', live:'Full site is live' }[st] || 'Full site not built yet';
+  const view = (st === 'review' || st === 'live') ? `<button class="pay-btn" onclick="window.open('${SITE_BASE}${s.slug}','_blank')">View full site</button>` : '';
+  const live = st === 'review' ? `<button class="pay-btn" onclick="approveSite('${s.id}')">Approve and go live</button>` : '';
+  const zip  = (st === 'review' || st === 'live') ? `<button class="pay-btn" onclick="downloadSite('${s.id}')">Download site (.zip)</button>` : '';
+  const build = (st === 'building') ? '' : `<button class="pay-btn" onclick="queueBuild('${s.id}')">${st ? 'Rebuild full site' : 'Build full site'}</button>`;
+  const leads = `<button class="pay-btn" onclick="showLeads('${s.id}', this)">Website messages</button>`;
+  return `<div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.06);">
+    <div style="font-size:12.5px;color:${st === 'review' ? 'var(--lime)' : 'var(--mid)'};">${label}${s.published_at ? ' &middot; live since ' + fmtShort(s.published_at) : ''}${st === 'live' ? ` &middot; <a href="${SITE_BASE}${s.slug}" target="_blank" rel="noopener" style="color:var(--lime);">${SITE_BASE}${s.slug}</a>` : ''}</div>
+    ${s.build_notes ? `<div style="font-size:12.5px;color:var(--mid);margin-top:6px;white-space:pre-wrap;">Builder notes: ${escHTML(s.build_notes)}</div>` : ''}
+    <div class="action-row" style="margin-top:8px;">${view}${live}${zip}${build}${leads}</div>
+    <div id="leads-${s.id}"></div>
+  </div>`;
+}
+async function queueBuild(id){
+  if (!confirm('Have the builder make the full website from the plan, preview and client photos? It runs on the next hourly pass.')) return;
+  const { error } = await sb.from('sites').update({ build_status: 'queued', build_requested_at: new Date().toISOString(), build_claimed_at: null }).eq('id', id);
+  if (error) { showAdminToast('Could not queue: ' + error.message, 'red'); return; }
+  adminLog('site', 'Full site build queued', 'Site id: ' + id);
+  showAdminToast('Queued. The builder picks it up within the hour.', 'lime');
+  loadSitesMgmt(); refreshRecord();
+}
+async function approveSite(id){
+  const { data: s } = await sb.from('sites').select('id,user_id,site_name,slug,site_url').eq('id', id).single();
+  if (!s) return;
+  if (!confirm('Make ' + s.site_name + ' public now? The client gets an email with the link.')) return;
+  const url = SITE_BASE + s.slug;
+  const upd = { build_status: 'live', published_at: new Date().toISOString() };
+  if (!s.site_url) upd.site_url = url;
+  const { error } = await sb.from('sites').update(upd).eq('id', id);
+  if (error) { showAdminToast('Could not publish: ' + error.message, 'red'); return; }
+  await sb.from('activity_log').insert({ user_id: s.user_id, actor: 'admin', event_type: 'site_live', title: 'Your website is live', detail: (s.site_name || '').replace(/^TEST\s+/i, '') + ' - ' + (s.site_url || url) });
+  showAdminToast('Live. The client will get an email on the next pass.', 'lime');
+  loadSitesMgmt(); refreshRecord();
+}
+function tbLeadScript(slug, page){
+  const code = '(function(){var S=' + JSON.stringify(slug) + ',P=' + JSON.stringify(page) + ','
+    + 'U="https://ganpjzutbzygaxlcgejd.supabase.co/rest/v1/rpc/submit_site_lead",K="sb_publishable_x9BC4b-yBIZAXz67WTVTkQ_v3wOCGhZ";'
+    + 'document.addEventListener("submit",function(e){var f=e.target;if(!f.matches||!f.matches("form[data-tb-lead]"))return;e.preventDefault();'
+    + 'var g=function(n){var el=f.querySelector("[name="+n+"]");return el?el.value:""};var b=f.querySelector("[type=submit]");if(b)b.disabled=true;'
+    + 'var say=function(t){var o=f.querySelector("[data-tb-status]");if(!o){o=document.createElement("p");o.setAttribute("data-tb-status","");o.setAttribute("role","status");f.appendChild(o);}o.textContent=t;};'
+    + 'fetch(U,{method:"POST",headers:{"Content-Type":"application/json",apikey:K},body:JSON.stringify({p_slug:S,p_name:g("name"),p_email:g("email"),p_phone:g("phone"),p_message:g("message"),p_page:P,p_website:g("website")})})'
+    + '.then(function(r){if(!r.ok)throw 0;f.reset();say(f.getAttribute("data-tb-thanks")||"Thanks! Your message was sent. We will get back to you soon.");})'
+    + '.catch(function(){say("Sorry, that did not send. Please call or text us instead.");})'
+    + '.finally(function(){if(b)b.disabled=false;});});})();';
+  return '<script>' + code + '<\/script>';
+}
+function loadJSZip(){
+  if (window.JSZip) return Promise.resolve();
+  return new Promise((ok, bad) => {
+    const sc = document.createElement('script');
+    sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+    sc.onload = ok; sc.onerror = () => bad(new Error('Could not load the zip tool'));
+    document.head.appendChild(sc);
+  });
+}
+async function downloadSite(id){
+  try {
+    await loadJSZip();
+    const { data: s } = await sb.from('sites').select('site_name,slug').eq('id', id).single();
+    const { data: pages } = await sb.from('site_pages').select('path,html').eq('site_id', id).not('html', 'is', null).order('sort');
+    if (!pages || !pages.length) { showAdminToast('No pages built yet', 'red'); return; }
+    const zip = new JSZip();
+    pages.forEach(p => {
+      const extra = tbLeadScript(s.slug, p.path);
+      const html = /<\/body>/i.test(p.html) ? p.html.replace(/<\/body>(?![\s\S]*<\/body>)/i, extra + '</body>') : p.html + extra;
+      zip.file(p.path, html);
+    });
+    zip.file('README.txt', [
+      s.site_name + ' - website files',
+      '',
+      'To host this site free on Cloudflare Pages:',
+      '1. Sign in at dash.cloudflare.com, open Workers & Pages, then Create, then Pages, then "Upload assets".',
+      '2. Name the project (this becomes name.pages.dev), unzip this file and drag the folder in, then Deploy.',
+      '3. Later, add the client\'s own domain under the project\'s Custom domains tab.',
+      '',
+      'Contact forms send messages to the client\'s portal (Website messages) and email automatically.'
+    ].join('\n'));
+    const blob = await zip.generateAsync({ type: 'blob' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = (s.slug || 'site') + '.zip';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  } catch (e) { showAdminToast(e.message || 'Download failed', 'red'); }
+}
+async function showLeads(siteId, btn){
+  const box = document.getElementById('leads-' + siteId);
+  if (box.innerHTML) { box.innerHTML = ''; return; }
+  const { data } = await sb.from('site_leads').select('*').eq('site_id', siteId).order('created_at', { ascending: false }).limit(50);
+  box.innerHTML = (data && data.length) ? data.map(l => `<div class="mat-row"><span>${escHTML(l.name || 'Visitor')}</span><p>${escHTML([l.email, l.phone].filter(Boolean).join(' · '))}${l.message ? '<br>' + escHTML(l.message) : ''}</p><em>${fmtShort(l.created_at)}</em></div>`).join('')
+    : '<div style="color:var(--mid);font-size:13px;margin-top:8px;">No messages from this website yet.</div>';
 }
 
 async function updateSiteStatus(id,status){

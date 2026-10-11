@@ -1034,8 +1034,8 @@ async function loadSites() {
   c.innerHTML = data.map(s=>`
     <div class="site-card">
       <div>
-        <div class="site-name">${s.site_name}</div>
-        <div class="site-url">${s.site_url?`<a href="${s.site_url}" target="_blank">${shortUrl(s.site_url)}</a>`:'URL pending'}</div>
+        <div class="site-name">${escP((s.site_name||'').replace(/^TEST\s+/i,''))}</div>
+        <div class="site-url">${s.site_url?`<a href="${escP(s.site_url)}" target="_blank" rel="noopener">${shortUrl(s.site_url)}</a>`:'URL pending'}</div>
         <div class="site-meta">${s.pages||1} page${(s.pages||1)!==1?'s':''} · Added ${new Date(s.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</div>
       </div>
       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
@@ -1043,10 +1043,40 @@ async function loadSites() {
         ${s.site_url?`<a href="${s.site_url}" target="_blank" class="ghost-btn lime-outline">Visit →</a>`:''}
         <button class="ghost-btn" onclick="showTab('new-request')">Request Edit</button>
       </div>
+      ${buildBlock(s)}
       ${ownBlock(s)}
     </div>`).join('');
   if (typeof loadDemoApprovals === 'function') loadDemoApprovals();
   loadPreviews();
+}
+
+// full website build progress, review link, and messages from the site's contact form
+const SITE_BASE = location.origin + location.pathname.replace(/[^/]*$/, '') + 'site.html?s=';
+function buildBlock(s){
+  if (!s.build_status) return '';
+  const link = SITE_BASE + encodeURIComponent(s.slug || '');
+  const text = {
+    queued:   'We are building your full website now. It usually takes a few hours; we review it before anyone else sees it.',
+    building: 'We are building your full website now. It usually takes a few hours; we review it before anyone else sees it.',
+    review:   'Your full website is built and in final review. You can look it over now; send changes with Request Edit.',
+    live:     'Your website is live.'
+  }[s.build_status] || '';
+  const btn = (s.build_status === 'review' || s.build_status === 'live')
+    ? `<a class="ghost-btn lime-outline" href="${link}" target="_blank" rel="noopener">${s.build_status === 'live' ? 'Open your website' : 'Look it over'}</a>` : '';
+  const msgs = s.build_status === 'live' || s.build_status === 'review'
+    ? `<button class="ghost-btn" onclick="toggleLeads('${s.id}', this)">Website messages</button><div id="leads-${s.id}" style="width:100%;"></div>` : '';
+  return `<div style="width:100%;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.06);display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+    <div style="flex:1 1 240px;font-size:13.5px;color:var(--mid);line-height:1.5;">${text}</div>${btn}${msgs}</div>`;
+}
+async function toggleLeads(siteId){
+  const box = document.getElementById('leads-' + siteId);
+  if (box.innerHTML) { box.innerHTML = ''; return; }
+  const { data } = await sb.from('site_leads').select('name,email,phone,message,created_at').eq('site_id', siteId).order('created_at', { ascending: false }).limit(50);
+  box.innerHTML = (data && data.length) ? data.map(l => `<div style="padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:13.5px;">
+      <div style="color:#fff;font-weight:600;">${escP(l.name || 'Visitor')} <span style="color:var(--mid);font-weight:400;font-size:12px;">&middot; ${new Date(l.created_at).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})}</span></div>
+      <div style="color:var(--mid);">${[l.email ? `<a href="mailto:${escP(l.email)}" style="color:var(--lime);">${escP(l.email)}</a>` : '', l.phone ? `<a href="tel:${escP(l.phone)}" style="color:var(--lime);">${escP(l.phone)}</a>` : ''].filter(Boolean).join(' &middot; ')}</div>
+      ${l.message ? `<div style="color:#ddd;margin-top:4px;white-space:pre-wrap;">${escP(l.message)}</div>` : ''}</div>`).join('')
+    : '<div style="color:var(--mid);font-size:13px;padding:8px 0;">No messages yet. When someone fills in the form on your website, it shows up here and in your email.</div>';
 }
 
 async function loadSubscription() {

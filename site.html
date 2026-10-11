@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Loading…</title>
+<style>
+  :root { --bar:#111510; --lime:#c8f135; --text:#e9eee4; --muted:#9aa394; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; background: #fff; font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; }
+  .bar { position: fixed; top: 0; left: 0; right: 0; height: 40px; z-index: 2; display: none; align-items: center; justify-content: center; gap: 10px; padding: 0 14px; background: var(--bar); color: var(--text); font-size: 13px; }
+  .bar b { color: var(--lime); font-weight: 700; }
+  body.review .bar { display: flex; }
+  iframe { position: fixed; inset: 0; width: 100%; height: 100%; border: 0; background: #fff; }
+  body.review iframe { top: 40px; height: calc(100% - 40px); }
+  .state { position: fixed; inset: 0; display: grid; place-items: center; text-align: center; padding: 24px; background: var(--bar); color: var(--muted); }
+  .state b { display: block; color: var(--text); font-size: 20px; margin-bottom: 8px; }
+  .state p { max-width: 30em; line-height: 1.6; }
+</style>
+</head>
+<body>
+  <div class="bar" role="note"><b>Review copy</b> Only you and Tech Bros can see this until it goes live.</div>
+  <div class="state" id="state"><p>Loading…</p></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// Serves a client website stored in our database:
+//   site.html?s=<slug>&p=<page.html>
+// Live sites are public. Sites in review are visible only to the owner and admin (signed in on this domain).
+(function () {
+  var SB_URL = 'https://ganpjzutbzygaxlcgejd.supabase.co';
+  var SB_KEY = 'sb_publishable_x9BC4b-yBIZAXz67WTVTkQ_v3wOCGhZ';
+  var params = new URLSearchParams(location.search);
+  var slug = (params.get('s') || '').toLowerCase();
+  var state = document.getElementById('state');
+  var frame = null;
+  var sb = null;
+
+  function show(title, text) {
+    state.style.display = 'grid';
+    state.innerHTML = '<div><b></b><p></p></div>';
+    state.querySelector('b').textContent = title;
+    state.querySelector('p').textContent = text;
+  }
+
+  // page links inside the site stay inside this viewer; forms send leads to the owner
+  function helpers(page) {
+    return '<script>(function(){' +
+      'document.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest("a[href]");if(!a)return;' +
+      'var h=a.getAttribute("href")||"";if(/^[a-z0-9][a-z0-9-]*\\.html(#.*)?$/i.test(h)){e.preventDefault();parent.postMessage({tbNav:h},"*");}});' +
+      '})();<\/script>' + leadScript(slug, page);
+  }
+
+  function inject(html, page) {
+    var extra = helpers(page);
+    return /<\/body>/i.test(html) ? html.replace(/<\/body>(?![\s\S]*<\/body>)/i, extra + '</body>') : html + extra;
+  }
+
+  async function load(page, push) {
+    if (!/^[a-z0-9][a-z0-9-]*\.html$/.test(page)) page = 'index.html';
+    var res = await sb.rpc('site_page', { p_slug: slug, p_path: page });
+    var row = res.data && res.data[0];
+    if (res.error || !row) {
+      if (page !== 'index.html') return load('index.html', push);
+      show('Site not found', 'This website is not live yet or the link is incomplete.');
+      return;
+    }
+    document.body.classList.toggle('review', row.build_status === 'review');
+    var m = /<title>([\s\S]*?)<\/title>/i.exec(row.html);
+    document.title = m ? m[1].replace(/\s+/g, ' ').trim() : row.site_name;
+    // a fresh iframe per page keeps the browser Back button in step with our own history
+    var next = document.createElement('iframe');
+    next.setAttribute('sandbox', 'allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation');
+    next.setAttribute('title', row.site_name);
+    next.srcdoc = inject(row.html, page);
+    if (frame) frame.replaceWith(next); else document.body.appendChild(next);
+    frame = next;
+    state.style.display = 'none';
+    var url = 'site.html?s=' + encodeURIComponent(slug) + (page === 'index.html' ? '' : '&p=' + encodeURIComponent(page));
+    if (push) history.pushState({ page: page }, '', url); else history.replaceState({ page: page }, '', url);
+  }
+
+  window.addEventListener('message', function (e) {
+    if (!frame || e.source !== frame.contentWindow || !e.data || typeof e.data.tbNav !== 'string') return;
+    var parts = e.data.tbNav.split('#');
+    load(parts[0], true);
+  });
+  window.addEventListener('popstate', function (e) { load((e.state && e.state.page) || 'index.html', false); });
+
+  if (!/^[a-z0-9][a-z0-9-]{0,60}$/.test(slug)) { show('Site not found', 'This link looks incomplete.'); return; }
+  try {
+    sb = supabase.createClient(SB_URL, SB_KEY);   // shares the portal/admin sign-in so owners can see review copies
+    load(params.get('p') || 'index.html', false);
+  } catch (e) {
+    show('Could not load this site', 'Please check your connection and try again.');
+  }
+})();
+
+// Shared with the admin "Download site" export: wires <form data-tb-lead> to the owner's inbox.
+function leadScript(slug, page) {
+  var code = '(function(){var S=' + JSON.stringify(slug) + ',P=' + JSON.stringify(page) + ',' +
+    'U="https://ganpjzutbzygaxlcgejd.supabase.co/rest/v1/rpc/submit_site_lead",K="sb_publishable_x9BC4b-yBIZAXz67WTVTkQ_v3wOCGhZ";' +
+    'document.addEventListener("submit",function(e){var f=e.target;if(!f.matches||!f.matches("form[data-tb-lead]"))return;e.preventDefault();' +
+    'var g=function(n){var el=f.querySelector("[name="+n+"]");return el?el.value:""};var b=f.querySelector("[type=submit]");if(b)b.disabled=true;' +
+    'var say=function(t){var o=f.querySelector("[data-tb-status]");if(!o){o=document.createElement("p");o.setAttribute("data-tb-status","");o.setAttribute("role","status");f.appendChild(o);}o.textContent=t;};' +
+    'fetch(U,{method:"POST",headers:{"Content-Type":"application/json",apikey:K},body:JSON.stringify({p_slug:S,p_name:g("name"),p_email:g("email"),p_phone:g("phone"),p_message:g("message"),p_page:P,p_website:g("website")})})' +
+    '.then(function(r){if(!r.ok)throw 0;f.reset();say(f.getAttribute("data-tb-thanks")||"Thanks! Your message was sent. We will get back to you soon.");})' +
+    '.catch(function(){say("Sorry, that did not send. Please call or text us instead.");})' +
+    '.finally(function(){if(b)b.disabled=false;});});})();';
+  return '<script>' + code + '<\/script>';
+}
+</script>
+</body>
+</html>
