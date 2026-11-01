@@ -37,6 +37,8 @@
   var state = document.getElementById('state');
   var frame = null;
   var sb = null;
+  // motion/depth layer, inlined into every page so it runs before first paint
+  var motionJS = fetch('tb-motion.js', { cache: 'no-cache' }).then(function (r) { return r.ok ? r.text() : ''; }).catch(function () { return ''; });
 
   function show(title, text) {
     state.style.display = 'grid';
@@ -53,14 +55,15 @@
       '})();<\/script>' + leadScript(slug, page);
   }
 
-  function inject(html, page) {
-    var extra = helpers(page);
-    return /<\/body>/i.test(html) ? html.replace(/<\/body>(?![\s\S]*<\/body>)/i, extra + '</body>') : html + extra;
+  function inject(html, page, motion) {
+    var extra = helpers(page) + (motion ? '<script>' + motion.replace(/<\/script/gi, '<\\/script') + '<\/script>' : '');
+    return /<\/body>/i.test(html) ? html.replace(/<\/body>(?![\s\S]*<\/body>)/i, function () { return extra + '</body>'; }) : html + extra;
   }
 
   async function load(page, push) {
     if (!/^[a-z0-9][a-z0-9-]*\.html$/.test(page)) page = 'index.html';
-    var res = await sb.rpc('site_page', { p_slug: slug, p_path: page });
+    var got = await Promise.all([sb.rpc('site_page', { p_slug: slug, p_path: page }), motionJS]);
+    var res = got[0];
     var row = res.data && res.data[0];
     if (res.error || !row) {
       if (page !== 'index.html') return load('index.html', push);
@@ -74,7 +77,7 @@
     var next = document.createElement('iframe');
     next.setAttribute('sandbox', 'allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation');
     next.setAttribute('title', row.site_name);
-    next.srcdoc = inject(row.html, page);
+    next.srcdoc = inject(row.html, page, got[1]);
     if (frame) frame.replaceWith(next); else document.body.appendChild(next);
     frame = next;
     state.style.display = 'none';

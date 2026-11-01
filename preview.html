@@ -45,6 +45,8 @@
       'sb_publishable_x9BC4b-yBIZAXz67WTVTkQ_v3wOCGhZ',
       { auth: { persistSession: false } }
     );
+    // motion/depth layer is inlined so it runs before first paint; a failed fetch just skips it
+    const motion = fetch('tb-motion.js', { cache: 'no-cache' }).then(r => r.ok ? r.text() : '').catch(() => '');
     const { data, error } = await sb.rpc('public_preview', { p_id: id });
     const row = data && data[0];
     if (error || !row || !row.html) { show('Preview not ready', 'This preview is still being built or has expired. Check back soon.'); return; }
@@ -59,7 +61,9 @@
     const frame = document.createElement('iframe');
     frame.setAttribute('sandbox', 'allow-scripts allow-forms allow-popups');
     frame.setAttribute('title', 'Website preview for ' + name);
-    frame.srcdoc = row.html;
+    const js = await motion;
+    const extra = js ? '<script>' + js.replace(/<\/script/gi, '<\\/script') + '<\/script>' : '';
+    frame.srcdoc = /<\/body>/i.test(row.html) ? row.html.replace(/<\/body>(?![\s\S]*<\/body>)/i, () => extra + '</body>') : row.html + extra;
     state.remove();
     document.body.appendChild(frame);
   } catch (e) {

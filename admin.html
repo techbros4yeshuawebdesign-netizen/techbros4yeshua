@@ -1421,8 +1421,10 @@ async function downloadSite(id){
     const { data: pages } = await sb.from('site_pages').select('path,html').eq('site_id', id).not('html', 'is', null).order('sort');
     if (!pages || !pages.length) { showAdminToast('No pages built yet', 'red'); return; }
     const zip = new JSZip();
+    const motion = await fetch('tb-motion.js', { cache: 'no-cache' }).then(r => r.ok ? r.text() : '').catch(() => '');
+    if (motion) zip.file('tb-motion.js', motion);
     pages.forEach(p => {
-      const extra = tbLeadScript(s.slug, p.path);
+      const extra = tbLeadScript(s.slug, p.path) + (motion ? '<script src="tb-motion.js"><\/script>' : '');
       const html = /<\/body>/i.test(p.html) ? p.html.replace(/<\/body>(?![\s\S]*<\/body>)/i, extra + '</body>') : p.html + extra;
       zip.file(p.path, html);
     });
