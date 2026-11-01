@@ -6,8 +6,80 @@
 (function () {
   'use strict';
   var root = document.documentElement;
-  if (root.getAttribute('data-tb-motion') === 'off' || window.__tbMotion) return;
+  if (window.__tbMotion) return;
   window.__tbMotion = true;
+
+  // ---------- legibility guard: small text must reach 4.5:1, large text 3:1 ----------
+  (function () {
+    function parse(c) { var m = /rgba?\(([^)]+)\)/.exec(c || ''); if (!m) return null; var v = m[1].split(/[\s,\/]+/).filter(Boolean).map(parseFloat); return { r: v[0], g: v[1], b: v[2], a: v.length > 3 ? v[3] : 1 }; }
+    function lin(x) { x /= 255; return x <= 0.03928 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4); }
+    function L(c) { return 0.2126 * lin(c.r) + 0.7152 * lin(c.g) + 0.0722 * lin(c.b); }
+    function ratio(a, b) { var x = L(a), y = L(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); }
+    function over(top, base) { return { r: top.r * top.a + base.r * (1 - top.a), g: top.g * top.a + base.g * (1 - top.a), b: top.b * top.a + base.b * (1 - top.a), a: 1 }; }
+    function mix(c, t, k) { return { r: c.r + (t - c.r) * k, g: c.g + (t - c.g) * k, b: c.b + (t - c.b) * k, a: c.a }; }
+    function css(c) { return 'rgba(' + Math.round(c.r) + ',' + Math.round(c.g) + ',' + Math.round(c.b) + ',' + c.a + ')'; }
+    // effective background, the element that paints it, or null when text sits on a photo
+    function backdrop(el) {
+      var layers = [], owner = null;
+      for (var e = el; e; e = e.parentElement) {
+        var s = getComputedStyle(e);
+        if (s.backgroundImage !== 'none' && !/gradient/.test(s.backgroundImage)) return null;
+        if (e !== document.body && e !== root && s.position !== 'static' && e.querySelector(':scope > img, :scope > picture, :scope > video')) return null;
+        var c = parse(s.backgroundColor);
+        if (c && c.a > 0) { if (!owner) owner = e; layers.push(c); if (c.a >= 0.95) break; }
+        // a see-through fixed or sticky bar floats over changing content: leave it alone
+        if (s.position === 'fixed' || s.position === 'sticky') return null;
+      }
+      var base = { r: 255, g: 255, b: 255, a: 1 };
+      for (var i = layers.length - 1; i >= 0; i--) base = over(layers[i], base);
+      return { c: base, owner: owner };
+    }
+    var all = document.querySelectorAll('body *');
+    for (var i = 0; i < all.length; i++) {
+      var el = all[i];
+      if (/^(SCRIPT|STYLE|SVG|svg|path|OPTION|TITLE)$/.test(el.tagName) || el.closest('[aria-hidden="true"], [data-tb-static]')) continue;
+      var own = false;
+      for (var n = el.firstChild; n; n = n.nextSibling) if (n.nodeType === 3 && n.nodeValue.trim()) { own = true; break; }
+      if (!own) continue;
+      var s = getComputedStyle(el), fg = parse(s.color);
+      if (!fg || fg.a < 0.1 || /transparent|rgba\(0, 0, 0, 0\)/.test(s.webkitTextFillColor || '')) continue;
+      var bd = backdrop(el); if (!bd) continue;
+      var bg = bd.c, eff = over(fg, bg), size = parseFloat(s.fontSize), bold = parseFloat(s.fontWeight) >= 600;
+      var need = (size >= 24 || (bold && size >= 18.66)) ? 3 : 4.5;
+      if (ratio(eff, bg) >= need) continue;
+      var lightText = L(eff) > L(bg), k;
+      var ownerIsControl = bd.owner && bd.owner !== document.body && (bd.owner === el || el.closest('a, button') === bd.owner) && bd.owner.matches('a, button, [class*="btn"]');
+      if (ownerIsControl && lightText) {
+        // white text on a pale brand button: deepen the button rather than the text
+        var b0 = parse(getComputedStyle(bd.owner).backgroundColor);
+        for (k = 0.05; k <= 0.7; k += 0.05) { var nb = mix(b0, 0, k); if (ratio(over(fg, nb), nb) >= need) break; }
+        var nbc = css(mix(b0, 0, Math.min(k, 0.7)));
+        bd.owner.style.setProperty('background-color', nbc, 'important');
+        if (getComputedStyle(bd.owner).borderColor === getComputedStyle(bd.owner).backgroundColor || parse(getComputedStyle(bd.owner).borderColor).a > 0) bd.owner.style.borderColor = nbc;
+      } else {
+        var target = L(bg) > 0.18 ? 0 : 255;
+        for (k = 0.05; k <= 0.9; k += 0.05) if (ratio(over(mix(fg, target, k), bg), bg) >= need) break;
+        el.style.setProperty('color', css(mix(fg, target, Math.min(k, 0.9))), 'important');
+      }
+    }
+  })();
+
+  // ---------- in-page links land below sticky or fixed top bars ----------
+  function anchorOffset() {
+    var bottom = 0;
+    Array.prototype.forEach.call(document.querySelectorAll('body > *, body > * > *'), function (e) {
+      var s = getComputedStyle(e);
+      if (s.position !== 'fixed' && s.position !== 'sticky') return;
+      var r = e.getBoundingClientRect();
+      if (r.top <= 1 && r.height > 0 && r.height < 160 && r.width > innerWidth * 0.6) bottom = Math.max(bottom, r.bottom);
+    });
+    if (bottom) root.style.scrollPaddingTop = Math.round(bottom + 12) + 'px';
+  }
+  anchorOffset();
+  window.addEventListener('scroll', function once() { anchorOffset(); window.removeEventListener('scroll', once); }, { passive: true });
+  window.addEventListener('resize', anchorOffset);
+
+  if (root.getAttribute('data-tb-motion') === 'off') return;
   if (!('IntersectionObserver' in window) || !window.requestAnimationFrame) return;
   if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
@@ -65,6 +137,7 @@
     '.tbm-shine{position:absolute;top:0;bottom:0;left:-60%;width:45%;pointer-events:none;z-index:-1;background:linear-gradient(100deg,transparent,rgba(255,255,255,.38),transparent);transform:skewX(-18deg);transition:left .75s ' + EASE + '}' +
     '.tbm-btn:hover .tbm-shine{left:125%}' +
     '.tbm-bar{position:fixed;top:0;left:0;height:3px;width:100%;transform-origin:0 50%;transform:scaleX(0);background:linear-gradient(90deg,rgba(' + acRGB + ',.55),rgb(' + acRGB + '));z-index:2147483000;pointer-events:none;box-shadow:0 0 12px rgba(' + acRGB + ',.6)}' +
+    '@media (pointer:coarse){a[href^="tel:"]:not([class*="btn"]),a[href^="mailto:"]:not([class*="btn"]){padding-block:10px;margin-block:-10px}}' +
     '@media print{[data-tbm],[data-tbm] img{opacity:1!important;transform:none!important;filter:none!important;clip-path:none!important}.tbm-bar{display:none}}';
   var style = document.createElement('style');
   style.setAttribute('data-tb-motion-css', '');
