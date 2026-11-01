@@ -31,6 +31,7 @@
   <div class="state" id="state"><p>Loading your preview...</p></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="tb-fast.js"></script>
 <script>
 (async function () {
   const state = document.getElementById('state');
@@ -63,7 +64,8 @@
     frame.setAttribute('title', 'Website preview for ' + name);
     const js = await motion;
     const extra = js ? '<script>' + js.replace(/<\/script/gi, '<\\/script') + '<\/script>' : '';
-    frame.srcdoc = /<\/body>/i.test(row.html) ? row.html.replace(/<\/body>(?![\s\S]*<\/body>)/i, () => extra + '</body>') : row.html + extra;
+    const page = window.tbOptimize ? window.tbOptimize(row.html) : row.html;
+    frame.srcdoc = /<\/body>/i.test(page) ? page.replace(/<\/body>(?![\s\S]*<\/body>)/i, () => extra + '</body>') : page + extra;
     state.remove();
     document.body.appendChild(frame);
   } catch (e) {

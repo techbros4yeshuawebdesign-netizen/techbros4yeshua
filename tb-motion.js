@@ -84,6 +84,48 @@
   window.addEventListener('scroll', function once() { anchorOffset(); window.removeEventListener('scroll', once); }, { passive: true });
   window.addEventListener('resize', anchorOffset);
 
+  // ---------- images: instant placeholder, fade-in, background preload, broken-image fallback ----------
+  var stillMotion = !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  (function () {
+    function frameOf(img) {
+      var f = img.parentElement;
+      if (f && f.tagName === 'PICTURE') f = f.parentElement;
+      return f && f !== document.body ? f : null;
+    }
+    function brandTint() {
+      var a = (getComputedStyle(root).getPropertyValue('--accent') || '').trim() || '#555';
+      return 'linear-gradient(135deg,' + a + ' 0%,rgba(20,20,22,.92) 100%)';
+    }
+    function broken(img) {
+      var f = frameOf(img);
+      img.style.visibility = 'hidden';
+      if (f) { f.style.backgroundImage = brandTint(); f.style.backgroundSize = 'cover'; }
+    }
+    Array.prototype.forEach.call(document.images, function (img) {
+      if (img.closest('[data-tb-static]')) return;
+      if (img.complete) { if (!img.naturalWidth && img.getAttribute('src')) broken(img); return; }
+      var tiny = img.getAttribute('data-tb-tiny'), f = frameOf(img);
+      if (tiny && f && getComputedStyle(f).backgroundImage === 'none') {
+        f.style.backgroundImage = 'url("' + tiny + '")';
+        f.style.backgroundSize = 'cover';
+        f.style.backgroundPosition = getComputedStyle(img).objectPosition || 'center';
+      }
+      if (stillMotion) {
+        img.style.opacity = '0';
+        img.style.transition = (img.style.transition ? img.style.transition + ',' : '') + 'opacity .8s cubic-bezier(.2,.7,.2,1)';
+      }
+      img.addEventListener('load', function () { img.style.opacity = ''; }, { once: true });
+      img.addEventListener('error', function () { img.style.opacity = ''; broken(img); }, { once: true });
+    });
+    // once the first screen is in, fetch every remaining photo so nothing is blank when scrolled to
+    function eager() {
+      Array.prototype.forEach.call(document.querySelectorAll('img[loading="lazy"]'), function (img) { img.loading = 'eager'; });
+    }
+    if (document.readyState === 'complete') setTimeout(eager, 200);
+    else window.addEventListener('load', function () { setTimeout(eager, 200); }, { once: true });
+    setTimeout(eager, 2500);
+  })();
+
   if (root.getAttribute('data-tb-motion') === 'off') return;
   if (!('IntersectionObserver' in window) || !window.requestAnimationFrame) return;
   if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -142,6 +184,12 @@
     '.tbm-shine{position:absolute;top:0;bottom:0;left:-60%;width:45%;pointer-events:none;z-index:-1;background:linear-gradient(100deg,transparent,rgba(255,255,255,.38),transparent);transform:skewX(-18deg);transition:left .75s ' + EASE + '}' +
     '.tbm-btn:hover .tbm-shine{left:125%}' +
     '.tbm-bar{position:fixed;top:0;left:0;height:3px;width:100%;transform-origin:0 50%;transform:scaleX(0);background:linear-gradient(90deg,rgba(' + acRGB + ',.55),rgb(' + acRGB + '));z-index:2147483000;pointer-events:none;box-shadow:0 0 12px rgba(' + acRGB + ',.6)}' +
+    '.tbm-frame:hover .tbm-px{scale:1.22}' +
+    '.tbm-curtain{position:sticky!important;z-index:0}' +
+    '.tbm-shade{position:absolute;inset:0;background:#05070a;opacity:0;pointer-events:none;z-index:5}' +
+    '.tbm-over{position:relative;z-index:1;box-shadow:0 -40px 80px -30px rgba(0,0,0,.5)}' +
+    '@keyframes tbmDrift{0%{--tbm-x:15%;--tbm-y:10%}50%{--tbm-x:85%;--tbm-y:60%}100%{--tbm-x:15%;--tbm-y:10%}}' +
+    '.tbm-drift{animation:tbmDrift 16s ease-in-out infinite}' +
     '@media (pointer:coarse){a[href^="tel:"]:not([class*="btn"]),a[href^="mailto:"]:not([class*="btn"]){padding-block:10px;margin-block:-10px}}' +
     '@media print{[data-tbm],[data-tbm] img{opacity:1!important;transform:none!important;filter:none!important;clip-path:none!important}.tbm-bar{display:none}}';
   var style = document.createElement('style');
@@ -187,6 +235,17 @@
     }, ms);
   }
   function play(el, delay) {
+    if (el.getAttribute('data-tbm') === 'wipe' && !el.tbmWaited) {
+      var pending = $$('img', el).filter(function (i) { return !i.complete; });
+      if (pending.length) {
+        el.tbmWaited = true;
+        var go = function () { if (go.done) return; go.done = true; play(el, 0); };
+        pending[0].addEventListener('load', go, { once: true });
+        pending[0].addEventListener('error', go, { once: true });
+        setTimeout(go, 1400);
+        return;
+      }
+    }
     el.style.transitionDelay = delay + 'ms';
     if (el.getAttribute('data-tbm') === 'wipe') $$('img', el).forEach(function (i) { i.style.transitionDelay = delay + 'ms'; setTimeout(function () { i.style.transitionDelay = ''; }, delay + 1700); });
     el.classList.add('tbm-in');
@@ -284,7 +343,7 @@
   // ---------- count-ups ----------
   var NUM = /^(\d{1,3}(?:,\d{3})*(?:\.\d+)?)(\+|%|\s?stars?|\s?★)?$/i;
   $$('strong, b, span, div, p, dt, dd, h3, h4').forEach(function (el) {
-    if (el.children.length || inChrome(el) || el.closest('a')) return;
+    if (el.children.length || inChrome(el) || el.closest('a, h1, h2, .tbm-split, [data-tb-static]')) return;
     var txt = el.textContent.trim(), m = NUM.exec(txt);
     if (!m || /^0\d/.test(m[1])) return;
     var target = parseFloat(m[1].replace(/,/g, ''));
@@ -358,6 +417,79 @@
     });
   }
 
+  // ---------- depth: hero stays put while the page slides over it ----------
+  var curtain = null, heroContent = [], hx = 0, hy = 0;
+  (function () {
+    if (!hero || hero === document.body) return;
+    var hs = cs(hero), next = hero.nextElementSibling;
+    while (next && (inChrome(next) || cs(next).display === 'none' || cs(next).position === 'fixed')) next = next.nextElementSibling;
+    if (!next || !/static|relative/.test(hs.position)) return;
+    if (hero.querySelector('form, input, select, textarea')) return;
+    if ($$('*', hero).some(function (e) { return /sticky|fixed/.test(cs(e).position); })) return;
+    var h = hero.offsetHeight, vh = window.innerHeight;
+    if (h < vh * 0.45 || h > vh * 2.2) return;
+    var pageBg = cs(document.body).backgroundColor;
+    if (!rgba(pageBg) || rgba(pageBg).a < 0.5) pageBg = cs(root).backgroundColor;
+    if (!rgba(pageBg) || rgba(pageBg).a < 0.5) pageBg = '#ffffff';
+    // everything after the hero rides above it on an opaque background
+    for (var sib = next; sib; sib = sib.nextElementSibling) {
+      var ss = cs(sib);
+      if (ss.position === 'fixed' || ss.position === 'absolute' || ss.display === 'none') continue;
+      if (ss.position === 'static') sib.style.position = 'relative';
+      if (ss.zIndex === 'auto') sib.style.zIndex = '1';
+      var bg = rgba(ss.backgroundColor);
+      if (!bg || bg.a < 0.95) sib.style.backgroundColor = pageBg;
+    }
+    next.classList.add('tbm-over');
+    hero.classList.add('tbm-curtain');
+    var naturalTop = hero.getBoundingClientRect().top + window.scrollY;
+    function place() {
+      var hh = hero.offsetHeight, v = window.innerHeight;
+      hero.style.top = Math.min(0, v - hh) + 'px';
+      if (curtain) { curtain.start = Math.max(0, naturalTop + hh - v); curtain.cover = Math.min(hh, v); }
+    }
+    window.addEventListener('resize', function () { place(); tick(); });
+    var shade = document.createElement('div'); shade.className = 'tbm-shade'; shade.setAttribute('aria-hidden', 'true');
+    hero.appendChild(shade);
+    curtain = { shade: shade, start: 0, cover: 1 };
+    place();
+    heroContent = Array.prototype.filter.call(hero.children, function (c) {
+      return c !== shade && !/^(IMG|PICTURE|VIDEO)$/.test(c.tagName) && !c.querySelector(':scope > img') && c.textContent.trim();
+    });
+  })();
+
+  // hero layers drift apart under the pointer (photo one way, words the other)
+  if (fine && hero) {
+    hero.addEventListener('pointermove', function (e) {
+      var r = hero.getBoundingClientRect();
+      hx = (e.clientX - r.left) / r.width - 0.5; hy = (e.clientY - r.top) / r.height - 0.5; tick();
+    });
+    hero.addEventListener('pointerleave', function () { hx = 0; hy = 0; tick(); });
+  }
+
+  // photo frames lean slightly as they pass through the screen
+  px.forEach(function (p) {
+    if (hero && hero.contains(p.frame)) { p.hero = true; return; }
+    p.frame.classList.add('tbm-frame');
+    if (p.frame.offsetWidth < innerWidth * 0.9 && p.frame.parentElement) { p.lean = true; p.frame.parentElement.style.perspective = '1400px'; }
+  });
+
+  // slow drifting light in dark sections on phones and tablets
+  if (!fine && window.CSS && CSS.registerProperty) {
+    try {
+      CSS.registerProperty({ name: '--tbm-x', syntax: '<length-percentage>', inherits: false, initialValue: '50%' });
+      CSS.registerProperty({ name: '--tbm-y', syntax: '<length-percentage>', inherits: false, initialValue: '0%' });
+    } catch (e) {}
+    sections.forEach(function (sec) {
+      var c = rgba(cs(sec).backgroundColor);
+      if (!c || c.a < 0.5 || lum(c) > 0.3) return;
+      var base = cs(sec).backgroundImage;
+      var glow = 'radial-gradient(420px circle at var(--tbm-x,50%) var(--tbm-y,0%), rgba(' + acRGB + ',.2), transparent 70%)';
+      sec.style.backgroundImage = base && base !== 'none' ? glow + ',' + base : glow;
+      sec.classList.add('tbm-drift');
+    });
+  }
+
   // ---------- scroll progress + parallax loop ----------
   var bar = document.createElement('div');
   bar.className = 'tbm-bar'; bar.setAttribute('aria-hidden', 'true');
@@ -374,8 +506,20 @@
         if (!p.on) return;
         var r = p.frame.getBoundingClientRect();
         var mid = (r.top + r.height / 2 - vh / 2) / (vh / 2 + r.height / 2);
-        p.el.style.translate = '0 ' + (-mid * r.height * p.k).toFixed(1) + 'px';
+        var ox = p.hero ? -hx * 18 : 0, oy = p.hero ? -hy * 12 : 0;
+        p.el.style.translate = ox.toFixed(1) + 'px ' + (-mid * r.height * p.k + oy).toFixed(1) + 'px';
+        if (p.lean) p.frame.style.rotate = 'x ' + Math.max(-7, Math.min(7, mid * 7)).toFixed(2) + 'deg';
       });
+      if (curtain) {
+        var raw = (window.scrollY - curtain.start) / curtain.cover, q = Math.min(1, Math.max(0, raw));
+        curtain.shade.style.opacity = (q * 0.6).toFixed(3);
+        // fully covered: take it out of the picture so gaps between sections show the page, not the hero
+        hero.style.visibility = raw > 1.02 ? 'hidden' : '';
+        heroContent.forEach(function (c) {
+          c.style.translate = (hx * 10).toFixed(1) + 'px ' + (q * -70 + hy * 8).toFixed(1) + 'px';
+          c.style.opacity = q ? Math.max(0, 1 - q * 1.3).toFixed(3) : '';
+        });
+      }
     });
   }
   window.addEventListener('scroll', tick, { passive: true });

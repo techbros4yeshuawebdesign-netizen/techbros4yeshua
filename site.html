@@ -25,6 +25,7 @@
   <div class="state" id="state"><p>Loading…</p></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="tb-fast.js"></script>
 <script>
 // Serves a client website stored in our database:
 //   site.html?s=<slug>&p=<page.html>
@@ -56,6 +57,7 @@
   }
 
   function inject(html, page, motion) {
+    if (window.tbOptimize) html = window.tbOptimize(html);
     var extra = helpers(page) + (motion ? '<script>' + motion.replace(/<\/script/gi, '<\\/script') + '<\/script>' : '');
     return /<\/body>/i.test(html) ? html.replace(/<\/body>(?![\s\S]*<\/body>)/i, function () { return extra + '</body>'; }) : html + extra;
   }
