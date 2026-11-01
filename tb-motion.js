@@ -71,7 +71,12 @@
       var s = getComputedStyle(e);
       if (s.position !== 'fixed' && s.position !== 'sticky') return;
       var r = e.getBoundingClientRect();
-      if (r.top <= 1 && r.height > 0 && r.height < 160 && r.width > innerWidth * 0.6) bottom = Math.max(bottom, r.bottom);
+      if (!(r.height > 0 && r.height < 160 && r.width > innerWidth * 0.6)) return;
+      // a sticky bar may sit lower at load (under a ribbon) but pins at its css top once scrolling
+      var pin = s.position === 'sticky' ? parseFloat(s.top) : r.top;
+      if (isNaN(pin) || pin > 1 + 40) return;
+      if (s.position === 'fixed' && pin > 40) return;
+      bottom = Math.max(bottom, Math.max(0, pin) + r.height);
     });
     if (bottom) root.style.scrollPaddingTop = Math.round(bottom + 12) + 'px';
   }
