@@ -817,6 +817,8 @@ async function copyText(t, ok){
 function textProspect(id, phone){
   const msg = document.getElementById('pitch-' + id)?.textContent || (PREVIEW_BASE + id);
   const num = String(phone).replace(/[^0-9+]/g, '');
+  // first text marks the prospect contacted; later texts count as follow-ups (drives the daily sales brief)
+  sb.rpc('mark_prospect_texted', { p_id: id }).then(() => loadProspects()).catch(() => {});
   location.href = 'sms:' + num + '?&body=' + encodeURIComponent(msg);
 }
 async function setProspect(id, status){
